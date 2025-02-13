@@ -142,6 +142,7 @@ bool RK4STEP_2D(double *gradientArray, int *gradientArraySize, double *startPoin
 
 
 void gradient_descend_rk4(double x, double y, double *matriz, int filas, int columnas, double *new_point, int step) {
+    /*
     double *gradientArray;
     const mwSize *gradientArraySizeC;
     const mwSize *PointSizeC;
@@ -154,12 +155,11 @@ void gradient_descend_rk4(double x, double y, double *matriz, int filas, int col
     double *nextPoint;
     double stepSize;
     double *stepSizeArray;
-    int i;
+    int i;*/
     
-    /* Check for proper number of input and output arguments. */
-    if(nrhs!=3) { mexErrMsgTxt("3 inputs are required."); }
-    if(nlhs!=1) { mexErrMsgTxt("One output required"); }
-    
+    int gradientArraySize[2];
+    int PointSizeC[2];
+
     /*  Get the number of gradient dimensions */
     gradientDims=mxGetNumberOfDimensions(prhs[1]);
     

@@ -43,7 +43,7 @@ int main() {
     objective_points[0] = 25;  // x coordinate
     objective_points[1] = 25;  // y coordinate
 
-    //Define las coordenadas de inicio
+    //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
     int num_start_points = 1;
     double *start_points = (double *)malloc(num_start_points * 2 * sizeof(double));;
     start_points[0] = 0;  // x coordinate
