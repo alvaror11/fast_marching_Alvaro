@@ -512,7 +512,7 @@ double* velocities_map(double* binary_map, int rows, int cols, int threshold){
         }
     }
     // Convert distances to velocities using threshold
-""    for (int i = 0; i < rows * cols; i++) {
+    for (int i = 0; i < rows * cols; i++) {
         if (distance_map[i] != 0.0) {
             // Normalize and apply threshold to create smooth gradient
             double normalized_dist = distance_map[i] / threshold;
