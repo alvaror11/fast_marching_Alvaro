@@ -40,14 +40,17 @@ int main() {
     // Define las coordenadas objetivo
     int num_points = 1;
     double *objective_points  = (double *)malloc(num_points * 2 * sizeof(double));;
-    objective_points[0] = 25;  // x coordinate
-    objective_points[1] = 25;  // y coordinate
+    objective_points[0] = 10;  // x coordinate
+    objective_points[1] = 5;  // y coordinate
 
     //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
     int num_start_points = 1;
     double *start_points = (double *)malloc(num_start_points * 2 * sizeof(double));;
     start_points[0] = 0;  // x coordinate
     start_points[1] = 0;  // y coordinate
+
+    // Define el umbral de distancia para la matriz de velocidades
+    double distance_threshold = 12.0;
 
     // Define el tamaño del paso
     int step = 1;
@@ -74,7 +77,7 @@ int main() {
 
     fclose(file);
 
-    printf("\nMatriz leída del archivo:\n");
+    // Invest values (0->1 and 1->0) and save in the expected format
     for (int i = 0; i < filas; i++) {
         for (int j = 0; j < columnas; j++) {
             if (matriz[j + i * columnas] == 1) {
@@ -82,15 +85,31 @@ int main() {
             } else if (matriz[j + i * columnas] == 0) {
                 matriz[j + i * columnas] = 1;
             }
-            printf("%.1f ",  matriz[j + i * columnas]);
         }
-        printf("\n");
     }
-     
 
+    //Create velocities map
+    double* obstacle_distance_map = velocities_map(matriz, filas, columnas, distance_threshold);
+    
+    //GUARDAR LA MATRIZ DE VELOCIDADES EN UN ARCHIVO DE SALIDA
+    FILE *output_file1 = fopen("velocities_map.txt", "w");
+    if (output_file1 == NULL) {
+        perror("Error al abrir el archivo de salida");
+        return 1;
+    }
+
+    // Escribir los resultados del mapa de distancias en el archivo de salida
+    for (int i = 0; i < filas; i++) {
+        for (int j = 0; j < columnas; j++) {
+            fprintf(output_file1, "%.2f ", obstacle_distance_map[j + i * columnas]);
+        }
+        fprintf(output_file1, "\n");
+    }
+
+    
     //Allocate memory for output map
     double* output_T = (double *)malloc(filas * columnas * sizeof(double));
-    output_T = main_msfm(matriz, objective_points, output_T);
+    output_T = main_msfm(obstacle_distance_map, objective_points, output_T);
 
     // Print the distance map results
     printf("\nDistance map results:\n");
@@ -100,9 +119,10 @@ int main() {
         }
         printf("\n");
     }
-    /* GUARDAR LA MATRIZ DE DISTANCIAS EN UN ARCHIVO DE SALIDA
-    FILE *output_file = fopen("output.txt", "w");
-    if (output_file == NULL) {
+
+    //GUARDAR LA MATRIZ DE TIEMPOS EN UN ARCHIVO DE SALIDA
+    FILE *output_file2 = fopen("times_map.txt", "w");
+    if (output_file2 == NULL) {
         perror("Error al abrir el archivo de salida");
         return 1;
     }
@@ -110,14 +130,19 @@ int main() {
     // Escribir los resultados del mapa de distancias en el archivo de salida
     for (int i = 0; i < filas; i++) {
         for (int j = 0; j < columnas; j++) {
-            fprintf(output_file, "%.2f ", output_T[j + i * columnas]);
+            fprintf(output_file2, "%.2f ", output_T[j + i * columnas]);
         }
-        fprintf(output_file, "\n");
+        fprintf(output_file2, "\n");
     }
 
     // Cerrar el archivo de salida
-    fclose(output_file);*/
-
+    fclose(output_file2);
+    free(output_T);
+    free(matriz);
+    free(objective_points);
+    free(start_points);
+    free(obstacle_distance_map);
+    
     // Empezamos a usar el descenso del gradiente para buscar el camino
     bool finished = false;      //mientras no se llegue al punto final es false
     
@@ -131,18 +156,19 @@ int main() {
 
     // Añadir el punto inicial
     addPointToTrajectory(traj, start_points[0], start_points[1]);
-    
+    double* last_point = malloc(2 * sizeof(double));
 
     while (finished = false);{
         // Obtener las coordenadas del último punto de la trayectoria
-        double last_x = traj->points[traj->size - 1].x;
-        double last_y = traj->points[traj->size - 1].y;
+        
+        last_point[0] = traj->points[traj->size - 1].x;
+        last_point[1] = traj->points[traj->size - 1].y;
 
         //Definir el pointer para los nuevos puntos de la trayectoria
         double* new_point = malloc(2 * sizeof(double));
 
         // Llamar a la función mexFunction en rk4_2D con las coordenadas del último punto y el mapa de velocidades
-        gradient_descend_rk4(last_x, last_y, matriz, filas, columnas, new_point, step);
+        //gradient_descend_rk4(last_point, matriz, filas, columnas, new_point, step);
 
         // Añadir el nuevo punto a la trayectoria
         addPointToTrajectory(traj, new_point[0], new_point[1]);

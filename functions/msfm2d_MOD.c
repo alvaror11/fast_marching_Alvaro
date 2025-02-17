@@ -202,6 +202,11 @@ double CalculateDistance(double *T, double Fij, int *dims, int i, int j, bool us
     return Tt;
 }
 
+double euclidean_distance(int x1, int y1, int x2, int y2) {
+    double dx = (double)(x2 - x1);
+    double dy = (double)(y2 - y1);
+    return sqrt(dx*dx + dy*dy);
+}
 /* The matlab mex funtion  */
 double* main_msfm(double* F_map, double* source_points, double* output_T) {
      /* The input variables */
@@ -471,6 +476,63 @@ double* main_msfm(double* F_map, double* source_points, double* output_T) {
     free(Frozen);
 }
 
+double* velocities_map(double* binary_map, int rows, int cols, int threshold){
+    double* distance_map = malloc(rows * cols * sizeof(double));
+    double max_distance = sqrt(rows*rows + cols*cols);  // diagonal distance
+
+    // First pass: mark obstacles as 0 and other cells as infinity
+    printf("\nMatriz con distancias maximas:\n");
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (binary_map[j + i * cols] == 0) {  // obstacle
+                distance_map[j + i * cols] = 0.0;
+            } else {
+                distance_map[j + i * cols] = max_distance;
+            }
+        }
+    }
+
+    // Check for each cell its distance to all the obstacles and choose the closest one
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            double min_dist = distance_map[j + i * cols];
+            if (distance_map[j + i * cols] != 0.0) {
+                for (int r = 0; r < rows; r++) {
+                    for (int s = 0; s < cols; s++) {
+                        if (distance_map[s + r * cols] == 0.0) {
+                            double new_dist = euclidean_distance(i,j,r,s);
+                            if (new_dist < min_dist) {
+                                min_dist = new_dist;
+                            }
+                        }
+                    }
+                }
+            }
+            distance_map[j + i * cols] = min_dist;
+        }
+    }
+    // Convert distances to velocities using threshold
+""    for (int i = 0; i < rows * cols; i++) {
+        if (distance_map[i] != 0.0) {
+            // Normalize and apply threshold to create smooth gradient
+            double normalized_dist = distance_map[i] / threshold;
+            if (normalized_dist > 1.0) {
+                distance_map[i] = 1.0;  // Maximum velocity
+            } else {
+                // Create smooth gradient between 0 and 1
+                distance_map[i] = normalized_dist;
+            }
+        }
+    }
+    
+    return distance_map;
+
+
+
+
+
+
+}
 
 
 
