@@ -9,6 +9,7 @@
                 "${workspaceFolder}\\prueba.c",
                 "${workspaceFolder}\\common.c",
                 "${workspaceFolder}\\msfm2d_MOD.c",
+                "${workspaceFolder}\\rk4_2D.c",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "msfm2d_MOD.h"
 #include "common.h"
+#include "rk4_2D.h"
 
 // Estructura de los puntos de la trayectoria
 typedef struct {
@@ -111,14 +112,14 @@ int main() {
     double* output_T = (double *)malloc(filas * columnas * sizeof(double));
     output_T = main_msfm(obstacle_distance_map, objective_points, output_T);
 
-    // Print the distance map results
+    /*// Print the distance map results
     printf("\nDistance map results:\n");
     for (int i = 0; i < filas; i++) {
         for (int j = 0; j < columnas; j++) {
             printf("%.2f ", output_T[i + j * filas]);
         }
         printf("\n");
-    }
+    }*/
 
     //GUARDAR LA MATRIZ DE TIEMPOS EN UN ARCHIVO DE SALIDA
     FILE *output_file2 = fopen("times_map.txt", "w");
@@ -134,14 +135,8 @@ int main() {
         }
         fprintf(output_file2, "\n");
     }
-
-    // Cerrar el archivo de salida
     fclose(output_file2);
-    free(output_T);
-    free(matriz);
-    free(objective_points);
-    free(start_points);
-    free(obstacle_distance_map);
+
     
     // Empezamos a usar el descenso del gradiente para buscar el camino
     bool finished = false;      //mientras no se llegue al punto final es false
@@ -156,19 +151,19 @@ int main() {
 
     // Añadir el punto inicial
     addPointToTrajectory(traj, start_points[0], start_points[1]);
-    double* last_point = malloc(2 * sizeof(double));
 
-    while (finished = false);{
+    //Definir el pointer para el último punto de la trayectoria y el nuevo punto
+    double* last_point = malloc(2 * sizeof(double));
+    double* new_point = malloc(2 * sizeof(double));
+
+    while (finished == false){
         // Obtener las coordenadas del último punto de la trayectoria
         
         last_point[0] = traj->points[traj->size - 1].x;
         last_point[1] = traj->points[traj->size - 1].y;
 
-        //Definir el pointer para los nuevos puntos de la trayectoria
-        double* new_point = malloc(2 * sizeof(double));
-
         // Llamar a la función mexFunction en rk4_2D con las coordenadas del último punto y el mapa de velocidades
-        //gradient_descend_rk4(last_point, matriz, filas, columnas, new_point, step);
+        gradient_descend_rk4(last_point, output_T, filas, columnas, new_point, step);
 
         // Añadir el nuevo punto a la trayectoria
         addPointToTrajectory(traj, new_point[0], new_point[1]);
@@ -177,9 +172,14 @@ int main() {
         if (new_point[0] == objective_points[0] && new_point[1] == objective_points[1]) {
             finished = true;
         }
-
-
     }
 
-
+// Liberar memoria
+free(output_T);
+free(matriz);
+free(objective_points);
+free(start_points);
+free(obstacle_distance_map);
+free(last_point);
+free(traj);
 }

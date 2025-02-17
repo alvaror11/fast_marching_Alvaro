@@ -481,7 +481,6 @@ double* velocities_map(double* binary_map, int rows, int cols, int threshold){
     double max_distance = sqrt(rows*rows + cols*cols);  // diagonal distance
 
     // First pass: mark obstacles as 0 and other cells as infinity
-    printf("\nMatriz con distancias maximas:\n");
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
             if (binary_map[j + i * cols] == 0) {  // obstacle
