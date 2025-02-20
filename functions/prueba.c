@@ -37,9 +37,12 @@ int main() {
 
     // Define las dimensiones de la matriz
     int filas = 50, columnas = 50; 
+    int size_map[2] = {columnas,filas};
 
     // Define las coordenadas objetivo
     int num_points = 1;
+    int dimensions = 2;
+    int size_objective[2] = {2,1};
     double *objective_points  = (double *)malloc(num_points * 2 * sizeof(double));;
     objective_points[0] = 47;  // x coordinate
     objective_points[1] = 5;  // y coordinate
@@ -110,7 +113,7 @@ int main() {
     
     //Allocate memory for output map
     double* output_T = (double *)malloc(filas * columnas * sizeof(double));
-    output_T = main_msfm(obstacle_distance_map, objective_points, output_T);
+    output_T = main_msfm(obstacle_distance_map, objective_points, output_T, size_map, size_objective);
 
 
     //GUARDAR LA MATRIZ DE TIEMPOS EN UN ARCHIVO DE SALIDA
@@ -186,7 +189,7 @@ int main() {
         last_point[1] = traj->points[traj->size - 1].y;
 
         // Llamar a la función mexFunction en rk4_2D con las coordenadas del último punto y el mapa de velocidades
-        gradient_descend_rk4(last_point, gradient_matrix, filas, columnas, new_point, step);
+        gradient_descend_rk4(last_point, gradient_matrix, size_map, size_objective, new_point, step);
 
         // Añadir el nuevo punto a la trayectoria
         addPointToTrajectory(traj, new_point[0], new_point[1]);

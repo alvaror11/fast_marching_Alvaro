@@ -172,20 +172,9 @@ bool RK4STEP_2D(double *gradientArray, int *gradientArraySize, double *startPoin
 }
 
 //solo funciona con un punto inicial
-void gradient_descend_rk4(double* point, double *matriz, int filas, int columnas, double *new_point, double step) {
-    /*
-    double *gradientArray;
-    const mwSize *gradientArraySizeC;
-    const mwSize *PointSizeC;
-    mwSize gradientArraySize[3];
-    mwSize PointDims;
-    mwSize gradientDims;
-    double *startPoint;
-    */
+void gradient_descend_rk4(double* startPoint, double *gradientArray, int* size_map, int* size_point, double *nextPoint, double stepSize) {
 
-    double *nextPoint = new_point;
     int stepSizeArray;
-    double stepSize = step;
     int i;
 
     double startPoint1[2];
@@ -194,36 +183,17 @@ void gradient_descend_rk4(double* point, double *matriz, int filas, int columnas
     int PointSizeC[2];
     int gradientArraySizeC[2];
 
-    int size_map[2] = {columnas,filas};
-    int size_point[2] = {2,1};
     gradientArraySizeC[0] = size_map[0];
     gradientArraySizeC[1] = size_map[1];
     PointSizeC[0] = size_point[0];
     PointSizeC[1] = size_point[1];
 
-    /*  Get the number of gradient dimensions 
-    gradientDims=mxGetNumberOfDimensions(prhs[1]);
     
-   Get the size of the gradient Array 
-    gradientArraySizeC = mxGetDimensions(prhs[1]);
-    
-     Get the number of startingpoint dimensions 
-    PointDims=mxGetNumberOfDimensions(prhs[0]);
-    
-   Get the size of the startingpoint 
-    PointSizeC = mxGetDimensions(prhs[0]);*/
+   //Get the size of the startingpoint 
+
     
     for (i=0; i<PointSizeC[1]; i++) { PointLength=PointLength*PointSizeC[i]; }
     
-    
-   /*Connect inputs */
-    double* startPoint = point;
-    double* gradientArray = matriz;
-    //startPoint =  mxGetPr(prhs[0]);
-    //gradientArray = mxGetPr(prhs[1]);
-    //stepSizeArray = mxGetPr(prhs[2]); stepSize=stepSizeArray[0];
-    //plhs[0] = mxCreateNumericArray(2, PointSizeC, mxDOUBLE_CLASS, mxREAL);
-    //nextPoint= mxGetPr(plhs[0]);
     
    /*Perform the RK4 raytracing step */
     if(PointLength==2) {

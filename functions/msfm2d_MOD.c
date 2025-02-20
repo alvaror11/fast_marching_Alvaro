@@ -208,19 +208,11 @@ double euclidean_distance(int x1, int y1, int x2, int y2) {
     return sqrt(dx*dx + dy*dy);
 }
 /* The matlab mex funtion  */
-double* main_msfm(double* F_map, double* source_points, double* output_T) {
-     /* The input variables */
-    double *F = F_map;
-    double *SourcePoints = source_points;
+double* main_msfm(double* F, double* source_points, double* T, int* size_map, int* size_target) {
+     /* The input variables */;
     bool usesecond = true;  // Default values
     bool usecross = true;   // Default values
-    /* INTRODUCIR TAMAÑO Y DIMENSIONES DE EL MAPA Y EL ARRAY DE PUNTOS OBJETIVO*/
-    int size_map[2] = {50,50};
-    int size_target[2] = {2,1};
 
-    /* The output distance image pointer     */
-    double *T = output_T;
-    
     /* Euclidian distance image */
     double *Y;
     
@@ -321,8 +313,8 @@ double* main_msfm(double* F_map, double* source_points, double* output_T) {
     /* and add all neighbours of the starting points to narrow list  */
     for (z=0; z<dims_sp[1]; z++) {
         /*starting point  */
-        x= (int)SourcePoints[0+z*2]-1;
-        y= (int)SourcePoints[1+z*2]-1;
+        x= (int)source_points[0+z*2]-1;
+        y= (int)source_points[1+z*2]-1;
         XY_index=x+y*dims[0];
         
         /*Set starting point to frozen and distance to zero  */
@@ -333,8 +325,8 @@ double* main_msfm(double* F_map, double* source_points, double* output_T) {
     
     for (z=0; z<dims_sp[1]; z++) {
         /*starting point  */
-        x= (int)SourcePoints[0+z*2]-1;
-        y= (int)SourcePoints[1+z*2]-1;
+        x= (int)source_points[0+z*2]-1;
+        y= (int)source_points[1+z*2]-1;
         XY_index=x+y*dims[0];
         
         /* Add neigbours of starting points  */
