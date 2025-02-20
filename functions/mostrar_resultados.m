@@ -72,6 +72,8 @@ fclose(file);
 
 cd(main_folder);
 
+%% Mapa de tiempos visualization
+
 umbralMax = 200; 
 
 % Crear una copia de la matriz con valores limitados a 200
@@ -80,12 +82,9 @@ matrizClipped(matriz_tiempos > umbralMax) = umbralMax;
 % Graficar la matriz con imágenes de escala de colores
 % ...existing code...
 
-%% Mapa de tiempos visualization
-umbralMax = 200; 
 
 % Create figure for time map
 figure;
-
 
 % Mostrar el mapa
 imagesc(matrizClipped);
@@ -108,6 +107,10 @@ cd(main_folder);
 % Extract coordinates
 traj_x = traj_data(:,1);
 traj_y = traj_data(:,2);
+
+% Convert to double if necessary
+traj_x = double(traj_x);
+traj_y = double(traj_y);
 
 hold on;
 

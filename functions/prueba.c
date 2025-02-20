@@ -214,16 +214,13 @@ int main() {
     }
 
     for (int i = 0; i < traj->size; i++) {
-        // Round coordinates
-        //int rounded_x = (int)round(traj->points[i].x);
-        //int rounded_y = (int)round(traj->points[i].y);
-        
         double traj_x = traj->points[i].x;
         double traj_y = traj->points[i].y;
         // Save to file (x y format)
-        fprintf(traj_file, "%d %d\n", traj_x, traj_y);
+        fprintf(traj_file, "%.2f %.2f\n", traj_x, traj_y);
     }
 
+    fclose(traj_file);
 
     // Liberar memoria    
     free(output_T);
