@@ -1,6 +1,6 @@
 clear;
 clc;
-close all;
+fclose all;
 
 filas = 50;
 columnas = 50;
@@ -172,14 +172,14 @@ hold on;
 [X, Y] = meshgrid(1:columnas, 1:filas);
 
 % Downsample for better visualization (adjust skip value as needed)
-skip = 1;  % Show an arrow every 2 points
+skip = 2;  % Show an arrow every 2 points
 X = X(1:skip:end, 1:skip:end);
 Y = Y(1:skip:end, 1:skip:end);
 Fx_down = Fx(1:skip:end, 1:skip:end);
 Fy_down = Fy(1:skip:end, 1:skip:end);
 
 % Plot vector field
-quiver(X, Y, Fx_down, Fy_down, 2, 'w', 'LineWidth', 1.5);
+quiver(X, Y, Fx_down, Fy_down, 0.5, 'w', 'LineWidth', 1.5);
 
 % Adjust colormap and limits
 colormap(jet);

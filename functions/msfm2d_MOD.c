@@ -477,6 +477,8 @@ double* main_msfm(double* F_map, double* source_points, double* output_T) {
 }
 
 double* velocities_map(double* binary_map, int rows, int cols, int threshold){
+    // Creates the velocities map from the binary occupational map.
+    //2D only
     double* distance_map = malloc(rows * cols * sizeof(double));
     double max_distance = sqrt(rows*rows + cols*cols);  // diagonal distance
 
@@ -533,5 +535,51 @@ double* velocities_map(double* binary_map, int rows, int cols, int threshold){
 
 }
 
-
-
+void compute_gradient_2d_discrete(double* input_matrix, double* gradient_matrix, int rows, int cols) {
+    // 8 neighborhood directions
+    const int Ne[8][2] = {
+        {-1, -1}, {-1, 0}, {-1, 1},
+        { 0, -1},          { 0, 1},
+        { 1, -1}, { 1, 0}, { 1, 1}
+    };
+    
+    // For each point in the matrix, including edges
+    for(int i = 0; i < rows; i++) {
+        for(int j = 0; j < cols; j++) {
+            double current_value = input_matrix[i*cols + j];
+            double min_value = current_value;
+            double fx = 0, fy = 0;
+            int valid_neighbors = 0;
+            
+            // Check all 8 neighbors
+            for(int n = 0; n < 8; n++) {
+                int ni = i + Ne[n][0];
+                int nj = j + Ne[n][1];
+                
+                // Only process neighbor if it's within bounds
+                if(ni >= 0 && ni < rows && nj >= 0 && nj < cols) {
+                    valid_neighbors++;
+                    double neighbor_value = input_matrix[ni*cols + nj];
+                    
+                    if(neighbor_value < min_value) {
+                        min_value = neighbor_value;
+                        // Normalize direction vector
+                        double norm = sqrt(Ne[n][0]*Ne[n][0] + Ne[n][1]*Ne[n][1]);
+                        fx = Ne[n][1]/norm; // x component in the columns direction
+                        fy = Ne[n][0]/norm; // y component in the rows direction
+                    }
+                }
+            }
+            
+            // Only store gradient if we found valid neighbors
+            if(valid_neighbors > 0) {
+                gradient_matrix[i*cols + j] = fx;
+                gradient_matrix[i*cols + j + rows*cols] = fy;
+            } else {
+                // No valid neighbors, set gradient to 0
+                gradient_matrix[i*cols + j] = 0;
+                gradient_matrix[i*cols + j + rows*cols] = 0;
+            }
+        }
+    }
+}
