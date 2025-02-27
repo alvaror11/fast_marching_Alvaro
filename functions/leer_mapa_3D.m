@@ -59,3 +59,43 @@ for k = 1:altura
 end
 
 fclose(fileID);
+
+%% Velocities Map
+
+velocities_map = zeros(filas, columnas, altura);
+
+% Read velocities map
+fileID = fopen([files_folder '\velocities_map3D.txt'], 'r');
+for k = 1:altura
+    for i = 1:filas
+        line = fgetl(fileID);
+        values = sscanf(line, '%f');
+        for j = 1:columnas
+            velocities_map(i,j,k) = values(j);
+        end
+    end
+end
+fclose(fileID);
+
+% Create visualization
+[x, y, z] = meshgrid(1:columnas, 1:filas, 1:altura);
+
+% Plot Velocities Map
+figure('Name', 'Velocities Map');
+slice(x, y, z, velocities_map, columnas/2, filas/2, altura/2);
+colormap(jet);
+colorbar;
+xlabel('X');
+ylabel('Y');
+zlabel('Z');
+title('Velocities Map - Slice View');
+axis tight;
+view(45, 30);
+
+
+
+
+
+
+
+

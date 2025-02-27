@@ -6,6 +6,8 @@
 #include "rk4_2D_3D.h"
 
 double* velocities_map3D(double* matriz, int* size_map, int distance_threshold);
+double* main_msfm3D(double* obstacle_distance_map, double* objective_points, double* output_T, int* size_map, int* size_objective);
+void compute_gradient_3d_discrete(double* input_matrix, double* gradient_matrix, int* size_map);
 
 // Estructura de los puntos de la trayectoria
 typedef struct {
@@ -127,7 +129,7 @@ void compute_2d_trajectory(){
 
     // Crear el gradiente para el mapa de tiempos:
     double* gradient_matrix = (double*)malloc(2 * filas * columnas * sizeof(double));
-    compute_gradient_2d_discrete(output_T, gradient_matrix, filas, columnas);
+    compute_gradient_2d_discrete(output_T, gradient_matrix, size_map);
 
     // After compute_gradient_2d_discrete call
     // Export gradient components to separate files
@@ -238,14 +240,14 @@ void compute_3d_trajectory(){
     double *objective_points  = (double *)malloc(num_points * 3 * sizeof(double));;
     objective_points[0] = 47;   // x coordinate
     objective_points[1] = 5;    // y coordinate
-    objective_points[1] = 5;    // z coordinate
+    objective_points[2] = 5;    // z coordinate
 
     //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
     int num_start_points = 1;
     double *start_points = (double *)malloc(num_start_points * 3 * sizeof(double));;
     start_points[0] = 5;    // x coordinate
     start_points[1] = 48;   // y coordinate
-    start_points[1] = 48;   // z coordinate
+    start_points[2] = 48;   // z coordinate
 
     // Define el umbral de distancia para la matriz de velocidades
     double distance_threshold = 4.0;
@@ -289,68 +291,79 @@ void compute_3d_trajectory(){
         perror("Error al abrir el archivo de salida");
         return;
     }
-/*
+
     // Escribir los resultados del mapa de velocidades en el archivo de salida
-    for (int i = 0; i < filas; i++) {
-        for (int j = 0; j < columnas; j++) {
-            fprintf(output_file1, "%.2f ", obstacle_distance_map[j + i * columnas]);
+    for (int k = 0; k < alto; k++) {
+        for (int i = 0; i < ancho; i++) {
+            for (int j = 0; j < largo; j++) {
+                fprintf(output_file1, "%.2f ", obstacle_distance_map[j + i * largo + k*ancho*largo]);
+            }
+            fprintf(output_file1, "\n");
         }
-        fprintf(output_file1, "\n");
+        
     }
     fclose(output_file1);
-    
+   
     //Allocate memory for output map
-    double* output_T = (double *)malloc(filas * columnas * sizeof(double));
-    output_T = main_msfm(obstacle_distance_map, objective_points, output_T, size_map, size_objective);
+    double* output_T = (double *)malloc(ancho * largo * alto * sizeof(double));
+    output_T = main_msfm3D(obstacle_distance_map, objective_points, output_T, size_map, size_objective);
 
 
     //GUARDAR LA MATRIZ DE TIEMPOS EN UN ARCHIVO DE SALIDA
-    FILE *output_file2 = fopen("./Archivos/times_map.txt", "w");
+    FILE *output_file2 = fopen("./Archivos/times_map3D.txt", "w");
     if (output_file2 == NULL) {
         perror("Error al abrir el archivo de salida");
         return;
     }
 
     // Escribir los resultados del mapa de distancias en el archivo de salida
-    for (int i = 0; i < filas; i++) {
-        for (int j = 0; j < columnas; j++) {
-            fprintf(output_file2, "%.2f ", output_T[j + i * columnas]);
+    for (int k = 0; k < alto; k++) {
+        for (int i = 0; i < ancho; i++) {
+            for (int j = 0; j < largo; j++) {
+                fprintf(output_file2, "%.2f ", output_T[j + i * largo + k*ancho*largo]);
+            }
         }
         fprintf(output_file2, "\n");
     }
     fclose(output_file2);
-
+ 
     // Crear el gradiente para el mapa de tiempos:
-    double* gradient_matrix = (double*)malloc(2 * filas * columnas * sizeof(double));
-    compute_gradient_2d_discrete(output_T, gradient_matrix, filas, columnas);
+    double* gradient_matrix = (double*)malloc(3 * ancho * largo * alto * sizeof(double));
+    compute_gradient_3d_discrete(output_T, gradient_matrix, size_map);
 
     // After compute_gradient_2d_discrete call
     // Export gradient components to separate files
-    FILE *gradient_x_file = fopen("./Archivos/gradient_x.txt", "w");
-    FILE *gradient_y_file = fopen("./Archivos/gradient_y.txt", "w");
+    FILE *gradient_x_file = fopen("./Archivos/gradient3D_x.txt", "w");
+    FILE *gradient_y_file = fopen("./Archivos/gradient3D_y.txt", "w");
+    FILE *gradient_z_file = fopen("./Archivos/gradient3D_z.txt", "w");
 
-    if (gradient_x_file == NULL || gradient_y_file == NULL) {
+    if (gradient_x_file == NULL || gradient_y_file == NULL || gradient_z_file == NULL) {
         perror("Error al abrir los archivos de gradiente");
         return;
     }
 
     // Write gradient components in matrix format
-    for (int i = 0; i < filas; i++) {
-        for (int j = 0; j < columnas; j++) {
-            // Write x component
-            fprintf(gradient_x_file, "%.4f ", gradient_matrix[i*columnas + j]);
-            // Write y component
-            fprintf(gradient_y_file, "%.4f ", gradient_matrix[i*columnas + j + filas*columnas]);
+    for (int k = 0; k < alto; k++) {
+        for (int i = 0; i < ancho; i++) {
+            for (int j = 0; j < largo; j++) {
+                // Write x component
+                fprintf(gradient_x_file, "%.4f ", gradient_matrix[j + i * largo + k*ancho*largo]);
+                // Write y component
+                fprintf(gradient_y_file, "%.4f ", gradient_matrix[j + i * largo + k*ancho*largo + ancho*largo*alto]);
+                // Write z component
+                fprintf(gradient_z_file, "%.4f ", gradient_matrix[j + i * largo + k*ancho*largo + 2*ancho*largo*alto]);
+            }
         }
         fprintf(gradient_x_file, "\n");
         fprintf(gradient_y_file, "\n");
+        fprintf(gradient_z_file, "\n");
     }
 
     fclose(gradient_x_file);
     fclose(gradient_y_file);
+    fclose(gradient_z_file);
 
-
-
+/*
 
     // Empezamos a usar el descenso del gradiente para buscar el camino
     bool finished = false;      //mientras no se llegue al punto final es false
