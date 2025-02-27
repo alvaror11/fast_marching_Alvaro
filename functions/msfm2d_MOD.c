@@ -469,10 +469,11 @@ double* main_msfm(double* F, double* source_points, double* T, int* size_map, in
     free(Frozen);
 }
 
-double* velocities_map(double* binary_map, int rows, int cols, int threshold, double safety_margin) {
+double* velocities_map(double* binary_map, int size_map[2], int threshold, double safety_margin) {
     // Creates the velocities map from the binary occupational map.
     //2D only
-    /*
+    int rows = size_map[0];
+    int cols = size_map[1];
     double* distance_map = malloc(rows * cols * sizeof(double));
     double max_distance = sqrt(rows*rows + cols*cols);  // diagonal distance
 
@@ -521,7 +522,7 @@ double* velocities_map(double* binary_map, int rows, int cols, int threshold, do
     }
     
     return distance_map;
-    */
+    /*
     int filas = rows;
     int columnas = cols;
     // No need to invert input values - keep obstacles as 1, free space as 0
@@ -593,7 +594,7 @@ double* velocities_map(double* binary_map, int rows, int cols, int threshold, do
     }
 
     free(temp_map);
-    return distance_map;
+    return distance_map;*/
 
 
 }

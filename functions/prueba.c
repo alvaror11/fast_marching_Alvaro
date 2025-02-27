@@ -84,21 +84,9 @@ void compute_2d_trajectory(){
     }
 
     fclose(file);
-    /*
-    // Lets do this part inside the velocities map function
-    // Invest values (0->1 and 1->0) and save in the expected format
-    for (int i = 0; i < filas; i++) {
-        for (int j = 0; j < columnas; j++) {
-            if (matriz[j + i * columnas] == 1) {
-                matriz[j + i * columnas] = 0;
-            } else if (matriz[j + i * columnas] == 0) {
-                matriz[j + i * columnas] = 1;
-            }
-        }
-    }
-    */
+    
     //Create velocities map
-    double* obstacle_distance_map = velocities_map(matriz, filas, columnas, distance_threshold, safety_margin);
+    double* obstacle_distance_map = velocities_map(matriz, size_map, distance_threshold, safety_margin);
     
     //GUARDAR LA MATRIZ DE VELOCIDADES EN UN ARCHIVO DE SALIDA
     FILE *output_file1 = fopen("./Archivos/velocities_map.txt", "w");
@@ -292,21 +280,6 @@ void compute_3d_trajectory(){
 
     fclose(file);
 
-    // Invest values (0->1 and 1->0) and save in the expected format
-    printf("\nInverting values (0->1, 1->0)...\n");
-    for (int k = 0; k < alto; k++) {
-        for (int i = 0; i < ancho; i++) {
-            for (int j = 0; j < largo; j++) {
-                int index = j + i*largo + k*ancho*largo;
-                if (matriz[index] == 1) {
-                    matriz[index] = 0;
-                } else if (matriz[index] == 0) {
-                    matriz[index] = 1;
-                }
-            }
-        }
-    }
-    
     //Create velocities map
     double* obstacle_distance_map = velocities_map3D(matriz, size_map, distance_threshold);
     
