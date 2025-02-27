@@ -469,11 +469,11 @@ double* main_msfm(double* F, double* source_points, double* T, int* size_map, in
     free(Frozen);
 }
 
-double* velocities_map(double* binary_map, int size_map[2], int threshold, double safety_margin) {
+double* velocities_map(double* binary_map, int* size_map, int threshold, double safety_margin) {
     // Creates the velocities map from the binary occupational map.
     //2D only
-    int rows = size_map[0];
-    int cols = size_map[1];
+    int rows = size_map[1];
+    int cols = size_map[0];
     double* distance_map = malloc(rows * cols * sizeof(double));
     double max_distance = sqrt(rows*rows + cols*cols);  // diagonal distance
 
@@ -599,7 +599,10 @@ double* velocities_map(double* binary_map, int size_map[2], int threshold, doubl
 
 }
 
-void compute_gradient_2d_discrete(double* input_matrix, double* gradient_matrix, int rows, int cols) {
+void compute_gradient_2d_discrete(double* input_matrix, double* gradient_matrix, int* size_map) {
+    
+    int rows = size_map[1];
+    int cols = size_map[0];
     // 8 neighborhood directions
     const int Ne[8][2] = {
         {-1, -1}, {-1, 0}, {-1, 1},

@@ -584,7 +584,7 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
     free(Frozen);
 }
 
-double* velocities_map3D(double* binary_map, int size_map[3], int threshold) {
+double* velocities_map3D(double* binary_map, int* size_map, int threshold) {
     int ancho = size_map[0];
     int largo = size_map[1];
     int alto = size_map[2];
@@ -635,14 +635,11 @@ double* velocities_map3D(double* binary_map, int size_map[3], int threshold) {
     printf("Calculating final velocities map, with the threshold: %d\n", threshold);
     for (int i = 0; i < ancho*largo*alto; i++) {
         double normalized_dist = distance_map[i] / threshold;
-        printf("Initial Value: %f\n", binary_map[i]);
-        printf("Distance Value: %f\n", distance_map[i]);
         if(normalized_dist > 1.0) {
             distance_map[i] = 1.0;
         } else {
             distance_map[i] = normalized_dist;
         }
-        printf("Normalized Value: %f\n", distance_map[i]);
     }
 
     return distance_map;
