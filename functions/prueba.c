@@ -426,7 +426,7 @@ void compute_3d_trajectory(){
 int main() {
     
     // Choose dimensions of the trayectory
-     int dimensions_prob = 2; // Removed redefinition of 'dimensions'
+     int dimensions_prob = 3; // Removed redefinition of 'dimensions'
 
     if (dimensions_prob == 3){
         compute_3d_trajectory();

@@ -584,7 +584,7 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
     free(Frozen);
 }
 
-double* velocities_map3D(double* binary_map, int* size_map, int threshold) {
+double* velocities_map3D(double* binary_map, int size_map[3], int threshold) {
     int ancho = size_map[0];
     int largo = size_map[1];
     int alto = size_map[2];
@@ -611,21 +611,23 @@ double* velocities_map3D(double* binary_map, int* size_map, int threshold) {
         for (int i = 0; i < ancho; i++) {
             for (int j = 0; j < largo; j++) {
                 int current_idx = j + i*largo + k*slice_size;
-                int min_dist = distance_map[current_idx];
-                for (int k2 = 0; k2 < alto; k2++) {
-                    for (int i2 = 0; i2 < ancho; i2++) {
-                        for (int j2 = 0; j2 < largo; j2++) {
-                            int current_idx2 = j2 + i2*largo + k2*slice_size;
-                            if(binary_map[current_idx2] == 0) {
-                                double distance = euclidean_distance3D(i, j, k, i2, j2, k2);
-                                if(distance < min_dist) {
-                                    min_dist = distance;
+                double min_dist = distance_map[current_idx];
+                if (distance_map[current_idx] != 0.0) {
+                    for (int k2 = 0; k2 < alto; k2++) {
+                        for (int i2 = 0; i2 < ancho; i2++) {
+                            for (int j2 = 0; j2 < largo; j2++) {
+                                int current_idx2 = j2 + i2*largo + k2*slice_size;
+                                if(distance_map[current_idx2] == 0) {
+                                    double distance = euclidean_distance3D(i, j, k, i2, j2, k2);
+                                    if(distance < min_dist) {
+                                        min_dist = distance;
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                distance_map[current_idx] = min_dist;
+                    distance_map[current_idx] = min_dist;
+                }                
             }
         }
     }
@@ -635,7 +637,7 @@ double* velocities_map3D(double* binary_map, int* size_map, int threshold) {
         double normalized_dist = distance_map[i] / threshold;
         printf("Initial Value: %f\n", binary_map[i]);
         printf("Distance Value: %f\n", distance_map[i]);
-        if(distance_map[i] > 1.0) {
+        if(normalized_dist > 1.0) {
             distance_map[i] = 1.0;
         } else {
             distance_map[i] = normalized_dist;

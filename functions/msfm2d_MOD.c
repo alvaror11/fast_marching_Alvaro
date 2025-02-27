@@ -492,7 +492,7 @@ double* velocities_map(double* binary_map, int size_map[2], int threshold, doubl
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
             double min_dist = distance_map[j + i * cols];
-            if (distance_map[j + i * cols] != 0.0) {
+            if (distance_map[j + i * cols] != 0.0) { 
                 for (int r = 0; r < rows; r++) {
                     for (int s = 0; s < cols; s++) {
                         if (distance_map[s + r * cols] == 0.0) {
