@@ -10,6 +10,46 @@ punto_x = 5;  % columna
 punto_y = 10; % fila
 files_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Archivos";
 main_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions";
+
+%% Mapa Original
+cd(files_folder);
+file = fopen('mapa.txt','r');
+
+matriz_vel = zeros(filas, columnas); 
+
+% Leer los datos línea por línea y almacenarlos en la matriz
+for i = 1:filas
+    linea = fgetl(file); % Leer una línea del archivo como string
+    if ischar(linea)
+        line = sscanf(linea, '%f')';
+        matriz_vel(i, :) = sscanf(linea, '%f')'; % Convertir la línea a números y almacenarla
+    else
+        error('Se alcanzó el final del archivo antes de leer todas las filas.');
+    end
+end
+
+% Cerrar el archivo
+fclose(file);
+cd(main_folder);
+
+% Crear figura
+figure;
+
+% Usar colormap en escala de grises
+colormap(gray);  % Usar escala de grises: negro (0) a blanco (1)
+
+% Mostrar el mapa
+imagesc(matriz_vel);
+axis equal;  % Mantener proporciones cuadradas
+colorbar;
+clim([0 1]);  % Ajustar límites de color entre 0 y 1
+
+% Etiquetas y título
+title('Mapa de Velocidades', 'FontSize', 12);
+xlabel('X', 'FontSize', 11);
+ylabel('Y', 'FontSize', 11);
+set(gca, 'FontSize', 10);
+
 %% Mapa de velocidades
 cd(files_folder);
 file = fopen('velocities_map.txt','r');

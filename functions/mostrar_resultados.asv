@@ -1,6 +1,6 @@
 clear;
 clc;
-fclose all;
+close all;
 
 filas = 50;
 columnas = 50;
@@ -10,6 +10,46 @@ punto_x = 5;  % columna
 punto_y = 10; % fila
 files_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Archivos";
 main_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions";
+
+%% Mapa Original
+cd(files_folder);
+file = fopen('mapa.txt','r');
+
+matriz_vel = zeros(filas, columnas); 
+
+% Leer los datos línea por línea y almacenarlos en la matriz
+for i = 1:filas
+    linea = fgetl(file); % Leer una línea del archivo como string
+    if ischar(linea)
+        line = sscanf(linea, '%f')';
+        matriz_vel(i, :) = sscanf(linea, '%f')'; % Convertir la línea a números y almacenarla
+    else
+        error('Se alcanzó el final del archivo antes de leer todas las filas.');
+    end
+end
+
+% Cerrar el archivo
+fclose(file);
+cd(main_folder);
+
+% Crear figura
+figure;
+
+% Usar colormap en escala de grises
+colormap(gray);  % Usar escala de grises: negro (0) a blanco (1)
+
+% Mostrar el mapa
+imagesc(matriz_vel);
+axis equal;  % Mantener proporciones cuadradas
+colorbar;
+clim([0 1]);  % Ajustar límites de color entre 0 y 1
+
+% Etiquetas y título
+title('Mapa de Velocidades', 'FontSize', 12);
+xlabel('X', 'FontSize', 11);
+ylabel('Y', 'FontSize', 11);
+set(gca, 'FontSize', 10);
+
 %% Mapa de velocidades
 cd(files_folder);
 file = fopen('velocities_map.txt','r');
@@ -72,6 +112,8 @@ fclose(file);
 
 cd(main_folder);
 
+%% Mapa de tiempos visualization
+
 umbralMax = 200; 
 
 % Crear una copia de la matriz con valores limitados a 200
@@ -80,12 +122,9 @@ matrizClipped(matriz_tiempos > umbralMax) = umbralMax;
 % Graficar la matriz con imágenes de escala de colores
 % ...existing code...
 
-%% Mapa de tiempos visualization
-umbralMax = 200; 
 
 % Create figure for time map
 figure;
-
 
 % Mostrar el mapa
 imagesc(matrizClipped);
@@ -108,6 +147,10 @@ cd(main_folder);
 % Extract coordinates
 traj_x = traj_data(:,1);
 traj_y = traj_data(:,2);
+
+% Convert to double if necessary
+traj_x = double(traj_x);
+traj_y = double(traj_y);
 
 hold on;
 
@@ -172,14 +215,14 @@ hold on;
 [X, Y] = meshgrid(1:columnas, 1:filas);
 
 % Downsample for better visualization (adjust skip value as needed)
-skip = 2;  % Show an arrow every 2 points
+skip = 1;  % Show an arrow every 2 points
 X = X(1:skip:end, 1:skip:end);
 Y = Y(1:skip:end, 1:skip:end);
 Fx_down = Fx(1:skip:end, 1:skip:end);
 Fy_down = Fy(1:skip:end, 1:skip:end);
 
 % Plot vector field
-quiver(X, Y, Fx_down, Fy_down, 0.5, 'w', 'LineWidth', 1.5);
+quiver(X, Y, Fx_down, Fy_down, 2, 'w', 'LineWidth', 1.5);
 
 % Adjust colormap and limits
 colormap(jet);

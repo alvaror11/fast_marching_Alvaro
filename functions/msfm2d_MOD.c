@@ -1,6 +1,7 @@
 //#include "mex.h"
 #include "math.h"
 #include "common.h"
+#include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include "msfm2d_MOD.h"
@@ -468,16 +469,17 @@ double* main_msfm(double* F, double* source_points, double* T, int* size_map, in
     free(Frozen);
 }
 
-double* velocities_map(double* binary_map, int rows, int cols, int threshold){
+double* velocities_map(double* binary_map, int rows, int cols, int threshold, double safety_margin) {
     // Creates the velocities map from the binary occupational map.
     //2D only
+    /*
     double* distance_map = malloc(rows * cols * sizeof(double));
     double max_distance = sqrt(rows*rows + cols*cols);  // diagonal distance
 
     // First pass: mark obstacles as 0 and other cells as infinity
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            if (binary_map[j + i * cols] == 0) {  // obstacle
+            if (binary_map[j + i * cols] == 1) {  // obstacle
                 distance_map[j + i * cols] = 0.0;
             } else {
                 distance_map[j + i * cols] = max_distance;
@@ -519,10 +521,79 @@ double* velocities_map(double* binary_map, int rows, int cols, int threshold){
     }
     
     return distance_map;
+    */
+    int filas = rows;
+    int columnas = cols;
+    // No need to invert input values - keep obstacles as 1, free space as 0
+    double* distance_map = malloc(filas * columnas * sizeof(double));
+    
+    // Copy initial map
+    for(int i = 0; i < filas; i++) {
+        for(int j = 0; j < columnas; j++) {
+            distance_map[j + i * columnas] = binary_map[j + i * columnas];
+        }
+    }
 
+    // Define 3x3 Gaussian blur kernel
+    
+    double kernel[3][3] = {
+        {0.0625, 0.125, 0.0625},
+        {0.125,  0.25,  0.125},
+        {0.0625, 0.125, 0.0625}
+    };
 
+    // Apply blur multiple times based on threshold
+    int blur_iterations = threshold;
+    double* temp_map = malloc(filas * columnas * sizeof(double));
 
+    for(int iter = 0; iter < blur_iterations; iter++) {
+        // Copy current state
+        memcpy(temp_map, distance_map, filas * columnas * sizeof(double));
 
+        for(int i = 1; i < filas-1; i++) {
+            for(int j = 1; j < columnas-1; j++) {
+                double sum = 0.0;
+                // Apply kernel
+                for(int ki = -1; ki <= 1; ki++) {
+                    for(int kj = -1; kj <= 1; kj++) {
+                        sum += temp_map[(j+kj) + (i+ki) * columnas] * 
+                               kernel[ki+1][kj+1];
+                    }
+                }
+                distance_map[j + i * columnas] = sum;
+            }
+        }
+    }
+
+    printf("\nVelocity map after blur (before inversion and normalization):\n");
+    for(int i = 0; i < filas; i++) {
+        for(int j = 0; j < columnas; j++) {
+            printf("%.3f ", distance_map[j + i * columnas]);
+        }
+        printf("\n");
+    }
+
+    printf("\nOriginal obstacle positions (1 = obstacle, 0 = free space):\n");
+    for(int i = 0; i < filas; i++) {
+        for(int j = 0; j < columnas; j++) {
+            printf("%.0f ", binary_map[j + i * columnas]);
+        }
+        printf("\n");
+    }
+
+    // Invert and normalize values
+    for(int i = 0; i < filas * columnas; i++) {
+        if(binary_map[i] == 1) {  // Original obstacle
+            distance_map[i] = 0.0;  // Keep obstacles at 0
+        } else {
+            distance_map[i] = (1.0 - (distance_map[i]*safety_margin));  // Invert and normalize
+            if(distance_map[i] < 0.0) distance_map[i] = 0.0;
+            else if(distance_map[i] > 1.0) distance_map[i] = 1.0;
+        }
+    }
+
+    free(temp_map);
+    return distance_map;
 
 
 }
