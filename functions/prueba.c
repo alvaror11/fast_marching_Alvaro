@@ -15,12 +15,24 @@ typedef struct {
     double y;
 } Point2D;
 
+typedef struct {
+    double x;
+    double y;
+    double z;
+} Point3D;
+
 //Estructura de la trayectoria
 typedef struct {
     Point2D* points;
     int size;
     int capacity;
 } Trajectory;
+
+typedef struct {
+    Point3D* points;
+    int size;
+    int capacity;
+} Trajectory3D;
 
 void compute_2d_trajectory();
 void addPointToTrajectory(Trajectory* traj, double x, double y) {
@@ -38,6 +50,23 @@ void addPointToTrajectory(Trajectory* traj, double x, double y) {
     traj->points[traj->size].y = y;
     traj->size++;
 }
+void addPointToTrajectory3D(Trajectory3D* traj, double x, double y, double z) {
+    if (traj->size >= traj->capacity) {
+        traj->capacity *= 2;
+        Point3D* temp = realloc(traj->points, traj->capacity * sizeof(Point3D));
+        if (temp == NULL) {
+            // Manejar error de memoria
+            return;
+        }
+        traj->points = temp;
+    }
+    
+    traj->points[traj->size].x = x;
+    traj->points[traj->size].y = y;
+    traj->points[traj->size].z = y;
+    traj->size++;
+}
+
 
 void compute_2d_trajectory(){
     // Define las dimensiones de la matriz
@@ -322,7 +351,6 @@ void compute_3d_trajectory(){
             for (int j = 0; j < largo; j++) {
                 int index = j + i * largo + k * ancho * largo;
                 if (index >= 0 && index < ancho * largo * alto) {
-                    printf("currently in index: %d\n", index);
                     fprintf(output_file2, "%.2f ", output_T[index]);
                 } else {
                     fprintf(output_file2, "0.00 ");  // Safe default value
@@ -370,55 +398,58 @@ void compute_3d_trajectory(){
     fclose(gradient_y_file);
     fclose(gradient_z_file);
 
-/*
+
 
     // Empezamos a usar el descenso del gradiente para buscar el camino
     bool finished = false;      //mientras no se llegue al punto final es false
     
     
     // Crear la trayectoria
-    int initial_capacity = 10;
-    Trajectory* traj = malloc(sizeof(Trajectory));
-    traj->points = malloc(initial_capacity * sizeof(Point2D));
+    int initial_capacity = 100;
+    Trajectory3D* traj = malloc(sizeof(Trajectory3D));
+    traj->points = malloc(initial_capacity * sizeof(Point3D));
     traj->size = 0;
     traj->capacity = initial_capacity;
 
     // Añadir el punto inicial
-    addPointToTrajectory(traj, start_points[0], start_points[1]);
+    addPointToTrajectory3D(traj, start_points[0], start_points[1], start_points[2]);
 
     //Definir el pointer para el último punto de la trayectoria y el nuevo punto
-    double* last_point = malloc(2 * sizeof(double));
-    double* new_point = malloc(2 * sizeof(double));
+    double* last_point = malloc(3 * sizeof(double));
+    double* new_point = malloc(3 * sizeof(double));
 
     while (finished == false){
         // Obtener las coordenadas del último punto de la trayectoria
         
         last_point[0] = traj->points[traj->size - 1].x;
         last_point[1] = traj->points[traj->size - 1].y;
+        last_point[2] = traj->points[traj->size - 1].z;
 
         // Llamar a la función mexFunction en rk4_2D con las coordenadas del último punto y el mapa de velocidades
         gradient_descend_rk4(last_point, gradient_matrix, size_map, size_objective, new_point, step);
 
         // Añadir el nuevo punto a la trayectoria
-        addPointToTrajectory(traj, new_point[0], new_point[1]);
+        addPointToTrajectory3D(traj, new_point[0], new_point[1], new_point[2]);
         
         // Print current trajectory
         printf("\nCurrent trajectory (size: %d):\n", traj->size);
         for (int i = 0; i < traj->size; i++) {
-            printf("Point %d: (%.2f, %.2f)\n", i, traj->points[i].x, traj->points[i].y);
+            printf("Point %d: (%.2f, %.2f, %.2f)\n", i, traj->points[i].x, traj->points[i].y, traj->points[i].z);
         }
         printf("-------------------------\n");
 
         // Comprobar si se ha llegado al punto objetivo
         if ((round(new_point[0]) == objective_points[0] || floor(new_point[0]) == objective_points[0]) 
-            && (round(new_point[1]) == objective_points[1] || floor(new_point[1]) == objective_points[1])) {
+            && (round(new_point[1]) == objective_points[1] || floor(new_point[1]) == objective_points[1])
+            &&(round(new_point[2]) == objective_points[2] || floor(new_point[2]) == objective_points[2])) {
             finished = true;
             traj->points[traj->size - 1].x = objective_points[0];
             traj->points[traj->size - 1].y = objective_points[1];
+            traj->points[traj->size - 1].z = objective_points[2];
         }
     }
 
-    FILE *traj_file = fopen("./Archivos/trajectory.txt", "w");
+    FILE *traj_file = fopen("./Archivos/trajectory3D.txt", "w");
     if (traj_file == NULL) {
         perror("Error al abrir el archivo de trayectoria");
         return;
@@ -427,8 +458,9 @@ void compute_3d_trajectory(){
     for (int i = 0; i < traj->size; i++) {
         double traj_x = traj->points[i].x;
         double traj_y = traj->points[i].y;
+        double traj_z = traj->points[i].z;
         // Save to file (x y format)
-        fprintf(traj_file, "%.2f %.2f\n", traj_x, traj_y);
+        fprintf(traj_file, "%.2f %.2f %.2f\n", traj_x, traj_y, traj_z);
     }
 
     fclose(traj_file);
@@ -440,7 +472,7 @@ void compute_3d_trajectory(){
     free(start_points);
     free(obstacle_distance_map);
     free(last_point);
-    free(traj);*/
+    free(traj);
 }
 
 int main() {

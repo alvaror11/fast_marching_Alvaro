@@ -120,9 +120,14 @@ void interpgrad3d(double *Ireturn, double *I, int *Isize, double *point) {
     if(xBas0<0) { xBas0=0; if(xBas1<0) { xBas1=0; }}
     if(yBas0<0) { yBas0=0; if(yBas1<0) { yBas1=0; }}
     if(zBas0<0) { zBas0=0; if(zBas1<0) { zBas1=0; }}
+    printf("\nSize in Z: %d\n", Isize[2]);
+    printf("Size in Y: %d\n", Isize[1]);
+    printf("Size in X: %d\n", Isize[0]);
+
     if(xBas1>(Isize[0]-1)) { xBas1=Isize[0]-1; if(xBas0>(Isize[0]-1)) { xBas0=Isize[0]-1; }}
     if(yBas1>(Isize[1]-1)) { yBas1=Isize[1]-1; if(yBas0>(Isize[1]-1)) { yBas0=Isize[1]-1; }}
     if(zBas1>(Isize[2]-1)) { zBas1=Isize[2]-1; if(zBas0>(Isize[2]-1)) { zBas0=Isize[2]-1; }}
+    
     
    /*Get the neighbour intensities */
     index[0]=mindex3(xBas0, yBas0, zBas0, Isize[0], Isize[1]);
@@ -233,6 +238,9 @@ bool RK4STEP_3D(double *gradientArray, int *gradientArraySize, double *startPoin
     double tempnorm;
     
    /*Calculate k1 */
+    printf("\nSize in Z: %d\n", gradientArraySize[2]);
+    printf("Size in Y: %d\n", gradientArraySize[1]);
+    printf("Size in X: %d\n", gradientArraySize[0]);
     interpgrad3d(k1, gradientArray, gradientArraySize, startPoint);
     tempnorm=norm3(k1);
     k1[0] = k1[0]*stepSize/tempnorm;
@@ -299,12 +307,10 @@ void gradient_descend_rk4(double* startPoint, double *gradientArray, int* size_m
 
     double startPoint1[2];
     int PointLength=1;
-    int gradientArraySize[2];
+    
     int PointSizeC[2];
-    int gradientArraySizeC[2];
 
-    gradientArraySizeC[0] = size_map[0];
-    gradientArraySizeC[1] = size_map[1];
+
     PointSizeC[0] = size_point[0];
     PointSizeC[1] = size_point[1];
 
@@ -317,8 +323,9 @@ void gradient_descend_rk4(double* startPoint, double *gradientArray, int* size_m
     
    /*Perform the RK4 raytracing step */
     if(PointLength==2) {
-        gradientArraySize[0]=gradientArraySizeC[0];
-        gradientArraySize[1]=gradientArraySizeC[1];
+        int gradientArraySize[2];
+        gradientArraySize[0]=size_map[0];
+        gradientArraySize[1]=size_map[1];
         startPoint1[0]=startPoint[0]-1.0; 
         startPoint1[1]=startPoint[1]-1.0;
         if(RK4STEP_2D(gradientArray, gradientArraySize, startPoint1, nextPoint, stepSize)) {
@@ -335,9 +342,13 @@ void gradient_descend_rk4(double* startPoint, double *gradientArray, int* size_m
         }
     }
     else if(PointLength==3) {
-        gradientArraySize[0]=gradientArraySizeC[0];
-        gradientArraySize[1]=gradientArraySizeC[1];
-        gradientArraySize[2]=gradientArraySizeC[2];
+        int gradientArraySize[3];
+        gradientArraySize[0]=size_map[0];
+        gradientArraySize[1]=size_map[1];
+        gradientArraySize[2]=size_map[2];
+        printf("\nSize in Z: %d\n", gradientArraySize[2]);
+        printf("Size in Y: %d\n", gradientArraySize[1]);
+        printf("Size in X: %d\n", gradientArraySize[0]);
         startPoint1[0]=startPoint[0]-1.0; 
         startPoint1[1]=startPoint[1]-1.0; 
         startPoint1[2]=startPoint[2]-1.0;
