@@ -320,7 +320,14 @@ void compute_3d_trajectory(){
     for (int k = 0; k < alto; k++) {
         for (int i = 0; i < ancho; i++) {
             for (int j = 0; j < largo; j++) {
-                fprintf(output_file2, "%.2f ", output_T[j + i * largo + k*ancho*largo]);
+                int index = j + i * largo + k * ancho * largo;
+                if (index >= 0 && index < ancho * largo * alto) {
+                    printf("currently in index: %d\n", index);
+                    fprintf(output_file2, "%.2f ", output_T[index]);
+                } else {
+                    fprintf(output_file2, "0.00 ");  // Safe default value
+                    printf("Warning: Invalid index access at k=%d, i=%d, j=%d\n", k, i, j);
+                }
             }
         }
         fprintf(output_file2, "\n");

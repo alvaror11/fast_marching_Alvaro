@@ -575,6 +575,7 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
         }
         
     }
+    return (double*)T;
     /* Free memory */
     /* Destroy parameter list */
     destroy_list(listval, listprop);
