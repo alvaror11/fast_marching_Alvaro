@@ -63,7 +63,7 @@ void addPointToTrajectory3D(Trajectory3D* traj, double x, double y, double z) {
     
     traj->points[traj->size].x = x;
     traj->points[traj->size].y = y;
-    traj->points[traj->size].z = y;
+    traj->points[traj->size].z = z;
     traj->size++;
 }
 
@@ -71,7 +71,7 @@ void addPointToTrajectory3D(Trajectory3D* traj, double x, double y, double z) {
 void compute_2d_trajectory(){
     // Define las dimensiones de la matriz
     int filas = 50, columnas = 50; 
-    int size_map[2] = {columnas,filas};
+    
 
     // Define las coordenadas objetivo
     int num_points = 1;
@@ -116,6 +116,49 @@ void compute_2d_trajectory(){
 
     fclose(file);
     
+    // Check that initial and final points are not inside an obstacle
+    if ((matriz[(int)start_points[1] + (int)start_points[0]*columnas] == 1)||
+        (matriz[(int)objective_points[1] + (int)objective_points[0]*columnas ] == 1)) {
+        printf("Error: Initial or objective point is inside an obstacle\n");
+        return;
+    }
+    //int size_map[2] = {columnas,filas};
+    // Adding a layer of obstacles surrounding the map
+    columnas = columnas+2;
+    filas = filas+2;
+    int size_map[2] = {columnas,filas};
+
+    double *matriz2 = (double *)malloc(filas * columnas * sizeof(double));
+    for (int i = 0; i < filas; i++) {
+        for (int j = 0; j < columnas; j++) {
+            if (i == 0 || j == 0 || i == filas-1 || j == columnas-1) {
+                matriz2[j + i * columnas] = 1;
+            } else {
+                matriz2[j + i * columnas] = matriz[j-1 + (i-1) * (columnas-2)];
+            }
+        }
+    }
+
+    FILE *surrounded_map_file = fopen("./Archivos/surrounded_map.txt", "w");
+    if (surrounded_map_file == NULL) {
+        perror("Error al abrir el archivo del mapa rodeado");
+        return;
+    }
+
+    // Write the surrounded map to file
+    printf("\nSaving surrounded map with dimensions: %d x %d\n", filas, columnas);
+    for (int i = 0; i < filas; i++) {
+        for (int j = 0; j < columnas; j++) {
+            fprintf(surrounded_map_file, "%.0f ", matriz2[j + i * columnas]);
+        }
+        fprintf(surrounded_map_file, "\n");
+    }
+
+    fclose(surrounded_map_file);
+    free(matriz);
+    matriz = matriz2;
+    
+
     //Create velocities map
     double* obstacle_distance_map = velocities_map(matriz, size_map, distance_threshold, safety_margin);
     
@@ -260,23 +303,22 @@ void compute_2d_trajectory(){
 }
 void compute_3d_trajectory(){
     int ancho = 50, largo = 50, alto = 50 ; 
-    int size_map[3] = {ancho, largo, alto};
 
     // Define las coordenadas objetivo
     int num_points = 1;
     // Removed redefinition of 'dimensions'
     int size_objective[2] = {3,1};
     double *objective_points  = (double *)malloc(num_points * 3 * sizeof(double));;
-    objective_points[0] = 47;   // x coordinate
+    objective_points[0] = 5;   // x coordinate
     objective_points[1] = 5;    // y coordinate
-    objective_points[2] = 5;    // z coordinate
+    objective_points[2] = 1;    // z coordinate
 
     //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
     int num_start_points = 1;
     double *start_points = (double *)malloc(num_start_points * 3 * sizeof(double));;
-    start_points[0] = 5;    // x coordinate
+    start_points[0] = 47;    // x coordinate
     start_points[1] = 48;   // y coordinate
-    start_points[2] = 48;   // z coordinate
+    start_points[2] = 35;   // z coordinate
 
     // Define el umbral de distancia para la matriz de velocidades
     double distance_threshold = 4.0;
@@ -311,7 +353,63 @@ void compute_3d_trajectory(){
 
     fclose(file);
 
+    // Check that initial and final points are not inside an obstacle
+    if ((matriz[(int)start_points[0] + (int)start_points[1]*largo + (int)start_points[2]*ancho*largo] == 1)||
+        (matriz[(int)objective_points[0] + (int)objective_points[1]*largo + (int)objective_points[2]*ancho*largo] == 1)) {
+        printf("Error: Initial or objective point is inside an obstacle\n");
+        return;
+    }
+
+    // Adding a layer of obstacles surrounding the map
+    ancho = ancho+2;
+    largo = largo+2;
+    alto = alto+2;
+    int size_map[3] = {ancho, largo, alto};
+
+    double *matriz2 = (double *)malloc(ancho * largo * alto * sizeof(double));
+    printf("\nCreating surrounded 3D map with dimensions: %d x %d x %d\n", ancho, largo, alto);
+
+    // Fill the new matrix with surrounding obstacles
+    for (int k = 0; k < alto; k++) {
+        for (int i = 0; i < ancho; i++) {
+            for (int j = 0; j < largo; j++) {
+                // Check if current position is on any face of the cube
+                if (i == 0 || i == ancho-1 || j == 0 || j == largo-1 || k == 0 || k == alto-1) {
+                    matriz2[j + i*largo + k*ancho*largo] = 1;  // Set obstacle
+                } else {
+                    // Copy original map data
+                    matriz2[j + i*largo + k*ancho*largo] = 
+                        matriz[(j-1) + (i-1)*(largo-2) + (k-1)*(ancho-2)*(largo-2)];
+                }
+            }
+        }
+    }
+
+    // Save surrounded map for verification
+    FILE *surrounded_map_file = fopen("./Archivos/surrounded_map3D.txt", "w");
+    if (surrounded_map_file == NULL) {
+        perror("Error al abrir el archivo del mapa rodeado 3D");
+        return;
+    }
+
+    // Write the surrounded map to file
+    printf("Saving surrounded 3D map...\n");
+    for (int k = 0; k < alto; k++) {
+        for (int i = 0; i < ancho; i++) {
+            for (int j = 0; j < largo; j++) {
+                fprintf(surrounded_map_file, "%.0f ", matriz2[j + i*largo + k*ancho*largo]);
+            }
+            fprintf(surrounded_map_file, "\n");
+        }
+        fprintf(surrounded_map_file, "\n");
+    }
+
+    fclose(surrounded_map_file);
+    free(matriz);
+    matriz = matriz2;
+
     //Create velocities map
+    
     double* obstacle_distance_map = velocities_map3D(matriz, size_map, distance_threshold);
     
     //GUARDAR LA MATRIZ DE VELOCIDADES EN UN ARCHIVO DE SALIDA
@@ -424,7 +522,14 @@ void compute_3d_trajectory(){
         last_point[0] = traj->points[traj->size - 1].x;
         last_point[1] = traj->points[traj->size - 1].y;
         last_point[2] = traj->points[traj->size - 1].z;
-
+        
+        printf("Last point coordinates: (%.2f, %.2f, %.2f)\n", last_point[0], last_point[1], last_point[2]);
+        int index = (int)(last_point[1] + (int)last_point[0] * largo + (int)last_point[2] * ancho * largo);
+        printf("Gradient values at point:\n");
+        printf("X: %.4f\n", gradient_matrix[index]);
+        printf("Y: %.4f\n", gradient_matrix[index + ancho*largo*alto]);
+        printf("Z: %.4f\n", gradient_matrix[index + 2*ancho*largo*alto]);
+        printf("-------------------------\n");
         // Llamar a la función mexFunction en rk4_2D con las coordenadas del último punto y el mapa de velocidades
         gradient_descend_rk4(last_point, gradient_matrix, size_map, size_objective, new_point, step);
 

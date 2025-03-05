@@ -492,6 +492,8 @@ double* velocities_map(double* binary_map, int* size_map, int threshold, double 
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
             double min_dist = distance_map[j + i * cols];
+            printf("Valor inicial:%d /n", binary_map[j + i * cols]);
+            printf("Valor de celda:%.3f /n", distance_map[j + i * cols]);
             if (distance_map[j + i * cols] != 0.0) { 
                 for (int r = 0; r < rows; r++) {
                     for (int s = 0; s < cols; s++) {
@@ -509,15 +511,19 @@ double* velocities_map(double* binary_map, int* size_map, int threshold, double 
     }
     // Convert distances to velocities using threshold
     for (int i = 0; i < rows * cols; i++) {
+        printf("Valor de celda original:%d /n", binary_map[i]);
+        printf("Valor de celda distancia:%.3f /n", distance_map[i]);
         if (distance_map[i] != 0.0) {
             // Normalize and apply threshold to create smooth gradient
             double normalized_dist = distance_map[i] / threshold;
+            
             if (normalized_dist > 1.0) {
                 distance_map[i] = 1.0;  // Maximum velocity
             } else {
                 // Create smooth gradient between 0 and 1
                 distance_map[i] = normalized_dist;
             }
+            printf("Valor de celda normalizado:%.3f /n", distance_map[i]);
         }
     }
     
