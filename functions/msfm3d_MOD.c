@@ -309,7 +309,7 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
     bool usesecond=true;
     bool usecross=true;
     
-    
+    printf("Starting MSFM3D\n");
     /* Euclidian distance image */
     double *Y;
     
@@ -593,6 +593,7 @@ double* velocities_map3D(double* binary_map, int* size_map, int threshold) {
     double* distance_map = malloc(ancho * largo * alto * sizeof(double));
     double max_val = sqrt(ancho*ancho + largo*largo + alto*alto);
 
+    printf("Calculating distance map\n");
     //First pass: marks obstacles as 0 and other cells as infinity
     for (int k = 0; k < alto; k++) {
         for (int i = 0; i < ancho; i++) {
@@ -712,6 +713,7 @@ void compute_gradient_3d_discrete(double* input_matrix, double* gradient_matrix,
                     gradient_matrix[current_idx + slice_size*alto] = fy;  // y component
                     gradient_matrix[current_idx + 2*slice_size*alto] = fz; // z component
                 } else {
+                    printf("No valid neighbors found for point (%d, %d, %d)\n", i, j, k);
                     gradient_matrix[current_idx] = 0;
                     gradient_matrix[current_idx + slice_size*alto] = 0;
                     gradient_matrix[current_idx + 2*slice_size*alto] = 0;

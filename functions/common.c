@@ -286,7 +286,7 @@ void listupdate(double **listval, int *listprop, int index, double val) {
 }
 
 int mindex3(int x, int y, int z, int sizx, int sizy) { 
-    return x + y * sizx + z * sizx * sizy; 
+    return y + x * sizy + z * sizx * sizy; 
 }
 
 bool IsFinite(double x) { 
