@@ -1,0 +1,170 @@
+=== Memory Checkpoint: Start ===
+Working Set: 3.00 MB
+Private Usage: 0.47 MB
+Peak Working Set: 3.00 MB
+Page File Usage: 0.47 MB
+Peak Page File: 0.47 MB
+WARNING: Working Set (3.00 MB) exceeds Private Usage (0.47 MB)
+This may indicate a system-level issue or shared memory usage
+==============================
+
+=== Memory Checkpoint: After initial Matrix allocation ===
+Working Set: 3.13 MB
+Private Usage: 0.50 MB
+Peak Working Set: 3.13 MB
+Page File Usage: 0.50 MB
+Peak Page File: 0.50 MB
+WARNING: Working Set (3.13 MB) exceeds Private Usage (0.50 MB)
+This may indicate a system-level issue or shared memory usage
+==============================
+
+=== Memory Checkpoint: After surrounded map ===
+Working Set: 3.18 MB
+Private Usage: 0.52 MB
+Peak Working Set: 3.18 MB
+Page File Usage: 0.52 MB
+Peak Page File: 0.52 MB
+WARNING: Working Set (3.18 MB) exceeds Private Usage (0.52 MB)
+This may indicate a system-level issue or shared memory usage
+==============================
+
+=== Memory Checkpoint: After velocities map ===
+Working Set: 3.21 MB
+Private Usage: 0.54 MB
+Peak Working Set: 3.21 MB
+Page File Usage: 0.54 MB
+Peak Page File: 0.54 MB
+WARNING: Working Set (3.21 MB) exceeds Private Usage (0.54 MB)
+This may indicate a system-level issue or shared memory usage
+==============================
+
+=== Memory Checkpoint: Start msfm ===
+Working Set: 3.24 MB
+Private Usage: 0.57 MB
+Peak Working Set: 3.24 MB
+Page File Usage: 0.57 MB
+Peak Page File: 0.57 MB
+WARNING: Working Set (3.24 MB) exceeds Private Usage (0.57 MB)
+This may indicate a system-level issue or shared memory usage
+==============================
+
+=== Memory Checkpoint: msfm line 301 ===
+Working Set: 4.78 MB
+Private Usage: 2.10 MB
+Peak Working Set: 4.78 MB
+Page File Usage: 2.10 MB
+Peak Page File: 2.10 MB
+WARNING: Working Set (4.78 MB) exceeds Private Usage (2.10 MB)
+This may indicate a system-level issue or shared memory usage
+==============================
+
+=== Memory Checkpoint: msfm line 374 ===
+Working Set: 4.78 MB
+Private Usage: 2.10 MB
+Peak Working Set: 4.78 MB
+Page File Usage: 2.10 MB
+Peak Page File: 2.10 MB
+WARNING: Working Set (4.78 MB) exceeds Private Usage (2.10 MB)
+This may indicate a system-level issue or shared memory usage
+==============================
+
+=== Memory Checkpoint: msfm line 374 ===
+Working Set: 4.78 MB
+Private Usage: 2.10 MB
+Peak Working Set: 4.78 MB
+Page File Usage: 2.10 MB
+Peak Page File: 2.10 MB
+WARNING: Working Set (4.78 MB) exceeds Private Usage (2.10 MB)
+This may indicate a system-level issue or shared memory usage
+==============================
+
+=== Memory Checkpoint: msfm line 374 ===
+Working Set: 4.79 MB
+Private Usage: 2.10 MB
+Peak Working Set: 4.79 MB
+Page File Usage: 2.10 MB
+Peak Page File: 2.10 MB
+WARNING: Working Set (4.79 MB) exceeds Private Usage (2.10 MB)
+This may indicate a system-level issue or shared memory usage
+==============================
+
+=== Memory Checkpoint: msfm line 374 ===
+Working Set: 4.79 MB
+Private Usage: 2.10 MB
+Peak Working Set: 4.79 MB
+Page File Usage: 2.10 MB
+Peak Page File: 2.10 MB
+WARNING: Working Set (4.79 MB) exceeds Private Usage (2.10 MB)
+This may indicate a system-level issue or shared memory usage
+==============================
+
+=== Memory Checkpoint: Before gradient ===
+Working Set: 4.79 MB
+Private Usage: 2.10 MB
+Peak Working Set: 4.79 MB
+Page File Usage: 2.10 MB
+Peak Page File: 2.10 MB
+WARNING: Working Set (4.79 MB) exceeds Private Usage (2.10 MB)
+This may indicate a system-level issue or shared memory usage
+==============================
+
+=== Memory Checkpoint: After gradient ===
+Working Set: 4.83 MB
+Private Usage: 2.14 MB
+Peak Working Set: 4.83 MB
+Page File Usage: 2.14 MB
+Peak Page File: 2.14 MB
+WARNING: Working Set (4.83 MB) exceeds Private Usage (2.14 MB)
+This may indicate a system-level issue or shared memory usage
+==============================
+
+=== Memory Checkpoint: After initializing trajectory ===
+Working Set: 4.83 MB
+Private Usage: 2.14 MB
+Peak Working Set: 4.83 MB
+Page File Usage: 2.14 MB
+Peak Page File: 2.14 MB
+WARNING: Working Set (4.83 MB) exceeds Private Usage (2.14 MB)
+This may indicate a system-level issue or shared memory usage
+==============================
+
+=== Memory Checkpoint: Trayectory finished ===
+Working Set: 4.84 MB
+Private Usage: 2.14 MB
+Peak Working Set: 4.84 MB
+Page File Usage: 2.14 MB
+Peak Page File: 2.14 MB
+WARNING: Working Set (4.84 MB) exceeds Private Usage (2.14 MB)
+This may indicate a system-level issue or shared memory usage
+==============================
+
+=== Memory Checkpoint: before freeing memory ===
+Working Set: 4.84 MB
+Private Usage: 2.14 MB
+Peak Working Set: 4.84 MB
+Page File Usage: 2.14 MB
+Peak Page File: 2.14 MB
+WARNING: Working Set (4.84 MB) exceeds Private Usage (2.14 MB)
+This may indicate a system-level issue or shared memory usage
+==============================
+
+=== Memory Checkpoint: After freeing memory ===
+Working Set: 4.84 MB
+Private Usage: 2.14 MB
+Peak Working Set: 4.84 MB
+Page File Usage: 2.14 MB
+Peak Page File: 2.14 MB
+WARNING: Working Set (4.84 MB) exceeds Private Usage (2.14 MB)
+This may indicate a system-level issue or shared memory usage
+==============================
+
+=== Memory Checkpoint: Finish ===
+Working Set: 4.84 MB
+Private Usage: 2.14 MB
+Peak Working Set: 4.84 MB
+Page File Usage: 2.14 MB
+Peak Page File: 2.14 MB
+WARNING: Working Set (4.84 MB) exceeds Private Usage (2.14 MB)
+This may indicate a system-level issue or shared memory usage
+==============================
+
