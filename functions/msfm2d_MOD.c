@@ -240,7 +240,6 @@ double* main_msfm(double* F, double* source_points, double* T, int* size_map, in
     dims_sp[0] = size_target[0];
     dims_sp[1] = size_target[1];
     
-    print_memory_usage("Start msfm");
     /* Number of pixels in image */
     int npixels;
     
@@ -303,7 +302,6 @@ double* main_msfm(double* F, double* source_points, double* T, int* size_map, in
     /* Initialize parameter list */
     initialize_list(listval, listprop);
     neg_listv=listval[listprop[1]-1];
-    print_memory_usage("msfm line 301");
     /*(There are 3 pixel classes:
      *  - frozen (processed)
      *  - narrow band (boundary) (in list to check for the next pixel with smallest distance)
@@ -371,7 +369,6 @@ double* main_msfm(double* F, double* source_points, double* T, int* size_map, in
                     }
                     T[IJ_index]=neg_pos;
                     neg_pos++;
-                    print_memory_usage("msfm line 374");
                 }
             }
         }
@@ -444,7 +441,6 @@ double* main_msfm(double* F, double* source_points, double* T, int* size_map, in
                         if(Ed) {
                             neg_listo = (double *)realloc(neg_listo, neg_free*sizeof(double) );
                         }
-                        print_memory_usage("msfm line 447");
                     }
                     list_add(listval, listprop, Tt);
                     neg_listv=listval[listprop[1]-1];
@@ -460,7 +456,6 @@ double* main_msfm(double* F, double* source_points, double* T, int* size_map, in
         
     }
     return (double*)T;
-    print_memory_usage("finish msfm");
     /* Free memory */
     /* Destroy parameter list */
     destroy_list(listval, listprop);
@@ -471,7 +466,6 @@ double* main_msfm(double* F, double* source_points, double* T, int* size_map, in
     }
     free(Frozen);
     free(Y);
-    print_memory_usage("finish msfm, after freeing");
 }
 
 double* velocities_map(double* binary_map, int* size_map, int threshold, double safety_margin) {

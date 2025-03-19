@@ -390,7 +390,6 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
     dims_sp[0] = size_target[0];
     dims_sp[1] = size_target[1];
     
-    print_memory_usage("Starting MSFM3D");                         
     npixels=size_map[0]*size_map[1]*size_map[2];
 
     // Allocate memory for outputs. IT WONT BE NEEDED, allocate in prueba
@@ -427,7 +426,6 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
     /* Initialize parameter list */
     initialize_list(listval, listprop);
     neg_listv=listval[listprop[1]-1];
-    print_memory_usage("MSFM3D line 430");
     
     /*(There are 3 pixel classes: */
     /*  - frozen (processed) */
@@ -494,7 +492,6 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
                     neg_listz[neg_pos]=k;
                     T[IJK_index]=neg_pos;
                     neg_pos++;
-                    print_memory_usage("MSFM3D line 497");
                 }
             }
         }
@@ -561,7 +558,6 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
                         if(Ed) {
                             neg_listo = (double *)realloc(neg_listo, neg_free*sizeof(double) );
                         }
-                        print_memory_usage("MSFM3D line 564");
                     }
                     list_add(listval, listprop, Tt);
                     neg_listv=listval[listprop[1]-1];
@@ -578,7 +574,6 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
         
     }
     return (double*)T;
-    print_memory_usage("MSFM3D finished");
     /* Free memory */
     /* Destroy parameter list */
     destroy_list(listval, listprop);
@@ -587,7 +582,6 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
     free(neg_listz);
     free(Frozen);
     free(Y);
-    print_memory_usage("MSFM3D after freeing");
 }
 
 double* velocities_map3D(double* binary_map, int* size_map, int threshold) {
@@ -664,7 +658,6 @@ double* velocities_map3D(double* binary_map, int* size_map, int threshold) {
             }
         }
     }
-    print_memory_usage("Finishing Velocities Map");
     return distance_map;
     free(kernel);
 }
