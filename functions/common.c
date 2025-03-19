@@ -14,6 +14,43 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "common.h"
+#include <windows.h>
+#include <psapi.h>
+
+
+void print_memory_usage(const char* checkpoint) {
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+    if (GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc))) {
+        float working_set = (float)pmc.WorkingSetSize / (1024*1024);
+        float private_usage = (float)pmc.PrivateUsage / (1024*1024);
+        
+        // Add validation and detailed information
+        FILE* mem_log = fopen("./Archivos/memory_log.txt", "a");
+        if (mem_log != NULL) {
+            fprintf(mem_log, "=== Memory Checkpoint: %s ===\n", checkpoint);
+            fprintf(mem_log, "Working Set: %.2f MB\n", working_set);
+            fprintf(mem_log, "Private Usage: %.2f MB\n", private_usage);
+            
+            // Detailed memory information
+            fprintf(mem_log, "Peak Working Set: %.2f MB\n", 
+                   (float)pmc.PeakWorkingSetSize / (1024*1024));
+            fprintf(mem_log, "Page File Usage: %.2f MB\n", 
+                   (float)pmc.PagefileUsage / (1024*1024));
+            fprintf(mem_log, "Peak Page File: %.2f MB\n", 
+                   (float)pmc.PeakPagefileUsage / (1024*1024));
+            
+            // Warning for unusual conditions
+            if (working_set > private_usage) {
+                fprintf(mem_log, "WARNING: Working Set (%.2f MB) exceeds Private Usage (%.2f MB)\n",
+                        working_set, private_usage);
+                fprintf(mem_log, "This may indicate a system-level issue or shared memory usage\n");
+            }
+            
+            fprintf(mem_log, "==============================\n\n");
+            fclose(mem_log);
+        }
+    }
+}
 
 /* Find minimum value of an array and return its index */
 int minarray(double *A, int l) {

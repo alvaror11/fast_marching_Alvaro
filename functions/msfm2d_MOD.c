@@ -214,6 +214,7 @@ double* main_msfm(double* F, double* source_points, double* T, int* size_map, in
     bool usesecond = true;  // Default values
     bool usecross = true;   // Default values
 
+    
     /* Euclidian distance image */
     double *Y;
     
@@ -239,6 +240,7 @@ double* main_msfm(double* F, double* source_points, double* T, int* size_map, in
     dims_sp[0] = size_target[0];
     dims_sp[1] = size_target[1];
     
+    print_memory_usage("Start msfm");
     /* Number of pixels in image */
     int npixels;
     
@@ -268,8 +270,6 @@ double* main_msfm(double* F, double* source_points, double* T, int* size_map, in
     
     npixels=size_map[0]*size_map[1];
     
-   
-   
     /* Allocate memory for the distance image. IT MAY NOT BE NEEDED, if the memory is allocated before running the function */
    
     //T = (double *)malloc(npixels * sizeof(double)); 
@@ -295,15 +295,15 @@ double* main_msfm(double* F, double* source_points, double* T, int* size_map, in
         neg_listo = (double *)malloc( neg_free*sizeof(double) );
         for(q=0;q<neg_free;q++) { neg_listo[q]=0; }
     }
-    
     /* List parameters array */
     listprop=(int*)malloc(3* sizeof(int));
     /* Make jagged list to store a maximum of 2^64 values */
     listval= (double **)malloc( 64* sizeof(double *) );
+    
     /* Initialize parameter list */
     initialize_list(listval, listprop);
     neg_listv=listval[listprop[1]-1];
-    
+    print_memory_usage("msfm line 301");
     /*(There are 3 pixel classes:
      *  - frozen (processed)
      *  - narrow band (boundary) (in list to check for the next pixel with smallest distance)
@@ -371,6 +371,7 @@ double* main_msfm(double* F, double* source_points, double* T, int* size_map, in
                     }
                     T[IJ_index]=neg_pos;
                     neg_pos++;
+                    print_memory_usage("msfm line 374");
                 }
             }
         }
@@ -443,6 +444,7 @@ double* main_msfm(double* F, double* source_points, double* T, int* size_map, in
                         if(Ed) {
                             neg_listo = (double *)realloc(neg_listo, neg_free*sizeof(double) );
                         }
+                        print_memory_usage("msfm line 447");
                     }
                     list_add(listval, listprop, Tt);
                     neg_listv=listval[listprop[1]-1];
@@ -458,6 +460,7 @@ double* main_msfm(double* F, double* source_points, double* T, int* size_map, in
         
     }
     return (double*)T;
+    print_memory_usage("finish msfm");
     /* Free memory */
     /* Destroy parameter list */
     destroy_list(listval, listprop);
@@ -467,6 +470,8 @@ double* main_msfm(double* F, double* source_points, double* T, int* size_map, in
         free(neg_listo);
     }
     free(Frozen);
+    free(Y);
+    print_memory_usage("finish msfm, after freeing");
 }
 
 double* velocities_map(double* binary_map, int* size_map, int threshold, double safety_margin) {
@@ -483,36 +488,55 @@ double* velocities_map(double* binary_map, int* size_map, int threshold, double 
             if (binary_map[j + i * cols] == 1) {  // obstacle
                 distance_map[j + i * cols] = 0.0;
             } else {
-                distance_map[j + i * cols] = max_distance;
+                distance_map[j + i * cols] = threshold;
             }
         }
     }
+    
+    // Create the kernel to be applied to the distance map
+    int size_kernel = (threshold*2) + 1;
+    int center = size_kernel / 2;
+    double* kernel = malloc(size_kernel * size_kernel * sizeof(double));
 
-    // Check for each cell its distance to all the obstacles and choose the closest one
+
+    for (int i = 0; i < size_kernel; i++) {
+        for (int j = 0; j < size_kernel; j++) {
+            double dx = (double)(i - center);
+            double dy = (double)(j - center);
+            kernel[j + i * size_kernel] = sqrt((dx*dx + dy*dy));
+        }
+    }
+    // Apply kernel only to obstacles and the cells surrounding them
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            double min_dist = distance_map[j + i * cols];
-            printf("Valor inicial:%d /n", binary_map[j + i * cols]);
-            printf("Valor de celda:%.3f /n", distance_map[j + i * cols]);
-            if (distance_map[j + i * cols] != 0.0) { 
-                for (int r = 0; r < rows; r++) {
-                    for (int s = 0; s < cols; s++) {
-                        if (distance_map[s + r * cols] == 0.0) {
-                            double new_dist = euclidean_distance(i,j,r,s);
-                            if (new_dist < min_dist) {
-                                min_dist = new_dist;
+            if (distance_map[j + i*cols] == 0){
+                // Apply kernel to surrounding cells
+                for (int ki = -threshold; ki <= threshold; ki++) {
+                    for (int kj = -threshold; kj <= threshold; kj++) {
+                        // Calculate target cell coordinates
+                        int target_i = i + ki;
+                        int target_j = j + kj;
+
+                        // Check if target cell is inside the map
+                        if (target_i >= 0 && target_i < rows && target_j >= 0 && target_j < cols) {
+                            // Calculate kernel index
+                            int kernel_i = ki + center;
+                            int kernel_j = kj + center;
+                            // Apply kernel to target cell
+                            double new_dist = kernel[kernel_j + kernel_i * size_kernel];
+                            double current_dist = distance_map[target_j + target_i * cols];
+                            if (new_dist < current_dist) {
+                                distance_map[target_j + target_i * cols] = new_dist;
                             }
                         }
                     }
-                }
+                }                       
             }
-            distance_map[j + i * cols] = min_dist;
         }
     }
     // Convert distances to velocities using threshold
+    
     for (int i = 0; i < rows * cols; i++) {
-        printf("Valor de celda original:%d /n", binary_map[i]);
-        printf("Valor de celda distancia:%.3f /n", distance_map[i]);
         if (distance_map[i] != 0.0) {
             // Normalize and apply threshold to create smooth gradient
             double normalized_dist = distance_map[i] / threshold;
@@ -523,86 +547,11 @@ double* velocities_map(double* binary_map, int* size_map, int threshold, double 
                 // Create smooth gradient between 0 and 1
                 distance_map[i] = normalized_dist;
             }
-            printf("Valor de celda normalizado:%.3f /n", distance_map[i]);
         }
     }
-    
+
+    free(kernel); 
     return distance_map;
-    /*
-    int filas = rows;
-    int columnas = cols;
-    // No need to invert input values - keep obstacles as 1, free space as 0
-    double* distance_map = malloc(filas * columnas * sizeof(double));
-    
-    // Copy initial map
-    for(int i = 0; i < filas; i++) {
-        for(int j = 0; j < columnas; j++) {
-            distance_map[j + i * columnas] = binary_map[j + i * columnas];
-        }
-    }
-
-    // Define 3x3 Gaussian blur kernel
-    
-    double kernel[3][3] = {
-        {0.0625, 0.125, 0.0625},
-        {0.125,  0.25,  0.125},
-        {0.0625, 0.125, 0.0625}
-    };
-
-    // Apply blur multiple times based on threshold
-    int blur_iterations = threshold;
-    double* temp_map = malloc(filas * columnas * sizeof(double));
-
-    for(int iter = 0; iter < blur_iterations; iter++) {
-        // Copy current state
-        memcpy(temp_map, distance_map, filas * columnas * sizeof(double));
-
-        for(int i = 1; i < filas-1; i++) {
-            for(int j = 1; j < columnas-1; j++) {
-                double sum = 0.0;
-                // Apply kernel
-                for(int ki = -1; ki <= 1; ki++) {
-                    for(int kj = -1; kj <= 1; kj++) {
-                        sum += temp_map[(j+kj) + (i+ki) * columnas] * 
-                               kernel[ki+1][kj+1];
-                    }
-                }
-                distance_map[j + i * columnas] = sum;
-            }
-        }
-    }
-
-    printf("\nVelocity map after blur (before inversion and normalization):\n");
-    for(int i = 0; i < filas; i++) {
-        for(int j = 0; j < columnas; j++) {
-            printf("%.3f ", distance_map[j + i * columnas]);
-        }
-        printf("\n");
-    }
-
-    printf("\nOriginal obstacle positions (1 = obstacle, 0 = free space):\n");
-    for(int i = 0; i < filas; i++) {
-        for(int j = 0; j < columnas; j++) {
-            printf("%.0f ", binary_map[j + i * columnas]);
-        }
-        printf("\n");
-    }
-
-    // Invert and normalize values
-    for(int i = 0; i < filas * columnas; i++) {
-        if(binary_map[i] == 1) {  // Original obstacle
-            distance_map[i] = 0.0;  // Keep obstacles at 0
-        } else {
-            distance_map[i] = (1.0 - (distance_map[i]*safety_margin));  // Invert and normalize
-            if(distance_map[i] < 0.0) distance_map[i] = 0.0;
-            else if(distance_map[i] > 1.0) distance_map[i] = 1.0;
-        }
-    }
-
-    free(temp_map);
-    return distance_map;*/
-
-
 }
 
 void compute_gradient_2d_discrete(double* input_matrix, double* gradient_matrix, int* size_map) {

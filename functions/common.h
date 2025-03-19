@@ -54,4 +54,6 @@ bool isntfrozen2d(int i, int j, int *dims, bool *Frozen);
 
 bool isfrozen2d(int i, int j, int *dims, bool *Frozen);
 
+void print_memory_usage(const char* checkpoint);
+
 #endif // COMMON_H

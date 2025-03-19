@@ -2,6 +2,7 @@
     "files.associations": {
         "stdbool.h": "c",
         "common.h": "c",
-        "cmath": "c"
+        "cmath": "c",
+        "msfm2d_mod.h": "c"
     }
 }

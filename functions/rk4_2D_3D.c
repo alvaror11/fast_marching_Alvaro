@@ -74,19 +74,6 @@ int checkBounds3d( double *point, int *Isize) {
     index[2]=mindex2(xBas1, yBas0, Isize[0]);
     index[3]=mindex2(xBas1, yBas1, Isize[0]);
     f=Isize[0]*Isize[1];
-
-    // Print debug information
-    printf("\nInterpolation at point (%.2f, %.2f):\n", point[0], point[1]);
-    printf("Base coordinates: x0=%d, x1=%d, y0=%d, y1=%d\n", xBas0, xBas1, yBas0, yBas1);
-    printf("Indices for corners:\n");
-    printf("Top-left     [%d,%d]: index=%d, dx=%.4f, dy=%.4f, weight=%.4f\n", 
-           xBas0, yBas0, index[0], I[index[0]], I[index[0]+f], perc[0]);
-    printf("Bottom-left  [%d,%d]: index=%d, dx=%.4f, dy=%.4f, weight=%.4f\n", 
-           xBas0, yBas1, index[1], I[index[1]], I[index[1]+f], perc[1]);
-    printf("Top-right    [%d,%d]: index=%d, dx=%.4f, dy=%.4f, weight=%.4f\n", 
-           xBas1, yBas0, index[2], I[index[2]], I[index[2]+f], perc[2]);
-    printf("Bottom-right [%d,%d]: index=%d, dx=%.4f, dy=%.4f, weight=%.4f\n", 
-           xBas1, yBas1, index[3], I[index[3]], I[index[3]+f], perc[3]);
     
     /* the interpolated color */
     Ireturn[0]=I[index[0]]*perc[0]+I[index[1]]*perc[1]+I[index[2]]*perc[2]+I[index[3]]*perc[3];
@@ -196,18 +183,6 @@ bool RK4STEP_2D(double *gradientArray, int *gradientArraySize, double *startPoin
     k4[0] = k4[0]*stepSize/tempnorm;
     k4[1] = k4[1]*stepSize/tempnorm;
     
-     // Print final k-values
-     printf("\nFinal RK4 coefficients:\n");
-     printf("k1: (%.4f, %.4f) - scaled: (%.4f, %.4f)\n", 
-            k1[0]/stepSize*tempnorm, k1[1]/stepSize*tempnorm, k1[0], k1[1]);
-     printf("k2: (%.4f, %.4f) - scaled: (%.4f, %.4f)\n", 
-            k2[0]/stepSize*tempnorm, k2[1]/stepSize*tempnorm, k2[0], k2[1]);
-     printf("k3: (%.4f, %.4f) - scaled: (%.4f, %.4f)\n", 
-            k3[0]/stepSize*tempnorm, k3[1]/stepSize*tempnorm, k3[0], k3[1]);
-     printf("k4: (%.4f, %.4f) - scaled: (%.4f, %.4f)\n", 
-            k4[0]/stepSize*tempnorm, k4[1]/stepSize*tempnorm, k4[0], k4[1]);
-     printf("Step size used: %.4f\n", stepSize);
-     printf("Movement vector: (%.4f, %.4f)\n", nextPoint[0] - startPoint[0], nextPoint[1] - startPoint[1]);
 
    /*Calculate final point */
     nextPoint[0] = startPoint[0] + (k1[0] + k2[0]*2.0 + k3[0]*2.0 + k4[0])/6.0;
@@ -235,9 +210,6 @@ bool RK4STEP_3D(double *gradientArray, int *gradientArraySize, double *startPoin
     double tempnorm;
     
    /*Calculate k1 */
-    printf("\nSize in Z: %d\n", gradientArraySize[2]);
-    printf("Size in Y: %d\n", gradientArraySize[1]);
-    printf("Size in X: %d\n", gradientArraySize[0]);
     interpgrad3d(k1, gradientArray, gradientArraySize, startPoint);
     tempnorm=norm3(k1);
     k1[0] = k1[0]*stepSize/tempnorm;
@@ -327,10 +299,6 @@ void gradient_descend_rk4(double* startPoint, double *gradientArray, int* size_m
         if(RK4STEP_2D(gradientArray, gradientArraySize, startPoint1, nextPoint, stepSize)) {
             nextPoint[0]=nextPoint[0]+1.0; 
             nextPoint[1]=nextPoint[1]+1.0;
-            printf("\nGradient descent step:\n");
-            printf("Start point: (%.2f, %.2f)\n", startPoint[0], startPoint[1]);
-            printf("Next point:  (%.2f, %.2f)\n", nextPoint[0], nextPoint[1]);
-            printf("Step size: %d\n", stepSize);
         }
     
         else {
@@ -343,9 +311,7 @@ void gradient_descend_rk4(double* startPoint, double *gradientArray, int* size_m
         gradientArraySize[0]=size_map[0];
         gradientArraySize[1]=size_map[1];
         gradientArraySize[2]=size_map[2];
-        printf("\nSize in Z: %d\n", gradientArraySize[2]);
-        printf("Size in Y: %d\n", gradientArraySize[1]);
-        printf("Size in X: %d\n", gradientArraySize[0]);
+
         startPoint1[0]=startPoint[0]-1.0; 
         startPoint1[1]=startPoint[1]-1.0; 
         startPoint1[2]=startPoint[2]-1.0;

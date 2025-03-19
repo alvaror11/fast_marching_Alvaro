@@ -9,7 +9,7 @@ columnas = 50;
 punto_x = 5;  % columna
 punto_y = 10; % fila
 files_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Archivos";
-main_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions";
+main_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Ver_Resultados";
 
 %% Mapa Original
 cd(files_folder);

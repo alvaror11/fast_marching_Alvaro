@@ -309,7 +309,7 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
     bool usesecond=true;
     bool usecross=true;
     
-    printf("Starting MSFM3D\n");
+    //printf("Starting MSFM3D\n");
     /* Euclidian distance image */
     double *Y;
     
@@ -390,7 +390,7 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
     dims_sp[0] = size_target[0];
     dims_sp[1] = size_target[1];
     
-                             
+    print_memory_usage("Starting MSFM3D");                         
     npixels=size_map[0]*size_map[1]*size_map[2];
 
     // Allocate memory for outputs. IT WONT BE NEEDED, allocate in prueba
@@ -427,7 +427,7 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
     /* Initialize parameter list */
     initialize_list(listval, listprop);
     neg_listv=listval[listprop[1]-1];
-    
+    print_memory_usage("MSFM3D line 430");
     
     /*(There are 3 pixel classes: */
     /*  - frozen (processed) */
@@ -494,6 +494,7 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
                     neg_listz[neg_pos]=k;
                     T[IJK_index]=neg_pos;
                     neg_pos++;
+                    print_memory_usage("MSFM3D line 497");
                 }
             }
         }
@@ -560,6 +561,7 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
                         if(Ed) {
                             neg_listo = (double *)realloc(neg_listo, neg_free*sizeof(double) );
                         }
+                        print_memory_usage("MSFM3D line 564");
                     }
                     list_add(listval, listprop, Tt);
                     neg_listv=listval[listprop[1]-1];
@@ -576,6 +578,7 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
         
     }
     return (double*)T;
+    print_memory_usage("MSFM3D finished");
     /* Free memory */
     /* Destroy parameter list */
     destroy_list(listval, listprop);
@@ -583,6 +586,8 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
     free(neg_listy);
     free(neg_listz);
     free(Frozen);
+    free(Y);
+    print_memory_usage("MSFM3D after freeing");
 }
 
 double* velocities_map3D(double* binary_map, int* size_map, int threshold) {
@@ -593,7 +598,7 @@ double* velocities_map3D(double* binary_map, int* size_map, int threshold) {
     double* distance_map = malloc(ancho * largo * alto * sizeof(double));
     double max_val = sqrt(ancho*ancho + largo*largo + alto*alto);
 
-    printf("Calculating distance map\n");
+    //printf("Calculating distance map\n");
     //First pass: marks obstacles as 0 and other cells as infinity
     for (int k = 0; k < alto; k++) {
         for (int i = 0; i < ancho; i++) {
@@ -607,45 +612,61 @@ double* velocities_map3D(double* binary_map, int* size_map, int threshold) {
             }
         }
     }
+    
+    // Create the 3D kernel
 
-    // Check for each cell its distance to all the obstacles and choose the closest one
+    int size_kernel = (threshold*2) + 1;
+    int center = size_kernel / 2;
+    double* kernel = malloc(size_kernel * size_kernel * size_kernel * sizeof(double));
+    for (int k = 0; k < size_kernel; k++) {
+        for (int i = 0; i < size_kernel; i++) {
+            for (int j = 0; j < size_kernel; j++) {
+                double dx = (double)(i - center);
+                double dy = (double)(j - center);
+                double dz = (double)(k - center);
+                kernel[j + i*size_kernel + k*size_kernel*size_kernel] = sqrt(dx*dx + dy*dy + dz*dz);
+                
+            }
+        }
+    }
+
+    // Apply kernel to the cells and update the distance map
     for (int k = 0; k < alto; k++) {
         for (int i = 0; i < ancho; i++) {
             for (int j = 0; j < largo; j++) {
-                int current_idx = j + i*largo + k*slice_size;
-                double min_dist = distance_map[current_idx];
-                if (distance_map[current_idx] != 0.0) {
-                    for (int k2 = 0; k2 < alto; k2++) {
-                        for (int i2 = 0; i2 < ancho; i2++) {
-                            for (int j2 = 0; j2 < largo; j2++) {
-                                int current_idx2 = j2 + i2*largo + k2*slice_size;
-                                if(distance_map[current_idx2] == 0) {
-                                    double distance = euclidean_distance3D(i, j, k, i2, j2, k2);
-                                    if(distance < min_dist) {
-                                        min_dist = distance;
+                if (distance_map[j + i*largo + k*slice_size] == 0){
+                    for (int ki = -threshold; ki <= threshold; ki++) {
+                        for (int kj = -threshold; kj <= threshold; kj++) {
+                            for (int kk = -threshold; kk <= threshold; kk++) {
+                                // Calculate cell coordinates
+                                int target_i = i + ki;
+                                int target_j = j + kj;
+                                int target_k = k + kk;
+
+                                // Check if target cell is inside the map
+                                if (target_i >= 0 && target_i < ancho && target_j >= 0 && target_j < largo &&
+                                    target_k >= 0 && target_k < alto) {
+                                    // Kernel index
+                                    int kernel_i = ki + center;
+                                    int kernel_j = kj + center;
+                                    int kernel_k = kk + center;
+                                    // Apply kernel to target cell
+                                    double new_dist = kernel[kernel_j + kernel_i * size_kernel + kernel_k * size_kernel * size_kernel];
+                                    double current_dist = distance_map[target_j + target_i*largo + target_k*slice_size];
+                                    if (new_dist < current_dist) {
+                                        distance_map[target_j + target_i*largo + target_k*slice_size] = new_dist;
                                     }
                                 }
                             }
                         }
                     }
-                    distance_map[current_idx] = min_dist;
-                }                
+                }
             }
         }
     }
-    // Convert distances to velocities using threshold and normalize
-    printf("Calculating final velocities map, with the threshold: %d\n", threshold);
-    for (int i = 0; i < ancho*largo*alto; i++) {
-        double normalized_dist = distance_map[i] / threshold;
-        if(normalized_dist > 1.0) {
-            distance_map[i] = 1.0;
-        } else {
-            distance_map[i] = normalized_dist;
-        }
-    }
-
+    print_memory_usage("Finishing Velocities Map");
     return distance_map;
-   
+    free(kernel);
 }
 
 void compute_gradient_3d_discrete(double* input_matrix, double* gradient_matrix, int* size_map){
