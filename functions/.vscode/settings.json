@@ -5,6 +5,8 @@
         "cmath": "c",
         "msfm2d_mod.h": "c",
         "fmm2.h": "c",
-        "rk4_2d_3d.h": "c"
+        "rk4_2d_3d.h": "c",
+        "msfm3d_mod.h": "c",
+        "stdlib.h": "c"
     }
 }

@@ -29,7 +29,7 @@ typedef struct {
 } Trajectory3D;
 
 // Function declarations
-void FMM2_2D(double* matriz, int size_map[2], double distance_threshold, 
+void FMM2_2D(double* matriz, int* size_map, double distance_threshold, 
              double safety_margin, int filas, int columnas, 
              double* objective_points, int size_objective[2], 
              double* start_points, double step, Trajectory* traj);
