@@ -296,12 +296,6 @@ double CalculateDistance3D(double *T, double Fijk, int *dims, int i, int j, int 
     return Tt;
 }
 
-double euclidean_distance3D(int x1, int y1, int z1, int x2, int y2, int z2){
-    double dx = (double)(x2 - x1);
-    double dy = (double)(y2 - y1);
-    double dz = (double)(z2 - z1);
-    return sqrt(dx*dx + dy*dy + dz*dz);
-}
 /* The matlab mex function */
 double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, int* size_target) {
     /* The input variables */

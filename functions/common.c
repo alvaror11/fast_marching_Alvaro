@@ -363,3 +363,16 @@ bool isfrozen2d(int i, int j, int *dims, bool *Frozen) {
     return (i >= 0) && (j >= 0) && (i < dims[0]) && (j < dims[1]) && 
            (Frozen[i + j * dims[0]] == 1);
 }
+
+double euclidean_distance(int x1, int y1, int x2, int y2) {
+    double dx = (double)(x2 - x1);
+    double dy = (double)(y2 - y1);
+    return sqrt(dx*dx + dy*dy);
+}
+
+double euclidean_distance3D(int x1, int y1, int z1, int x2, int y2, int z2){
+    double dx = (double)(x2 - x1);
+    double dy = (double)(y2 - y1);
+    double dz = (double)(z2 - z1);
+    return sqrt(dx*dx + dy*dy + dz*dz);
+}

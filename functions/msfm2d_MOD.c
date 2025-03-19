@@ -203,11 +203,6 @@ double CalculateDistance(double *T, double Fij, int *dims, int i, int j, bool us
     return Tt;
 }
 
-double euclidean_distance(int x1, int y1, int x2, int y2) {
-    double dx = (double)(x2 - x1);
-    double dy = (double)(y2 - y1);
-    return sqrt(dx*dx + dy*dy);
-}
 /* The matlab mex funtion  */
 double* main_msfm(double* F, double* source_points, double* T, int* size_map, int* size_target) {
      /* The input variables */;

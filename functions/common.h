@@ -56,4 +56,9 @@ bool isfrozen2d(int i, int j, int *dims, bool *Frozen);
 
 void print_memory_usage(const char* checkpoint);
 
+double euclidean_distance(int x1, int y1, int x2, int y2);
+
+double euclidean_distance3D(int x1, int y1, int z1, int x2, int y2, int z2);
+
+
 #endif // COMMON_H

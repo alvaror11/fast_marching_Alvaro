@@ -127,7 +127,7 @@ void main() {
         // Define las coordenadas objetivo
         int num_points = 1;
         int dimensions = 2;
-        int size_objective[2] = {2,1};
+        int size_objective[2] = {dimensions,num_points};
         double *objective_points  = (double *)malloc(num_points * 2 * sizeof(double));;
         objective_points[0] = 47;  // x coordinate
         objective_points[1] = 5;  // y coordinate
