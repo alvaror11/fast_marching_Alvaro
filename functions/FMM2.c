@@ -127,7 +127,7 @@ void FMM2_2D(double* matriz, int size_map[2], double distance_threshold, double 
     
 }
 void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, int ancho, int largo, int alto, 
-            double* objective_points, int size_objective[3], double* start_points, double step, 
+            double* objective_points, int size_objective[2], double* start_points, double step, 
             Trajectory3D* traj){
     
 

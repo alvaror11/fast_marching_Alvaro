@@ -3,6 +3,8 @@
         "stdbool.h": "c",
         "common.h": "c",
         "cmath": "c",
-        "msfm2d_mod.h": "c"
+        "msfm2d_mod.h": "c",
+        "fmm2.h": "c",
+        "rk4_2d_3d.h": "c"
     }
 }
