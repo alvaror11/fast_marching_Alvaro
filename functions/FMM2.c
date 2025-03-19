@@ -70,7 +70,7 @@ void addPointToTrajectory3D(Trajectory3D* traj, double x, double y, double z) {
 }
 
 
-void FMM2_2D(double* matriz, int size_map[2], double distance_threshold, double safety_margin,
+void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double safety_margin,
             int filas, int columnas, double* objective_points, int size_objective[2], double* start_points, double step,
             Trajectory* traj){
     

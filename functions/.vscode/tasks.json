@@ -12,6 +12,7 @@
                 "${workspaceFolder}\\msfm3d_MOD.c",
                 "${workspaceFolder}\\rk4_2D_3D.c",
                 "${workspaceFolder}\\FMM2.c",
+                "${workspaceFolder}\\planner.c",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],
