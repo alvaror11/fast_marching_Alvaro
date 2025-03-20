@@ -129,6 +129,9 @@ void planners_2D(double* matriz, int* size_map, double* objective_points, int si
 
             fclose(file);
             */
+
+        case 2:
+            // Select a rectangle that connects all objective and start 
     }
 
 }
