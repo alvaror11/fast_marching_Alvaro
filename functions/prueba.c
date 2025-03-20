@@ -126,6 +126,7 @@ void main() {
         clock_t start = clock();
         // Define las dimensiones de la matriz
         int filas = 50, columnas = 50; 
+
         // Define las coordenadas objetivo
         int *size_map = (int *)malloc(2 * sizeof(int));
         size_map[0] = columnas;
@@ -134,22 +135,25 @@ void main() {
         int dimensions = 2;
         int size_objective[2] = {dimensions,num_points};
         double *objective_points  = (double *)malloc(num_points * 2 * sizeof(double));;
-        objective_points[0] = 40;  // x coordinate
+        objective_points[0] = 36;  // x coordinate
         objective_points[1] = 10;  // y coordinate
 
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
         int num_start_points = 1;
+        int size_start[2] = {dimensions,num_start_points};
         double *start_points = (double *)malloc(num_start_points * 2 * sizeof(double));;
         start_points[0] = 10;  // x coordinate
         start_points[1] = 40;  // y coordinate
         
-        // Definir el tipo de planner que se quiere usar
-        int planner_type = 1;
+        // PARSAMETROS DE LOS PLANNER
+        int planner_type = 2;       // tipo de planner a usar
+        int escalado_vectores = 3; // valor para escalar los vectores del planner 2
+
         // Define el umbral de distancia para la matriz de velocidades
         double distance_threshold = 4;
-        double safety_margin = 2.5;
+        double safety_margin = 2.5;  // por ahora no se usa
 
-        // Define el tamaño del paso
+        // Define el tamaño del paso para el descenso del gradiente
         double step = 0.5;
 
         FILE *file = fopen("./Mapas/mapa.txt", "r");
@@ -181,7 +185,7 @@ void main() {
         }
         printf("celda (39,11) = %.1f\n", matriz[39 + 11*columnas]);
         // LLamar al planner
-        planners_2D(matriz, size_map, objective_points, size_objective, start_points, planner_type);
+        planners_2D(matriz, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
 
         if (planner_type == 0){
             // Solo se añade un borde de obstaculos alrededor del mapa si no se ha aplicado ningun planner
