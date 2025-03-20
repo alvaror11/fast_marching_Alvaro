@@ -2,19 +2,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "common.h"
 
 
 void planners_2D(double* matriz, int* size_map, double* objective_points, int size_objective[2], 
-                double* start_points, int planner_type){
+                double* start_points, int size_start[2], int planner_type, int escalado_vectores) {
 
     // Choose type of planner
     switch(planner_type){
+
+        // Common variables
         
         case 0:
             // Use original map
             break;
-        case 1:
+        case 1:{
             // Coger el cuadrado mas pequeño que contega puntos objetivo y de inicio
             int x_max = 0;
             int y_max = 0;
@@ -129,9 +132,102 @@ void planners_2D(double* matriz, int* size_map, double* objective_points, int si
 
             fclose(file);
             */
+        }
+        case 2:{
+            // Select a rectangle that connects all objective and start
+            int num_start = size_objective[1]; 
+            int num_end = size_start[1];    
+            int total_vectors = num_start * num_end;  // All possible combinations
+            
+            int x_max = 0;
+            int y_max = 0;
+            int x_min = size_map[0];
+            int y_min = size_map[1];
 
-        case 2:
-            // Select a rectangle that connects all objective and start 
+            for (int i = 0; i<num_start; i++){
+                double start_x = start_points[i*2];
+                double start_y = start_points[i*2 + 1];
+
+                for (int j = 0; j<num_end; j++){
+                    double end_x = objective_points[j*2];
+                    double end_y = objective_points[j*2 + 1];
+
+                    //Calculate vector
+                    double vector_x = end_x - start_x;
+                    double vector_y = end_y - start_y;
+
+                    //Normalize
+                    double norm = sqrt(vector_x*vector_x + vector_y*vector_y);
+                    vector_x = (vector_x / norm) * escalado_vectores; 
+                    vector_y = (vector_y / norm) * escalado_vectores;
+
+                    double normal_x = -vector_y;
+                    double normal_y = vector_x;
+
+                    // Check points for start position
+                    double points[8][2] = {
+                        {start_x + vector_x, start_y + vector_y},   // Forward
+                        {start_x - vector_x, start_y - vector_y},   // Backward
+                        {start_x + normal_x, start_y + normal_y},   // Right
+                        {start_x - normal_x, start_y - normal_y},   // Left
+                        {end_x + vector_x, end_y + vector_y},       // Forward
+                        {end_x - vector_x, end_y - vector_y},       // Backward
+                        {end_x + normal_x, end_y + normal_y},       // Right
+                        {end_x - normal_x, end_y - normal_y}        // Left
+                    };
+
+                    // Update bounds for all points
+                    for (int k = 0; k < 8; k++) {
+                        // Apply ceil/floor first then clamp to map boundaries
+                        int temp_x = (int)((points[k][0] > x_max) ? ceil(points[k][0]) : floor(points[k][0]));
+                        int temp_y = (int)((points[k][1] > y_max) ? ceil(points[k][1]) : floor(points[k][1]));
+                        
+                        // Clamp values to map boundaries
+                        temp_x = (temp_x < 0) ? 0 : ((temp_x >= size_map[0]) ? size_map[0] - 1 : temp_x);
+                        temp_y = (temp_y < 0) ? 0 : ((temp_y >= size_map[1]) ? size_map[1] - 1 : temp_y);
+                        
+                        // Update max/min values
+                        if (temp_x > x_max) x_max = temp_x;
+                        if (temp_x < x_min) x_min = temp_x;
+                        if (temp_y > y_max) y_max = temp_y;
+                        if (temp_y < y_min) y_min = temp_y;
+                    }                 
+                }
+            }
+            
+            // LLenar la parte del mapa que no se usa con obstaculos
+            for (int i = 0; i < (int)size_map[1]; i++) {
+                for (int j = 0; j < (int)size_map[0]; j++) {
+                    if (i < y_min || i > y_max || j < x_min || j > x_max) {
+                        matriz[i * size_map[0] + j] = 1;
+                    }
+                }
+            }
+            
+            //Save reduced map
+            FILE *file = fopen("reduced_map.txt", "w");
+            if (file == NULL) {
+                printf("Error opening file for writing\n");
+                return;
+            }
+
+            // Write the map data
+            for (int i = 0; i < (int)size_map[1]; i++) {
+                for (int j = 0; j < (int)size_map[0]; j++) {
+                    fprintf(file, "%.2f ", matriz[i * (int)size_map[0] + j]);
+                }
+                fprintf(file, "\n");  // New line after each row
+            }
+
+            fclose(file);
+        
+        
+        
+        }   
+            
+            
+
+
     }
 
 }
