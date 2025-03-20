@@ -24,14 +24,15 @@ void main() {
         int *size_map = (int *)malloc(3 * sizeof(int));
         size_map[0] = ancho;
         size_map[1] = largo;
+        size_map[2] = alto;
         // Define las coordenadas objetivo
         int num_points = 1;
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         double *objective_points  = (double *)malloc(num_points * 3 * sizeof(double));;
-        objective_points[0] = 5;   // x coordinate
-        objective_points[1] = 5;    // y coordinate
-        objective_points[2] = 5;    // z coordinate
+        objective_points[0] = 10;   // x coordinate
+        objective_points[1] = 10;    // y coordinate
+        objective_points[2] = 13;    // z coordinate
 
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
         int num_start_points = 1;
@@ -42,8 +43,8 @@ void main() {
         start_points[2] = 40;   // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
-        int planner_type = 0;           //tipo de planner a usar
-        int escalado_vectores = 1;      //valor para escalar los vectores del planner 2
+        int planner_type = 1;           //tipo de planner a usar
+        int escalado_vectores = 5;      //valor para escalar los vectores del planner 2
         
         // Define el umbral de distancia para la matriz de velocidades
         double distance_threshold = 4.0;
