@@ -123,6 +123,7 @@ void main() {
         }
     }
     else if (dimensions_prob == 2){
+        clock_t start = clock();
         // Define las dimensiones de la matriz
         int filas = 50, columnas = 50; 
         // Define las coordenadas objetivo
@@ -178,7 +179,7 @@ void main() {
             printf("Error: Initial or objective point is inside an obstacle\n");
             return;
         }
-
+        printf("celda (39,11) = %.1f\n", matriz[39 + 11*columnas]);
         // LLamar al planner
         planners_2D(matriz, size_map, objective_points, size_objective, start_points, planner_type);
 
@@ -201,7 +202,7 @@ void main() {
             matriz = matriz2;
         }
         ;
-        clock_t start = clock();
+        
         // Crear la trayectoria
         int initial_capacity = 10;
         Trajectory* traj = malloc(sizeof(Trajectory));
