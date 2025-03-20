@@ -53,8 +53,10 @@ set(gca, 'FontSize', 10);
 %% Mapa de velocidades
 cd(files_folder);
 file = fopen('velocities_map.txt','r');
-filas = filas + 2;
-columnas = columnas + 2;
+
+%solo sumar filas y columnas si no se usan planners
+%filas = filas + 2;
+%columnas = columnas + 2;
 matriz_vel = zeros(filas, columnas); 
 
 % Leer los datos línea por línea y almacenarlos en la matriz
