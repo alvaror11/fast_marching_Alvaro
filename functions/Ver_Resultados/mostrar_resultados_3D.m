@@ -1,6 +1,6 @@
 clear;
 clc;
-close all;
+%close all;
 main_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Ver_Resultados";
 files_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Archivos";
 cd(files_folder)
@@ -265,14 +265,14 @@ cd(main_folder);
 
 % Example usage - change these values to visualize different slices
 slice_dim = 'z';  % Options: 'x', 'y', or 'z'
-slice_num = 7;   % Choose slice number within dimensions
+slice_num = 13;   % Choose slice number within dimensions
 
 % Visualize slice
-visualizeSlice(times_map, gradient_x, gradient_y, gradient_z, slice_dim, slice_num);
+visualizeSlice(times_map, gradient_x, gradient_y, gradient_z, slice_dim, slice_num, columnas, filas, altura);
 cd(main_folder);
 
 % Create slice visualization function
-function visualizeSlice(data, grad_x, grad_y, grad_z, slice_dim, slice_num)
+function visualizeSlice(data, grad_x, grad_y, grad_z, slice_dim, slice_num, columnas, filas, altura)
     figure;
     clipped_data = min(data, 400);
     
@@ -308,13 +308,20 @@ function visualizeSlice(data, grad_x, grad_y, grad_z, slice_dim, slice_num)
             slice_data = clipped_data(:,:,slice_num);
             grad_data_1 = grad_x(:,:,slice_num);
             grad_data_2 = grad_y(:,:,slice_num);
-            [X, Y] = meshgrid(1:size(data,2), 1:size(data,1));
+            % Create grid for quiver plot
+            [X, Y] = meshgrid(1:columnas, 1:filas);
+            imagesc(slice_data);
+            hold on
+            % Downsample for better visualization (adjust skip value as needed)
+            skip = 1;  % Show an arrow every 2 points
+            X = X(1:skip:end, 1:skip:end);
+            Y = Y(1:skip:end, 1:skip:end);
+            Fx_down = grad_data_1(1:skip:end, 1:skip:end);
+            Fy_down = grad_data_2(1:skip:end, 1:skip:end);
             
-            surf(X, Y, slice_data, 'EdgeColor', 'none');
-            hold on;
-            quiver(X, Y, grad_data_1, grad_data_2, 2, 'w', 'LineWidth', 1.5, ...
-                  'MaxHeadSize', 0.5, 'AutoScale', 'on');
-            xlabel('X'); ylabel('Y');
+            % Plot vector field
+            quiver(X, Y, Fx_down, Fy_down, 2, 'w', 'LineWidth', 1.5);
+
     end
     
     % Configure visualization

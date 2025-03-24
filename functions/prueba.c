@@ -30,8 +30,8 @@ void main() {
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         double *objective_points  = (double *)malloc(num_points * 3 * sizeof(double));;
-        objective_points[0] = 23;   // x coordinate
-        objective_points[1] = 23;    // y coordinate
+        objective_points[0] = 40;   // x coordinate
+        objective_points[1] = 40;    // y coordinate
         objective_points[2] = 13;    // z coordinate
 
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
@@ -40,7 +40,7 @@ void main() {
         double *start_points = (double *)malloc(num_start_points * 3 * sizeof(double));;
         start_points[0] = 10;    // x coordinate
         start_points[1] = 10;   // y coordinate
-        start_points[2] = 23;   // z coordinate
+        start_points[2] = 40;   // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
         int planner_type = 0;           //tipo de planner a usar
@@ -52,7 +52,7 @@ void main() {
         // Define el tamaño del paso
         double step = 0.5;
 
-        FILE *file = fopen("./Mapas/MAP_1_25_25_25X.txt", "r");
+        FILE *file = fopen("./Mapas/mapa3D.txt", "r");
         if (file == NULL) {
             perror("Error al abrir el archivo");
             return;
@@ -110,8 +110,8 @@ void main() {
                             matriz2[j + i*largo + k*ancho*largo] = 1;  // Set obstacle
                         } else {
                             // Copy original map data
-                            matriz2[j + i*largo + k*ancho*largo] = 
-                                matriz[(j-1) + (i-1)*(largo-2) + (k-1)*(ancho-2)*(largo-2)];
+                            matriz2[j + i*largo + k*ancho*largo] = 0;
+                            //    matriz[(j-1) + (i-1)*(largo-2) + (k-1)*(ancho-2)*(largo-2)];
                         }
                     }
                 }
