@@ -652,6 +652,20 @@ double* velocities_map3D(double* binary_map, int* size_map, int threshold) {
             }
         }
     }
+
+    // Covert distances to velocities using threshold
+    for (int i = 0; i < slice_size*alto; i++) {
+        // Normalize and apply threshold to create smooth gradient
+        double normalized_dist = distance_map[i] / threshold;
+                    
+        if (normalized_dist > 1.0) {
+            distance_map[i] = 1.0;  // Maximum velocity
+        } else {
+            // Create smooth gradient between 0 and 1
+            distance_map[i] = normalized_dist;
+        }
+    }
+
     return distance_map;
     free(kernel);
 }

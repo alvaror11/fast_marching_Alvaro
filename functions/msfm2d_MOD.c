@@ -495,6 +495,7 @@ double* velocities_map(double* binary_map, int* size_map, int threshold, double 
             kernel[j + i * size_kernel] = sqrt((dx*dx + dy*dy));
         }
     }
+    
     // Apply kernel only to obstacles and the cells surrounding them
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
