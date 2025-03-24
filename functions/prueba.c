@@ -30,20 +30,20 @@ void main() {
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         double *objective_points  = (double *)malloc(num_points * 3 * sizeof(double));;
-        objective_points[0] = 10;   // x coordinate
-        objective_points[1] = 10;    // y coordinate
+        objective_points[0] = 23;   // x coordinate
+        objective_points[1] = 23;    // y coordinate
         objective_points[2] = 13;    // z coordinate
 
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
         int num_start_points = 1;
         int size_start[2] = {3, num_start_points};
         double *start_points = (double *)malloc(num_start_points * 3 * sizeof(double));;
-        start_points[0] = 40;    // x coordinate
-        start_points[1] = 40;   // y coordinate
-        start_points[2] = 40;   // z coordinate
+        start_points[0] = 10;    // x coordinate
+        start_points[1] = 10;   // y coordinate
+        start_points[2] = 23;   // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
-        int planner_type = 1;           //tipo de planner a usar
+        int planner_type = 0;           //tipo de planner a usar
         int escalado_vectores = 5;      //valor para escalar los vectores del planner 2
         
         // Define el umbral de distancia para la matriz de velocidades
@@ -52,7 +52,7 @@ void main() {
         // Define el tamaño del paso
         double step = 0.5;
 
-        FILE *file = fopen("./Mapas/mapa3D.txt", "r");
+        FILE *file = fopen("./Mapas/MAP_1_25_25_25X.txt", "r");
         if (file == NULL) {
             perror("Error al abrir el archivo");
             return;
@@ -86,7 +86,7 @@ void main() {
         }
 
         // Aplicar el planner
-        planners_2D(matriz, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
+        planners_3D(matriz, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
 
 
         // Adding a layer of obstacles surrounding the map
@@ -135,9 +135,6 @@ void main() {
             objective_points, size_objective, start_points, step, traj);
         clock_t end = clock();
         double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-        for(int i = 0; i < traj->size; i++) {
-            printf("Point %d: (%.2f, %.2f, %.2f)\n", i, traj->points[i].x, traj->points[i].y, traj->points[i].z);
-        }
         printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);        
     }
     else if (dimensions_prob == 2){
@@ -164,7 +161,7 @@ void main() {
         start_points[1] = 40;  // y coordinate
         
         // PARSAMETROS DE LOS PLANNER
-        int planner_type = 2;       // tipo de planner a usar
+        int planner_type = 0;       // tipo de planner a usar
         int escalado_vectores = 6; // valor para escalar los vectores del planner 2
 
         // Define el umbral de distancia para la matriz de velocidades
@@ -201,7 +198,6 @@ void main() {
             printf("Error: Initial or objective point is inside an obstacle\n");
             return;
         }
-        printf("celda (39,11) = %.1f\n", matriz[39 + 11*columnas]);
         // LLamar al planner
         planners_2D(matriz, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
 
@@ -225,7 +221,6 @@ void main() {
             free(matriz);
             matriz = matriz2;
         }
-        ;
         
         // Crear la trayectoria
         int initial_capacity = 10;

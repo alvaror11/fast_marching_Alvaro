@@ -10,4 +10,11 @@ void planners_2D(double* matriz,
                  double* start_points, int size_start[2], 
                  int planner_type, int escalado_vectores);
 
+void planners_3D(double* matriz, 
+                  int* size_map, 
+                  double* objective_points, 
+                  int size_objective[2], 
+                  double* start_points, int size_start[2], 
+                  int planner_type, int escalado_vectores);
+
 #endif // PLANNER_H

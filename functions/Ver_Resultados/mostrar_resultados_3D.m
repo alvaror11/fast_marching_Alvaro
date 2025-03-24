@@ -1,0 +1,330 @@
+clear;
+clc;
+close all;
+main_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Ver_Resultados";
+files_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Archivos";
+cd(files_folder)
+
+%% Occupation map
+% Load the .mat file containing the 3D map
+load('mapa3d.mat');  % Adjust the filename as needed
+% Assuming the variable in the .mat file is called 'mapa3D'
+cd(main_folder);
+% Get dimensions
+[filas, columnas, altura] = size(Wgr);
+Wgr = double(Wgr);
+
+% Create 3D visualization
+figure;
+
+% Create meshgrid for visualization
+[x, y, z] = meshgrid(1:columnas, 1:filas, 1:altura);
+
+% Plot obstacles (1s) in red
+p1 = patch(isosurface(x, y, z, Wgr, 0.5));
+isonormals(x, y, z, Wgr, p1);
+set(p1, 'FaceColor', 'red', 'EdgeColor', 'none', 'FaceAlpha', 0.3);
+
+% Plot free space (0s) in blue
+p2 = patch(isosurface(x, y, z, ~Wgr, 0.5));
+isonormals(x, y, z, ~Wgr, p2);
+set(p2, 'FaceColor', 'blue', 'EdgeColor', 'none', 'FaceAlpha', 0.1);
+
+% Configure visualization
+daspect([1 1 1]);
+view(45, 30);
+camlight;
+lighting gouraud;
+axis tight;
+box on;
+grid on;
+xlabel('X');
+ylabel('Y');
+zlabel('Z');
+title('3D Map Visualization');
+legend([p1, p2], {'Obstacles', 'Free Space'}, 'Location', 'northeastoutside');
+hold off;
+% Save to text file
+fileID = fopen('./mapa3D.txt', 'w');
+
+
+% Write the map layer by layer
+for k = 1:altura
+    for i = 1:filas
+        for j = 1:columnas
+            fprintf(fileID, '%d ', Wgr(i,j,k));
+        end
+        fprintf(fileID, '\n');
+    end
+    % Add a separator between layers
+    fprintf(fileID, '\n');
+end
+
+fclose(fileID);
+
+%% Velocities Map
+
+
+%% Trayectoria
+
+% Read trajectory data
+cd(files_folder);
+fileID = fopen('trajectory3D.txt', 'r');
+if fileID == -1
+    error('Could not open trajectory file');
+end
+
+% Read dimensions from first line
+dims = fscanf(fileID, '%d');  % Read num_points and dimensions
+num_points = dims(1);
+
+% Initialize trajectory array
+trajectory = zeros(num_points, 3);
+
+% Read trajectory points
+for i = 1:num_points
+    line = fgetl(fileID);
+    if ischar(line)
+        values = sscanf(line, '%f');
+        if length(values) == 3
+            trajectory(i,:) = values';
+        end
+    end
+end
+fclose(fileID);
+cd(main_folder);
+trajectory(1,1) = 10;
+
+% Create trajectory visualization
+figure;
+
+% Create meshgrid for visualization
+[x, y, z] = meshgrid(1:columnas, 1:filas, 1:altura);
+
+% Plot ONLY obstacles (1s) in red with high opacity
+p1 = patch(isosurface(x, y, z, Wgr, 0.5));
+isonormals(x, y, z, Wgr, p1);
+set(p1, 'FaceColor', 'red', 'EdgeColor', 'none', 'FaceAlpha', 0.9);
+hold on;
+
+% Plot trajectory with thick red line
+h_traj = plot3(trajectory(:,1), trajectory(:,2), trajectory(:,3), 'b-', 'LineWidth', 3);
+
+% Add start and end points with distinctive markers
+h_start = plot3(trajectory(1,1), trajectory(1,2), trajectory(1,3), 'go', ...
+    'MarkerSize', 10, 'MarkerFaceColor', 'g');
+h_end = plot3(trajectory(end,1), trajectory(end,2), trajectory(end,3), 'mo', ...
+    'MarkerSize', 10, 'MarkerFaceColor', 'm');
+
+% Configure visualization
+axis tight;
+box on;
+grid on;
+xlabel('X');
+ylabel('Y');
+zlabel('Z');
+title('3D Trajectory with Obstacles');
+legend([p1, h_traj, h_start, h_end], ...
+       {'Obstacles', 'Trajectory', 'Start', 'End'}, ...
+       'Location', 'northeastoutside');
+
+% Set view angle and lighting
+view(45, 30);
+camlight;
+lighting gouraud;
+daspect([1 1 1]);
+
+hold off;
+
+cd(main_folder)
+
+%% Times and Gradient Map Visualization
+filas = filas + 2;
+columnas = columnas + 2;
+altura = altura +2;
+% Read times map
+cd(files_folder);
+fileID = fopen('times_map3D.txt', 'r');
+if fileID == -1
+    error('Could not open times map file');
+end
+
+% Read dimensions
+dims = fscanf(fileID, '%d', [1 3]);
+times_map = zeros(filas, columnas, altura);
+
+% Read dimensions
+dims = fscanf(fileID, '%d', [1 3]);
+times_map = zeros(filas, columnas, altura);
+
+% Read data layer by layer
+for k = 1:altura
+    layer_header = fgetl(fileID); % Read "Layer n:" line
+    if ~ischar(layer_header)
+        error('Error reading layer header');
+    end
+    
+    % Read each row of the layer
+    for i = 1:filas
+        line = fgetl(fileID);
+        if ~ischar(line)
+            error(['Error reading line ' num2str(i) ' of layer ' num2str(k)]);
+        end
+        % Convert string to array of numbers
+        values = str2num(line);  % Using str2num instead of sscanf
+        if length(values) ~= columnas
+            error(['Incorrect number of values in line ' num2str(i) ' of layer ' num2str(k)]);
+        end
+        times_map(i,:,k) = values;
+    end
+    
+    empty_line = fgetl(fileID); % Skip empty line between layers
+end
+fclose(fileID);
+% Read gradient components
+gradient_x = zeros(filas, columnas, altura);
+gradient_y = zeros(filas, columnas, altura);
+gradient_z = zeros(filas, columnas, altura);
+
+% Read X component
+fileID = fopen('gradient3D_x.txt', 'r');
+if fileID == -1
+    error('Could not open gradient_x file');
+end
+dims = fscanf(fileID, '%d', [1 3]); % Skip dimensions line
+dims = fscanf(fileID, '%d', [1 3]); % Skip dimensions line
+for k = 1:altura
+    layer_header = fgetl(fileID); % Skip "Layer n:" line
+    for i = 1:filas
+        line = fgetl(fileID);
+        if ~ischar(line)
+            error(['Error reading line ' num2str(i) ' of layer ' num2str(k)]);
+        end
+        values = str2num(line);
+        largo = length(values);
+        if length(values) ~= columnas
+            error(['Incorrect number of values in line ' num2str(i) ' of layer ' num2str(k)]);
+        end
+        gradient_x(i,:,k) = values;
+    end
+    empty_line = fgetl(fileID); % Skip empty line
+end
+fclose(fileID);
+
+% Read Y component using same pattern
+fileID = fopen('gradient3D_y.txt', 'r');
+if fileID == -1
+    error('Could not open gradient_y file');
+end
+dims = fscanf(fileID, '%d', [1 3]);
+dims = fscanf(fileID, '%d', [1 3]);
+
+for k = 1:altura
+    layer_header = fgetl(fileID);
+    for i = 1:filas
+        line = fgetl(fileID);
+        if ~ischar(line)
+            error(['Error reading line ' num2str(i) ' of layer ' num2str(k)]);
+        end
+        values = str2num(line);
+        if length(values) ~= columnas
+            error(['Incorrect number of values in line ' num2str(i) ' of layer ' num2str(k)]);
+        end
+        gradient_y(i,:,k) = values;
+    end
+    empty_line = fgetl(fileID);
+end
+fclose(fileID);
+
+% Read Z component using same pattern
+fileID = fopen('gradient3D_z.txt', 'r');
+if fileID == -1
+    error('Could not open gradient_z file');
+end
+dims = fscanf(fileID, '%d', [1 3]);
+dims = fscanf(fileID, '%d', [1 3]);
+
+for k = 1:altura
+    layer_header = fgetl(fileID);
+    for i = 1:filas
+        line = fgetl(fileID);
+        if ~ischar(line)
+            error(['Error reading line ' num2str(i) ' of layer ' num2str(k)]);
+        end
+        values = str2num(line);
+        if length(values) ~= columnas
+            error(['Incorrect number of values in line ' num2str(i) ' of layer ' num2str(k)]);
+        end
+        gradient_z(i,:,k) = values;
+    end
+    empty_line = fgetl(fileID);
+end
+fclose(fileID);
+
+cd(main_folder);
+
+% Example usage - change these values to visualize different slices
+slice_dim = 'z';  % Options: 'x', 'y', or 'z'
+slice_num = 7;   % Choose slice number within dimensions
+
+% Visualize slice
+visualizeSlice(times_map, gradient_x, gradient_y, gradient_z, slice_dim, slice_num);
+cd(main_folder);
+
+% Create slice visualization function
+function visualizeSlice(data, grad_x, grad_y, grad_z, slice_dim, slice_num)
+    figure;
+    clipped_data = min(data, 400);
+    
+    switch slice_dim
+        case 'x'
+            slice_data = squeeze(clipped_data(:,slice_num,:))';
+            grad_data_1 = squeeze(grad_y(:,slice_num,:))';
+            grad_data_2 = squeeze(grad_z(:,slice_num,:))';
+            [Y, Z] = meshgrid(1:size(data,1), 1:size(data,3));
+            
+            % Plot times map first
+            surf(Y, Z, slice_data, 'EdgeColor', 'none');
+            hold on;
+            
+            % Plot gradient vectors with increased visibility
+            quiver(Y, Z, grad_data_1, grad_data_2, 2, 'w', 'LineWidth', 1.5, ...
+                  'MaxHeadSize', 0.5, 'AutoScale', 'on');
+            xlabel('Y'); ylabel('Z');
+            
+        case 'y'
+            slice_data = squeeze(clipped_data(slice_num,:,:))';
+            grad_data_1 = squeeze(grad_x(slice_num,:,:))';
+            grad_data_2 = squeeze(grad_z(slice_num,:,:))';
+            [X, Z] = meshgrid(1:size(data,2), 1:size(data,3));
+            
+            surf(X, Z, slice_data, 'EdgeColor', 'none');
+            hold on;
+            quiver(X, Z, grad_data_1, grad_data_2, 2, 'w', 'LineWidth', 1.5, ...
+                  'MaxHeadSize', 0.5, 'AutoScale', 'on');
+            xlabel('X'); ylabel('Z');
+            
+        case 'z'
+            slice_data = clipped_data(:,:,slice_num);
+            grad_data_1 = grad_x(:,:,slice_num);
+            grad_data_2 = grad_y(:,:,slice_num);
+            [X, Y] = meshgrid(1:size(data,2), 1:size(data,1));
+            
+            surf(X, Y, slice_data, 'EdgeColor', 'none');
+            hold on;
+            quiver(X, Y, grad_data_1, grad_data_2, 2, 'w', 'LineWidth', 1.5, ...
+                  'MaxHeadSize', 0.5, 'AutoScale', 'on');
+            xlabel('X'); ylabel('Y');
+    end
+    
+    % Configure visualization
+    title(['Times Map - ' upper(slice_dim) ' Slice ' num2str(slice_num)]);
+    colormap(jet);
+    c = colorbar;
+    ylabel(c, 'Time');
+    caxis([0 400]);
+    view(2);
+    axis equal tight;
+    grid on;
+end
+
