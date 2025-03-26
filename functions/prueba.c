@@ -110,8 +110,8 @@ void main() {
                             matriz2[j + i*largo + k*ancho*largo] = 1;  // Set obstacle
                         } else {
                             // Copy original map data
-                            matriz2[j + i*largo + k*ancho*largo] = 0;
-                            //    matriz[(j-1) + (i-1)*(largo-2) + (k-1)*(ancho-2)*(largo-2)];
+                            matriz2[j + i*largo + k*ancho*largo] = 
+                                matriz[(j-1) + (i-1)*(largo-2) + (k-1)*(ancho-2)*(largo-2)];
                         }
                     }
                 }
