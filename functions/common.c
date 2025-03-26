@@ -326,6 +326,9 @@ int mindex3(int x, int y, int z, int sizx, int sizy) {
     return y + x * sizy + z * sizx * sizy; 
 }
 
+int mindex2(int x, int y, int sizx) { 
+    return x + y * sizx; 
+}
 bool IsFinite(double x) { 
     return (x <= doublemax && x >= -doublemax); 
 }
@@ -350,9 +353,6 @@ bool isfrozen3d(int i, int j, int k, int *dims, bool *Frozen) {
            (Frozen[mindex3(i, j, k, dims[0], dims[1])] == 1);
 }
 
-int mindex2(int x, int y, int sizx) { 
-    return x + y * sizx; 
-}
 
 bool isntfrozen2d(int i, int j, int *dims, bool *Frozen) {
     return (i >= 0) && (j >= 0) && (i < dims[0]) && (j < dims[1]) && 

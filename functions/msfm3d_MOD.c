@@ -702,7 +702,7 @@ void compute_gradient_3d_discrete(double* input_matrix, double* gradient_matrix,
                 double min_value = current_value;
                 double fx = 0, fy = 0, fz = 0;
                 int valid_neighbors = 0;
-                if (i >= (33) && i <= (47) && j >= (33) && j <= (47) && k == 13) {
+                if (k >= (38) && k <= (42) && j >= (1) && j <= (5) && i == 20) {
                     printf("\n=== Analyzing cell (%d, %d, %d) ===\n", i, j, k);
                     printf("Current value: %.4f\n", current_value);
                     printf("Checking neighbors:\n");
@@ -731,7 +731,7 @@ void compute_gradient_3d_discrete(double* input_matrix, double* gradient_matrix,
                             fy = Ne[n][1]/norm; // y component
                             fz = Ne[n][2]/norm; // z component
                         }
-                        if (k == 13 && i >= 33 && i <= 40 && j >= 33 && j <= 40) {
+                        if (k >= (38) && k <= (42) && j >= (1) && j <= (5) && i == 20) {
                             printf("  Neighbor (%d, %d, %d): %.4f", ni, nj, nk, neighbor_value);
                             if(neighbor_value == min_value) {
                                 printf(" - New minimum!");
@@ -747,7 +747,7 @@ void compute_gradient_3d_discrete(double* input_matrix, double* gradient_matrix,
                     gradient_matrix[current_idx + slice_size*alto] = fy;  // y component
                     gradient_matrix[current_idx + 2*slice_size*alto] = fz; // z component
 
-                    if (k == 13 && i >= 33 && i <= 40 && j >= 33 && j <= 40) {
+                    if (k >= (38) && k <= (42) && j >= (1) && j <= (5) && i == 20) {
                         printf("Final gradient: fx=%.4f, fy=%.4f, fz=%.4f\n", gradient_matrix[current_idx], gradient_matrix[current_idx + slice_size*alto], gradient_matrix[current_idx + 2*slice_size*alto]);
                         printf("------------------------\n");
                     }

@@ -94,6 +94,8 @@ void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double sa
     //Allocate memory for output map
     double* output_T = (double *)malloc(filas * columnas * sizeof(double));
     output_T = main_msfm(obstacle_distance_map, objective_points, output_T, size_map, size_objective);
+    printf ("value at the objective point: %f\n", output_T[(int)objective_points[0] -1   + ((int)objective_points[1])*columnas]);
+
     // Save times map
     FILE *output_file2 = fopen("./Archivos/times_map.txt", "w");
      if (output_file2 == NULL) {
@@ -208,8 +210,8 @@ void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, int anc
     // Write the map data layer by layer
     for (int k = 0; k < size_map[2]; k++) {
         fprintf(output_file1, "Layer %d:\n", k);
-        for (int i = 0; i < size_map[1]; i++) {
-            for (int j = 0; j < size_map[0]; j++) {
+        for (int i = 0; i < size_map[0]; i++) {
+            for (int j = 0; j < size_map[1]; j++) {
                 fprintf(output_file1, "%.2f ", 
                     obstacle_distance_map[j + i*size_map[1] + k*size_map[0]*size_map[1]]);
             }
@@ -223,11 +225,10 @@ void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, int anc
     //Allocate memory for output map
     double* output_T = (double *)malloc(ancho * largo * alto * sizeof(double));
     output_T = main_msfm3D(obstacle_distance_map, objective_points, output_T, size_map, size_objective);
+    printf ("value at the objective point: %f\n", output_T[(int)objective_points[0]   + ((int)objective_points[1] )*largo + ((int)objective_points[2] )*ancho*largo]);
 
-
-    printf ("value at the objective point: %f\n", output_T[(int)objective_points[1] + (int)objective_points[0]*largo + (int)objective_points[2]*ancho*largo]);
     // Save times map
-    FILE *output_file2 = fopen("./Archivos/times_map3D.txt", "w");
+   FILE *output_file2 = fopen("./Archivos/times_map3D.txt", "w");
     if (output_file2 == NULL) {
         perror("Error al abrir el archivo de salida");
         return;
@@ -317,6 +318,13 @@ void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, int anc
         // Llamar a la función mexFunction en rk4_2D con las coordenadas del último punto y el mapa de velocidades
         gradient_descend_rk4(last_point, gradient_matrix, size_map, size_objective, new_point, step);
 
+        // Debugg code 
+        /*
+        printf("Last point: (%.2f, %.2f, %.2f)\n", last_point[0], last_point[1], last_point[2]);
+        printf("Occupation value at last point: %.4f\n",
+            matriz[(int)last_point[1] + 1 + ((int)last_point[0] + 1)*size_map[1] + (int)last_point[2]*size_map[0]*size_map[1]]);
+        printf("New point: (%.2f, %.2f, %.2f)\n", new_point[0], new_point[1], new_point[2]);
+        */
         // Añadir el nuevo punto a la trayectoria
         addPointToTrajectory3D(traj, new_point[0], new_point[1], new_point[2]);
         
@@ -353,13 +361,13 @@ void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, int anc
 
     printf("\nChecking trajectory points in maps:\n");
     for (int i = 0; i < traj->size; i++) {
-        int x = (int)traj->points[i].x;
-        int y = (int)traj->points[i].y;
-        int z = (int)traj->points[i].z;
+        int x = (int)traj->points[i].x - 1;
+        int y = (int)traj->points[i].y - 1;
+        int z = (int)traj->points[i].z -1;
         printf("Trajectory point %d: (%.2f, %.2f, %.2f)\n", i,
-            traj->points[i].x,
-            traj->points[i].y,
-            traj->points[i].z);
+            x,
+            y,
+            z);
         printf("  - Velocity value: %.4f\n",
             obstacle_distance_map[x + y*size_map[0] + z*size_map[0]*size_map[1]]);
         printf("  - Occupation value: %.4f\n",

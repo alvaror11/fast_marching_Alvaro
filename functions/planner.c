@@ -298,12 +298,12 @@ void planners_3D(double* matriz, int* size_map, double* objective_points, int si
 
             // Fill map outside bounds with obstacles
             for (int k = 0; k < size_map[2]; k++) {
-                for (int i = 0; i < size_map[1]; i++) {
-                    for (int j = 0; j < size_map[0]; j++) {
+                for (int i = 0; i < size_map[0]; i++) {
+                    for (int j = 0; j < size_map[1]; j++) {
                         if (j < x_min || j > x_max || 
                             i < y_min || i > y_max || 
                             k < z_min || k > z_max) {
-                            matriz[j + i*size_map[0] + k*size_map[0]*size_map[1]] = 1;
+                            matriz[j + i*size_map[1] + k*size_map[0]*size_map[1]] = 1;
                         }
                     }
                 }
