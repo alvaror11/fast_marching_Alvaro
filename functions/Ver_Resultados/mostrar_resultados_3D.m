@@ -1,6 +1,6 @@
 clear;
 clc;
-%close all;
+close all;
 main_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Ver_Resultados";
 files_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Archivos";
 cd(files_folder)
@@ -265,10 +265,15 @@ cd(main_folder);
 
 % Example usage - change these values to visualize different slices
 slice_dim = 'z';  % Options: 'x', 'y', or 'z'
-slice_num = 13;   % Choose slice number within dimensions
-
+slice_num = 13  ;   % Choose slice number within dimensions
+slice_num = slice_num + 1;
 % Visualize slice
 visualizeSlice(times_map, gradient_x, gradient_y, gradient_z, slice_dim, slice_num, columnas, filas, altura);
+
+min_time = 0;
+max_time = 10;
+visualizeTimesMap(times_map, 'z', 13, min_time, max_time);
+
 cd(main_folder);
 
 % Create slice visualization function
@@ -335,3 +340,79 @@ function visualizeSlice(data, grad_x, grad_y, grad_z, slice_dim, slice_num, colu
     grid on;
 end
 
+
+function visualizeTimesMap(data, slice_dim, slice_num, min_time, max_time)
+    figure;
+    
+    switch slice_dim
+        case 'x'
+            slice_data = squeeze(data(:,slice_num,:))';
+            xlabel('Y'); ylabel('Z');
+        case 'y'
+            slice_data = squeeze(data(slice_num,:,:))';
+            xlabel('X'); ylabel('Z');
+        case 'z'
+            slice_data = data(:,:,slice_num);
+            xlabel('X'); ylabel('Y');
+    end
+    
+    % Create masked and modified data for visualization
+    modified_data = slice_data;
+    obstacle_mask = slice_data > max_time;
+    valid_mask = ~obstacle_mask & slice_data >= min_time;
+    
+    % Create custom colormap for better visualization of small differences
+    n_colors = 256;
+    custom_map = [
+        % First 70% of colormap for values 0-50
+        flipud(copper(round(0.7*n_colors))); 
+        % Remaining 30% for values 50-400
+        flipud(hot(round(0.3*n_colors)))
+    ];
+    
+    % Add gray color for obstacles
+    custom_map = [custom_map; 0.5 0.5 0.5];
+    
+    % Normalize valid data to enhance small differences
+    modified_data(valid_mask) = (slice_data(valid_mask) - min_time) / (max_time - min_time);
+    modified_data(obstacle_mask) = 2;  % Value beyond colormap range for obstacles
+    
+    % Create visualization
+    imagesc(modified_data);
+    colormap(custom_map);
+    
+    % Configure colorbar with custom ticks
+    c = colorbar;
+    ylabel(c, 'Time (s)');
+    
+    % Calculate colorbar ticks for better readability
+    tick_positions = linspace(0, 1, 10);
+    tick_values = linspace(min_time, max_time, 10);
+    set(c, 'Ticks', [tick_positions 2], ...
+           'TickLabels', [arrayfun(@(x) sprintf('%.1f', x), tick_values, 'UniformOutput', false) {'Obs'}]);
+    
+    title(['Times Map - ' upper(slice_dim) ' Slice ' num2str(slice_num)]);
+    axis equal tight;
+    grid on;
+    %set(gca, 'YDir', 'normal');
+    
+    % Add numerical values if map is not too large
+    [rows, cols] = size(slice_data);
+    if max(rows, cols) < 20
+        for i = 1:rows
+            for j = 1:cols
+                if ~obstacle_mask(i,j)
+                    text(j, i, num2str(slice_data(i,j),'%.1f'), ...
+                        'HorizontalAlignment', 'center', ...
+                        'Color', 'k', ...
+                        'FontWeight', 'bold');
+                else
+                    text(j, i, 'X', ...
+                        'HorizontalAlignment', 'center', ...
+                        'Color', 'w', ...
+                        'FontWeight', 'bold');
+                end
+            end
+        end
+    end
+end

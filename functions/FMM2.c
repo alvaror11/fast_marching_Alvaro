@@ -211,7 +211,7 @@ void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, int anc
         for (int i = 0; i < size_map[1]; i++) {
             for (int j = 0; j < size_map[0]; j++) {
                 fprintf(output_file1, "%.2f ", 
-                    obstacle_distance_map[j + i*size_map[0] + k*size_map[0]*size_map[1]]);
+                    obstacle_distance_map[j + i*size_map[1] + k*size_map[0]*size_map[1]]);
             }
             fprintf(output_file1, "\n");
         }
@@ -224,6 +224,8 @@ void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, int anc
     double* output_T = (double *)malloc(ancho * largo * alto * sizeof(double));
     output_T = main_msfm3D(obstacle_distance_map, objective_points, output_T, size_map, size_objective);
 
+
+    printf ("value at the objective point: %f\n", output_T[(int)objective_points[1] + (int)objective_points[0]*largo + (int)objective_points[2]*ancho*largo]);
     // Save times map
     FILE *output_file2 = fopen("./Archivos/times_map3D.txt", "w");
     if (output_file2 == NULL) {
@@ -273,9 +275,9 @@ void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, int anc
          fprintf(gradient_y_file, "Layer %d:\n", k);
          fprintf(gradient_z_file, "Layer %d:\n", k);
          
-         for (int i = 0; i < size_map[1]; i++) {
-             for (int j = 0; j < size_map[0]; j++) {
-                 int idx = j + i*size_map[0] + k*size_map[0]*size_map[1];
+         for (int i = 0; i < size_map[0]; i++) {
+             for (int j = 0; j < size_map[1]; j++) {
+                 int idx = j + i*size_map[1] + k*size_map[0]*size_map[1];
                  // Write x component
                  fprintf(gradient_x_file, "%.4f ", gradient_matrix[idx]);
                  // Write y component
