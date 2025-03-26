@@ -97,6 +97,12 @@ void main() {
             size_map[0] = ancho;
             size_map[1] = largo;
             size_map[2] = alto;
+            objective_points[0] = objective_points[0] + 1;
+            objective_points[1] = objective_points[1] + 1;
+            objective_points[2] = objective_points[2] + 1;
+            start_points[0] = start_points[0] + 1;
+            start_points[1] = start_points[1] + 1;
+            start_points[2] = start_points[2] + 1;
 
             double *matriz2 = (double *)malloc(ancho * largo * alto * sizeof(double));
             //printf("\nCreating surrounded 3D map with dimensions: %d x %d x %d\n", ancho, largo, alto);
@@ -207,6 +213,10 @@ void main() {
             filas = filas+2;
             size_map[0] = columnas;
             size_map[1] = filas;
+            objective_points[0] = objective_points[0] + 1;
+            objective_points[1] = objective_points[1] + 1;
+            start_points[0] = start_points[0] + 1;
+            start_points[1] = start_points[1] + 1;
             double *matriz2 = (double *)malloc(filas * columnas * sizeof(double));
             for (int i = 0; i < filas; i++) {
                 for (int j = 0; j < columnas; j++) {

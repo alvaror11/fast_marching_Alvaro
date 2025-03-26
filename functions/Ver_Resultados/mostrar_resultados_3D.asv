@@ -265,15 +265,15 @@ cd(main_folder);
 
 % Example usage - change these values to visualize different slices
 
-slice_dim = 'x';  % Options: 'x', 'y', or 'z'
-slice_num = 20  ;   % Choose slice number within dimensions
+slice_dim = 'z';  % Options: 'x', 'y', or 'z'
+slice_num = 12  ;   % Choose slice number within dimensions
 slice_num = slice_num + 1;
 % Visualize slice
 visualizeSlice(times_map, gradient_x, gradient_y, gradient_z, slice_dim, slice_num, columnas, filas, altura);
 
 min_time = 0;
-max_time = 100;
-visualizeTimesMap(times_map, slice_dim, slice_num, min_time, max_time);
+max_time = 10;
+visualizeTimesMap(times_map, 'z', 13, min_time, max_time);
 
 cd(main_folder);
 
@@ -284,76 +284,55 @@ function visualizeSlice(data, grad_x, grad_y, grad_z, slice_dim, slice_num, colu
     
     switch slice_dim
         case 'x'
-            slice_data = squeeze(clipped_data(:,slice_num,:));
-            grad_data_1 = squeeze(grad_y(:,slice_num,:));  % Y component (horizontal)
-            grad_data_2 = squeeze(grad_z(:,slice_num,:));  % Z component (vertical)
+            slice_data = squeeze(clipped_data(:,slice_num,:))';
+            grad_data_1 = squeeze(grad_y(:,slice_num,:))';
+            grad_data_2 = squeeze(grad_z(:,slice_num,:))';
+            [Y, Z] = meshgrid(1:size(data,1), 1:size(data,3));
             
-            % Display times map with origin at bottom left
-            imagesc(slice_data);
-            set(gca, 'YDir', 'normal');  % Z axis points up
-            hold on
+            % Plot times map first
+            surf(Y, Z, slice_data, 'EdgeColor', 'none');
+            hold on;
             
-            % Create grid with Y horizontal and Z vertical
-            [Y, Z] = meshgrid(1:columnas, 1:altura);
-            
-            % Downsample for visualization
-            skip = 1;
-            Yd = Y(1:skip:end, 1:skip:end);
-            Zd = Z(1:skip:end, 1:skip:end);
-            Fy_d = grad_data_1(1:skip:end, 1:skip:end);
-            Fz_d = grad_data_2(1:skip:end, 1:skip:end);
-            
-            % Plot vectors
-            quiver(Yd, Zd, Fy_d, Fz_d, 2, 'w', 'LineWidth', 1.5);
+            % Plot gradient vectors with increased visibility
+            quiver(Y, Z, grad_data_1, grad_data_2, 2, 'w', 'LineWidth', 1.5, ...
+                  'MaxHeadSize', 0.5, 'AutoScale', 'on');
             xlabel('Y'); ylabel('Z');
             
         case 'y'
-            slice_data = squeeze(clipped_data(slice_num,:,:));
-            grad_data_1 = -squeeze(grad_x(slice_num,:,:));  % X component (horizontal, negated for left direction)
-            grad_data_2 = squeeze(grad_z(slice_num,:,:));   % Z component (vertical)
+            slice_data = squeeze(clipped_data(slice_num,:,:))';
+            grad_data_1 = squeeze(grad_x(slice_num,:,:))';
+            grad_data_2 = squeeze(grad_z(slice_num,:,:))';
+            [X, Z] = meshgrid(1:size(data,2), 1:size(data,3));
             
-            % Display times map with origin at bottom right
-            imagesc(fliplr(slice_data));  % Flip horizontally for right-to-left X
-            set(gca, 'YDir', 'normal');   % Z axis points up
-            hold on
-            
-            % Create grid with X horizontal (right to left) and Z vertical
-            [X, Z] = meshgrid(1:columnas, 1:altura);
-            
-            % Downsample for visualization
-            skip = 1;
-            Xd = X(1:skip:end, 1:skip:end);
-            Zd = Z(1:skip:end, 1:skip:end);
-            Fx_d = grad_data_1(1:skip:end, 1:skip:end);
-            Fz_d = grad_data_2(1:skip:end, 1:skip:end);
-            
-            % Plot vectors with flipped X coordinates
-            quiver(fliplr(Xd), Zd, fliplr(Fx_d), fliplr(Fz_d), 2, 'w', 'LineWidth', 1.5);
+            surf(X, Z, slice_data, 'EdgeColor', 'none');
+            hold on;
+            quiver(X, Z, grad_data_1, grad_data_2, 2, 'w', 'LineWidth', 1.5, ...
+                  'MaxHeadSize', 0.5, 'AutoScale', 'on');
             xlabel('X'); ylabel('Z');
             
         case 'z'
-            slice_data = clipped_data(:,:,slice_num);
-            grad_data_1 = grad_x(:,:,slice_num);  % vertical component (X)
-            grad_data_2 = grad_y(:,:,slice_num);  % horizontal component (Y)
-            
-            % Display times map
-            imagesc(slice_data);
-            hold on
-            
-            % Create grid matching image coordinates (Y horizontal, X vertical)
-            [Y, X] = meshgrid(1:columnas, 1:filas);  % Y first for horizontal axis
-            
-            % Downsample for visualization
-            skip = 1;
-            Xd = X(1:skip:end, 1:skip:end);
-            Yd = Y(1:skip:end, 1:skip:end);
-            Fx_d = grad_data_1(1:skip:end, 1:skip:end);  % X gradient (vertical)
-            Fy_d = grad_data_2(1:skip:end, 1:skip:end);  % Y gradient (horizontal)
-            
-            % Plot vectors with correct components
-            quiver(Yd, Xd, Fy_d, Fx_d, 2, 'w', 'LineWidth', 1.5);
-            
-            xlabel('Y'); ylabel('X');  % Label axes appropriately
+        slice_data = clipped_data(:,:,slice_num);
+        grad_data_1 = grad_x(:,:,slice_num);  % vertical component (X)
+        grad_data_2 = grad_y(:,:,slice_num);  % horizontal component (Y)
+        
+        % Display times map
+        imagesc(slice_data);
+        hold on
+        
+        % Create grid matching image coordinates (Y horizontal, X vertical)
+        [Y, X] = meshgrid(1:columnas, 1:filas);  % Y first for horizontal axis
+        
+        % Downsample for visualization
+        skip = 1;
+        Xd = X(1:skip:end, 1:skip:end);
+        Yd = Y(1:skip:end, 1:skip:end);
+        Fx_d = grad_data_1(1:skip:end, 1:skip:end);  % X gradient (vertical)
+        Fy_d = grad_data_2(1:skip:end, 1:skip:end);  % Y gradient (horizontal)
+        
+        % Plot vectors with correct components
+        quiver(Yd, Xd, Fy_d, Fx_d, 2, 'w', 'LineWidth', 1.5);
+        
+        xlabel('Y'); ylabel('X');  % Label axes appropriately
 
     end
     
