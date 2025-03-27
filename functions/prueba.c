@@ -43,7 +43,7 @@ void main() {
         start_points[2] = 40;   // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
-        int planner_type = 0;           //tipo de planner a usar
+        int planner_type = 1;           //tipo de planner a usar
         int escalado_vectores = 5;      //valor para escalar los vectores del planner 2
         
         // Define el umbral de distancia para la matriz de velocidades
