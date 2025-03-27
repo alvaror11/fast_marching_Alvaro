@@ -30,8 +30,7 @@ typedef struct {
 
 // Function declarations
 void FMM2_2D(double* matriz, int* size_map, double distance_threshold, 
-             double safety_margin, int filas, int columnas, 
-             double* objective_points, int size_objective[2], 
+             double safety_margin, double* objective_points, int size_objective[2], 
              double* start_points, double step, Trajectory* traj);
 
 void FMM2_3D(double* matriz, int* size_map, double distance_threshold,

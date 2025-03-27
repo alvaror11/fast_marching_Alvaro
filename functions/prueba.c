@@ -15,7 +15,7 @@
 void main() {
     
     // Choose dimensions of the trayectory
-     int dimensions_prob = 3; // Removed redefinition of 'dimensions'
+     int dimensions_prob = 2;// Removed redefinition of 'dimensions'
 
     if (dimensions_prob == 3){
         clock_t start = clock();
@@ -238,13 +238,9 @@ void main() {
         traj->points = malloc(initial_capacity * sizeof(Point2D));
         traj->size = 0;
         traj->capacity = initial_capacity;
-        FMM2_2D(matriz, size_map, distance_threshold, safety_margin, filas, columnas, 
+        FMM2_2D(matriz, size_map, distance_threshold, safety_margin, 
                 objective_points, size_objective, start_points, step, traj);
         clock_t end = clock();
-        // Use the trajectory
-        for(int i = 0; i < traj->size; i++) {
-            printf("Point %d: (%.2f, %.2f)\n", i, traj->points[i].x, traj->points[i].y);
-        }
         double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
         printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);
     }

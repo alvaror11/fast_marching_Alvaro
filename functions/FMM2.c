@@ -71,7 +71,7 @@ void addPointToTrajectory3D(Trajectory3D* traj, double x, double y, double z) {
 
 
 void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double safety_margin,
-            int filas, int columnas, double* objective_points, int size_objective[2], double* start_points, double step,
+             double* objective_points, int size_objective[2], double* start_points, double step,
             Trajectory* traj){
     
     //Create velocities map
@@ -83,18 +83,17 @@ void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double sa
          perror("Error al abrir el archivo de salida");
          return;
      }
-     for (int i = 0; i < filas; i++) {
-         for (int j = 0; j < columnas; j++) {
-             fprintf(output_file1, "%.2f ", obstacle_distance_map[j + i * columnas]);
+     for (int i = 0; i < size_map[1]; i++) {
+         for (int j = 0; j < size_map[0]; j++) {
+             fprintf(output_file1, "%.2f ", obstacle_distance_map[j + i * size_map[0]]);
          }
          fprintf(output_file1, "\n");
      }
      fclose(output_file1); 
 
     //Allocate memory for output map
-    double* output_T = (double *)malloc(filas * columnas * sizeof(double));
+    double* output_T = (double *)malloc(size_map[1] * size_map[0] * sizeof(double));
     output_T = main_msfm(obstacle_distance_map, objective_points, output_T, size_map, size_objective);
-    printf ("value at the objective point: %f\n", output_T[(int)objective_points[0] -1   + ((int)objective_points[1])*columnas]);
 
     // Save times map
     FILE *output_file2 = fopen("./Archivos/times_map.txt", "w");
@@ -104,16 +103,16 @@ void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double sa
      }
  
      // Escribir los resultados del mapa de distancias en el archivo de salida
-     for (int i = 0; i < filas; i++) {
-         for (int j = 0; j < columnas; j++) {
-             fprintf(output_file2, "%.2f ", output_T[j + i * columnas]);
+     for (int i = 0; i < size_map[1]; i++) {
+         for (int j = 0; j < size_map[0]; j++) {
+             fprintf(output_file2, "%.2f ", output_T[j + i * size_map[0]]);
          }
          fprintf(output_file2, "\n");
      }
      fclose(output_file2);
 
     // Crear el gradiente para el mapa de tiempos:
-    double* gradient_matrix = (double*)malloc(2 * filas * columnas * sizeof(double));
+    double* gradient_matrix = (double*)malloc(2 * size_map[1] * size_map[0] * sizeof(double));
     compute_gradient_2d_discrete(output_T, gradient_matrix, size_map);
     // Save gradients
     FILE *gradient_x_file = fopen("./Archivos/gradient_x.txt", "w");
@@ -125,12 +124,12 @@ void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double sa
      }
  
      // Write gradient components in matrix format
-     for (int i = 0; i < filas; i++) {
-         for (int j = 0; j < columnas; j++) {
+     for (int i = 0; i < size_map[1]; i++) {
+         for (int j = 0; j < size_map[0]; j++) {
              // Write x component
-             fprintf(gradient_x_file, "%.4f ", gradient_matrix[i*columnas + j]);
+             fprintf(gradient_x_file, "%.4f ", gradient_matrix[i*size_map[0] + j]);
              // Write y component
-             fprintf(gradient_y_file, "%.4f ", gradient_matrix[i*columnas + j + filas*columnas]);
+             fprintf(gradient_y_file, "%.4f ", gradient_matrix[i*size_map[0] + j + size_map[1]*size_map[0]]);
          }
          fprintf(gradient_x_file, "\n");
          fprintf(gradient_y_file, "\n");
@@ -160,13 +159,13 @@ void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double sa
 
         // Añadir el nuevo punto a la trayectoria
         addPointToTrajectory(traj, new_point[0], new_point[1]);
-        printf("Last point: (%.2f, %.2f)\n", last_point[0], last_point[1]);
         // Comprobar si se ha llegado al punto objetivo
         if ((round(new_point[0]) == objective_points[0] || floor(new_point[0]) == objective_points[0]) 
             && (round(new_point[1]) == objective_points[1] || floor(new_point[1]) == objective_points[1])) {
             finished = true;
             traj->points[traj->size - 1].x = objective_points[0];
             traj->points[traj->size - 1].y = objective_points[1];
+            printf("Objective reached\n");
         }
     }
     FILE *traj_file = fopen("./Archivos/trajectory.txt", "w");
