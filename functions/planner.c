@@ -227,7 +227,6 @@ void planners_3D(double* matriz, int* size_map, double* objective_points, int si
                 double start_z = start_points[i*3 + 2];
 
                 for (int j = 0; j < num_end; j++) {
-                    printf("\nProcessing start point %d with end point %d\n", i, j);
                     double end_x = objective_points[j*3];
                     double end_y = objective_points[j*3 + 1];
                     double end_z = objective_points[j*3 + 2];
@@ -271,7 +270,6 @@ void planners_3D(double* matriz, int* size_map, double* objective_points, int si
 
                     // Update bounds for all points
                     for (int k = 0; k < 12; k++) {
-                        printf("Point %d: (%.2f, %.2f, %.2f)\n", k, points[k][0], points[k][1], points[k][2]);
                         
                         int temp_x = (int)((points[k][0] > x_max) ? ceil(points[k][0]) : floor(points[k][0]));
                         int temp_y = (int)((points[k][1] > y_max) ? ceil(points[k][1]) : floor(points[k][1]));
@@ -292,9 +290,6 @@ void planners_3D(double* matriz, int* size_map, double* objective_points, int si
                     }
                 }
             }
-
-            printf("\nFinal bounds: X[%d,%d] Y[%d,%d] Z[%d,%d]\n", 
-                    x_min, x_max, y_min, y_max, z_min, z_max);
 
             // Fill map outside bounds with obstacles
             for (int k = 0; k < size_map[2]; k++) {

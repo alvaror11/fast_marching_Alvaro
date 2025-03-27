@@ -137,7 +137,7 @@ void main() {
 
         // Call th FMM2 function
         
-        FMM2_3D(matriz, size_map, distance_threshold, ancho, largo, alto,
+        FMM2_3D(matriz, size_map, distance_threshold, 
             objective_points, size_objective, start_points, step, traj);
         clock_t end = clock();
         double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;

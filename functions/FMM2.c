@@ -192,11 +192,9 @@ void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double sa
     free(last_point);
     
 }
-void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, int ancho, int largo, int alto, 
-            double* objective_points, int size_objective[2], double* start_points, double step, 
-            Trajectory3D* traj){
+void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, double* objective_points, 
+            int size_objective[2], double* start_points, double step, Trajectory3D* traj){
     
-
     //Create velocities map
     double* obstacle_distance_map = velocities_map3D(matriz, size_map, distance_threshold);
     
@@ -223,9 +221,8 @@ void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, int anc
     fclose(output_file1);
    
     //Allocate memory for output map
-    double* output_T = (double *)malloc(ancho * largo * alto * sizeof(double));
+    double* output_T = (double *)malloc(size_map[0] * size_map[1] * size_map[2] * sizeof(double));
     output_T = main_msfm3D(obstacle_distance_map, objective_points, output_T, size_map, size_objective);
-    printf ("value at the objective point: %f\n", output_T[(int)objective_points[0]-1   + ((int)objective_points[1]-1 )*largo + ((int)objective_points[2]-1)*ancho*largo]);
 
     // Save times map
    FILE *output_file2 = fopen("./Archivos/times_map3D.txt", "w");
@@ -252,7 +249,7 @@ void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, int anc
     fclose(output_file2);
  
     // Crear el gradiente para el mapa de tiempos:
-    double* gradient_matrix = (double*)malloc(3 * ancho * largo * alto * sizeof(double));
+    double* gradient_matrix = (double*)malloc(3 * size_map[0] * size_map[1] * size_map[2] * sizeof(double));
     compute_gradient_3d_discrete(output_T, gradient_matrix, size_map);
 
      // Save gradients
@@ -330,6 +327,7 @@ void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, int anc
             traj->points[traj->size - 1].x = objective_points[0];
             traj->points[traj->size - 1].y = objective_points[1];
             traj->points[traj->size - 1].z = objective_points[2];
+            printf("Objective point reached\n");
         }
     }
     // Save trajectory to file
