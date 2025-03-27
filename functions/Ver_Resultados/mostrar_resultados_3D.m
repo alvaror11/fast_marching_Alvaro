@@ -6,62 +6,66 @@ files_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fa
 cd(files_folder)
 
 %% Occupation map
-% Load the .mat file containing the 3D map
-load('mapa3d.mat');  % Adjust the filename as needed
-% Assuming the variable in the .mat file is called 'mapa3D'
+%% Read and create 3D map from text file
+cd(files_folder);
+fileID = fopen('mapa3D.txt', 'r');
+if fileID == -1
+    error('Could not open Mapa3D.txt file');
+end
+
+% Read dimensions from first line
+ancho = 50;
+largo = 50;
+altura = 50;
+
+% Initialize 3D matrix
+Wgr = zeros(ancho, largo, altura);
+
+% Read data layer by layer
+for k = 1:altura  
+    % Read each row of the layer
+    for i = 1:ancho
+        line = fgetl(fileID);
+        if ~ischar(line)
+            error(['Error reading line ' num2str(i) ' of layer ' num2str(k)]);
+        end
+        values = str2num(line);
+        if length(values) ~= largo
+            error(['Incorrect number of values in line ' num2str(i) ' of layer ' num2str(k)]);
+        end
+        Wgr(i,:,k) = values;
+    end
+    
+    empty_line = fgetl(fileID); % Skip empty line between layers
+end
+fclose(fileID);
 cd(main_folder);
-% Get dimensions
-[filas, columnas, altura] = size(Wgr);
-Wgr = double(Wgr);
 
-% Create 3D visualization
+%% Create 3D visualization
 figure;
-
-% Create meshgrid for visualization
-[x, y, z] = meshgrid(1:columnas, 1:filas, 1:altura);
+Wgr_viz = permute(Wgr, [2 1 3]);  % Swap X and Y dimensions
+% Create meshgrid for visualization with correct orientation
+[y, x, z] = meshgrid(1:largo, 1:ancho, 1:altura);
 
 % Plot obstacles (1s) in red
-p1 = patch(isosurface(x, y, z, Wgr, 0.5));
-isonormals(x, y, z, Wgr, p1);
-set(p1, 'FaceColor', 'red', 'EdgeColor', 'none', 'FaceAlpha', 0.3);
-
-% Plot free space (0s) in blue
-p2 = patch(isosurface(x, y, z, ~Wgr, 0.5));
-isonormals(x, y, z, ~Wgr, p2);
-set(p2, 'FaceColor', 'blue', 'EdgeColor', 'none', 'FaceAlpha', 0.1);
+p1 = patch(isosurface(y, x, z, Wgr_viz, 0.5));
+isonormals(y, x, z, Wgr_viz, p1);
+set(p1, 'FaceColor', 'red', 'EdgeColor', 'none', 'FaceAlpha', 0.9);
 
 % Configure visualization
-daspect([1 1 1]);
-view(45, 30);
-camlight;
-lighting gouraud;
 axis tight;
 box on;
 grid on;
-xlabel('X');
-ylabel('Y');
-zlabel('Z');
-title('3D Map Visualization');
-legend([p1, p2], {'Obstacles', 'Free Space'}, 'Location', 'northeastoutside');
-hold off;
-% Save to text file
-fileID = fopen('./mapa3D.txt', 'w');
+xlabel('X');  % Y axis is horizontal (columns)
+ylabel('Y');  % X axis is depth (rows)
+zlabel('Z');  % Z axis is height (layers)
+title('3D Map from Text File');
 
-
-% Write the map layer by layer
-for k = 1:altura
-    for i = 1:filas
-        for j = 1:columnas
-            fprintf(fileID, '%d ', Wgr(i,j,k));
-        end
-        fprintf(fileID, '\n');
-    end
-    % Add a separator between layers
-    fprintf(fileID, '\n');
-end
-
-fclose(fileID);
-
+% Set view to match coordinate system
+view(45, 30);
+camlight;
+lighting gouraud;
+daspect([1 1 1]);
 %% Velocities Map
 
 
@@ -98,12 +102,14 @@ trajectory(1,1) = 10;
 % Create trajectory visualization
 figure;
 
-% Create meshgrid for visualization
-[x, y, z] = meshgrid(1:columnas, 1:filas, 1:altura);
+Wgr_viz = permute(Wgr, [2 1 3]);  % Swap X and Y dimensions
+% Create meshgrid for visualization with correct orientation
+[y, x, z] = meshgrid(1:largo, 1:ancho, 1:altura);
 
-% Plot ONLY obstacles (1s) in red with high opacity
-p1 = patch(isosurface(x, y, z, Wgr, 0.5));
-isonormals(x, y, z, Wgr, p1);
+% Plot obstacles (1s) in red
+p1 = patch(isosurface(y, x, z, Wgr_viz, 0.5));
+isonormals(y, x, z, Wgr_viz, p1);
+set(p1, 'FaceColor', 'red', 'EdgeColor', 'none', 'FaceAlpha', 0.9);
 set(p1, 'FaceColor', 'red', 'EdgeColor', 'none', 'FaceAlpha', 0.9);
 hold on;
 
@@ -139,8 +145,8 @@ hold off;
 cd(main_folder)
 
 %% Times and Gradient Map Visualization
-filas = filas + 2;
-columnas = columnas + 2;
+ancho = ancho + 2;
+largo = largo + 2;
 altura = altura +2;
 % Read times map
 cd(files_folder);
@@ -151,11 +157,11 @@ end
 
 % Read dimensions
 dims = fscanf(fileID, '%d', [1 3]);
-times_map = zeros(filas, columnas, altura);
+times_map = zeros(ancho, largo, altura);
 
 % Read dimensions
 dims = fscanf(fileID, '%d', [1 3]);
-times_map = zeros(filas, columnas, altura);
+times_map = zeros(ancho, largo, altura);
 
 % Read data layer by layer
 for k = 1:altura
@@ -165,14 +171,14 @@ for k = 1:altura
     end
     
     % Read each row of the layer
-    for i = 1:filas
+    for i = 1:ancho
         line = fgetl(fileID);
         if ~ischar(line)
             error(['Error reading line ' num2str(i) ' of layer ' num2str(k)]);
         end
         % Convert string to array of numbers
         values = str2num(line);  % Using str2num instead of sscanf
-        if length(values) ~= columnas
+        if length(values) ~= largo
             error(['Incorrect number of values in line ' num2str(i) ' of layer ' num2str(k)]);
         end
         times_map(i,:,k) = values;
@@ -182,9 +188,9 @@ for k = 1:altura
 end
 fclose(fileID);
 % Read gradient components
-gradient_x = zeros(filas, columnas, altura);
-gradient_y = zeros(filas, columnas, altura);
-gradient_z = zeros(filas, columnas, altura);
+gradient_x = zeros(ancho, largo, altura);
+gradient_y = zeros(ancho, largo, altura);
+gradient_z = zeros(ancho, largo, altura);
 
 % Read X component
 fileID = fopen('gradient3D_x.txt', 'r');
@@ -195,14 +201,14 @@ dims = fscanf(fileID, '%d', [1 3]); % Skip dimensions line
 dims = fscanf(fileID, '%d', [1 3]); % Skip dimensions line
 for k = 1:altura
     layer_header = fgetl(fileID); % Skip "Layer n:" line
-    for i = 1:filas
+    for i = 1:ancho
         line = fgetl(fileID);
         if ~ischar(line)
             error(['Error reading line ' num2str(i) ' of layer ' num2str(k)]);
         end
         values = str2num(line);
         largo = length(values);
-        if length(values) ~= columnas
+        if length(values) ~= largo
             error(['Incorrect number of values in line ' num2str(i) ' of layer ' num2str(k)]);
         end
         gradient_x(i,:,k) = values;
@@ -221,13 +227,13 @@ dims = fscanf(fileID, '%d', [1 3]);
 
 for k = 1:altura
     layer_header = fgetl(fileID);
-    for i = 1:filas
+    for i = 1:ancho
         line = fgetl(fileID);
         if ~ischar(line)
             error(['Error reading line ' num2str(i) ' of layer ' num2str(k)]);
         end
         values = str2num(line);
-        if length(values) ~= columnas
+        if length(values) ~= largo
             error(['Incorrect number of values in line ' num2str(i) ' of layer ' num2str(k)]);
         end
         gradient_y(i,:,k) = values;
@@ -246,13 +252,13 @@ dims = fscanf(fileID, '%d', [1 3]);
 
 for k = 1:altura
     layer_header = fgetl(fileID);
-    for i = 1:filas
+    for i = 1:ancho
         line = fgetl(fileID);
         if ~ischar(line)
             error(['Error reading line ' num2str(i) ' of layer ' num2str(k)]);
         end
         values = str2num(line);
-        if length(values) ~= columnas
+        if length(values) ~= largo
             error(['Incorrect number of values in line ' num2str(i) ' of layer ' num2str(k)]);
         end
         gradient_z(i,:,k) = values;
@@ -269,7 +275,7 @@ slice_dim = 'x';  % Options: 'x', 'y', or 'z'
 slice_num = 20  ;   % Choose slice number within dimensions
 slice_num = slice_num + 1;
 % Visualize slice
-visualizeSlice(times_map, gradient_x, gradient_y, gradient_z, slice_dim, slice_num, columnas, filas, altura);
+visualizeSlice(times_map, gradient_x, gradient_y, gradient_z, slice_dim, slice_num, largo, ancho, altura);
 
 min_time = 0;
 max_time = 100;
@@ -278,7 +284,7 @@ visualizeTimesMap(times_map, slice_dim, slice_num, min_time, max_time);
 cd(main_folder);
 
 % Create slice visualization function
-function visualizeSlice(data, grad_x, grad_y, grad_z, slice_dim, slice_num, columnas, filas, altura)
+function visualizeSlice(data, grad_x, grad_y, grad_z, slice_dim, slice_num, largo, ancho, altura)
     figure;
     clipped_data = min(data, 400);
     
@@ -294,7 +300,7 @@ function visualizeSlice(data, grad_x, grad_y, grad_z, slice_dim, slice_num, colu
             hold on
             
             % Create grid with Y horizontal and Z vertical
-            [Y, Z] = meshgrid(1:columnas, 1:altura);
+            [Y, Z] = meshgrid(1:largo, 1:altura);
             
             % Downsample for visualization
             skip = 1;
@@ -318,7 +324,7 @@ function visualizeSlice(data, grad_x, grad_y, grad_z, slice_dim, slice_num, colu
             hold on
             
             % Create grid with X horizontal (right to left) and Z vertical
-            [X, Z] = meshgrid(1:columnas, 1:altura);
+            [X, Z] = meshgrid(1:largo, 1:altura);
             
             % Downsample for visualization
             skip = 1;
@@ -341,7 +347,7 @@ function visualizeSlice(data, grad_x, grad_y, grad_z, slice_dim, slice_num, colu
             hold on
             
             % Create grid matching image coordinates (Y horizontal, X vertical)
-            [Y, X] = meshgrid(1:columnas, 1:filas);  % Y first for horizontal axis
+            [Y, X] = meshgrid(1:largo, 1:ancho);  % Y first for horizontal axis
             
             % Downsample for visualization
             skip = 1;
