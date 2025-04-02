@@ -297,7 +297,7 @@ double CalculateDistance3D(double *T, double Fijk, int *dims, int i, int j, int 
 }
 
 /* The matlab mex function */
-double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, int* size_target) {
+double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, int* size_target, double* start_points) {
     /* The input variables */
     bool *useseconda, *usecrossa;
     bool usesecond=true;
@@ -562,6 +562,11 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
                     
                     T[IJK_index]=neg_pos;
                     neg_pos++;
+                    
+                    if (x == start_points[0] && y == start_points[1] && z == start_points[2]) {
+                        //stop the iteration of the loop if the starting point is reached
+                        break;
+                    }
                 }
             }
         }

@@ -2,18 +2,18 @@ clear;
 clc;
 close all;
 
-filas = 50;
-columnas = 50;
+filas = 200;
+columnas = 200;
 
 % Punto para iniciar la traj.
-punto_x = 5;  % columna
+punto_x = 170;  % columna
 punto_y = 10; % fila
 files_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Archivos";
 main_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Ver_Resultados";
 
 %% Mapa Original
 cd(files_folder);
-file = fopen('mapa.txt','r');
+file = fopen('MAP_4_200_200.txt','r');
 
 matriz_vel = zeros(filas, columnas); 
 
@@ -41,11 +41,11 @@ colormap(gray);  % Usar escala de grises: negro (0) a blanco (1)
 % Mostrar el mapa
 imagesc(matriz_vel);
 axis equal;  % Mantener proporciones cuadradas
-colorbar;
-clim([0 1]);  % Ajustar límites de color entre 0 y 1
+%colorbar;
+%clim([0 1]);  % Ajustar límites de color entre 0 y 1
 
 % Etiquetas y título
-title('Mapa de Velocidades', 'FontSize', 12);
+title('Occupation Map', 'FontSize', 12);
 xlabel('X', 'FontSize', 11);
 ylabel('Y', 'FontSize', 11);
 set(gca, 'FontSize', 10);
@@ -87,7 +87,7 @@ colorbar;
 clim([0 1]);  % Ajustar límites de color entre 0 y 1
 
 % Etiquetas y título
-title('Mapa de Velocidades', 'FontSize', 12);
+title('Velocities Map', 'FontSize', 12);
 xlabel('X', 'FontSize', 11);
 ylabel('Y', 'FontSize', 11);
 set(gca, 'FontSize', 10);
@@ -133,10 +133,10 @@ figure;
 imagesc(matrizClipped);
 colorbar;
 colormap(jet);
-clim([0 umbralMax]);
+clim([0 200]);
 
 % Etiquetas y título
-title('Mapa de Tiempos', 'FontSize', 12);
+title('Times Map', 'FontSize', 12);
 xlabel('X', 'FontSize', 11);
 ylabel('Y', 'FontSize', 11);
 set(gca, 'FontSize', 10);

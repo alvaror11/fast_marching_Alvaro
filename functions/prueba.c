@@ -15,12 +15,12 @@
 void main() {
     
     // Choose dimensions of the trayectory
-     int dimensions_prob = 2;// Removed redefinition of 'dimensions'
+     int dimensions_prob = 3;// Removed redefinition of 'dimensions'
 
     if (dimensions_prob == 3){
         clock_t start = clock();
         // Coord X = ancho, Y = largo, Z = alto
-        int ancho = 50, largo = 50, alto = 50 ; 
+        int ancho = 200, largo = 200, alto = 200 ; 
         int *size_map = (int *)malloc(3 * sizeof(int));
         size_map[0] = ancho;
         size_map[1] = largo;
@@ -30,17 +30,17 @@ void main() {
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         double *objective_points  = (double *)malloc(num_points * 3 * sizeof(double));;
-        objective_points[0] = 40;   // x coordinate
-        objective_points[1] = 40;    // y coordinate
-        objective_points[2] = 13;    // z coordinate
+        objective_points[0] = 190;   // x coordinate
+        objective_points[1] = 190;    // y coordinate
+        objective_points[2] = 190;    // z coordinate
 
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
         int num_start_points = 1;
         int size_start[2] = {3, num_start_points};
         double *start_points = (double *)malloc(num_start_points * 3 * sizeof(double));;
-        start_points[0] = 10;    // x coordinate
-        start_points[1] = 10;   // y coordinate
-        start_points[2] = 40;   // z coordinate
+        start_points[0] = 30;    // x coordinate
+        start_points[1] = 30;   // y coordinate
+        start_points[2] = 30;   // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
         int planner_type = 1;           //tipo de planner a usar
@@ -52,7 +52,7 @@ void main() {
         // Define el tamaño del paso
         double step = 0.5;
 
-        FILE *file = fopen("./Mapas/mapa3D.txt", "r");
+        FILE *file = fopen("./Mapas/MAP_4_200_200_200.txt", "r");
         if (file == NULL) {
             perror("Error al abrir el archivo");
             return;
@@ -84,10 +84,18 @@ void main() {
             printf("Error: Initial or objective point is inside an obstacle\n");
             return;
         }
+        if (objective_points[0] > size_map[0] || objective_points[1] > size_map[1] || objective_points[2] > size_map[2] 
+            ||start_points[0] > size_map[0] || start_points[1] > size_map[1] || start_points[2] > size_map[2]){ 
+            printf("Error: Initial or objective point is outside the map\n");
+            return;
+        }
 
         // Aplicar el planner
+        clock_t start_planner = clock();
         planners_3D(matriz, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
-
+        clock_t end_planner = clock();
+        double time_planner = ((double) (end_planner - start_planner)) / CLOCKS_PER_SEC;    
+        printf("Time for planner: %.3f s\n", time_planner);
 
         // Adding a layer of obstacles surrounding the map
         if (planner_type == 0){
@@ -141,12 +149,39 @@ void main() {
             objective_points, size_objective, start_points, step, traj);
         clock_t end = clock();
         double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+        // Save trajectory to file
+        /*
+        FILE* results_file = fopen("./Archivos/trajectory_results.txt", "w");
+        if (results_file == NULL) {
+            perror("Error opening results file");
+            return;
+        }
+
+        fprintf(results_file, "=== Map Characteristics ===\n");
+        fprintf(results_file, "3D (%d x %d x %d)\n\n", size_map[0], size_map[1], size_map[2]);
+
+        fprintf(results_file, "=== Computation Parameters ===\n");
+        fprintf(results_file, "Computation Time = %.3f s\n", cpu_time_used);
+
+
+        fprintf(results_file, "=== Trajectory Parameters ===\n");
+        fprintf(results_file, "Start point: (%.2f, %.2f. %.2f)\n", start_points[0], start_points[1], start_points[2]);
+        fprintf(results_file, "End point: (%.2f, %.2f, %.2f)\n", objective_points[0], objective_points[1], objective_points[2]);
+        fprintf(results_file, "Distance threshold: %.2f\n\n", distance_threshold);
+
+        fprintf(results_file, "=== Trajectory Points ===\n");
+        for (int i = 0; i < traj->size; i++) {
+            fprintf(results_file, "Point %d: (%.2f, %.2f, %.2f)\n", i, traj->points[i].x, traj->points[i].y, traj->points[i].z);
+        }
+
+        fclose(results_file);
+        */
         printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);        
     }
     else if (dimensions_prob == 2){
         clock_t start = clock();
         // Define las dimensiones de la matriz
-        int filas = 50, columnas = 50; 
+        int filas = 25, columnas = 25; 
         int *size_map = (int *)malloc(2 * sizeof(int));
         size_map[0] = columnas;
         size_map[1] = filas;
@@ -156,15 +191,15 @@ void main() {
         int dimensions = 2;
         int size_objective[2] = {dimensions,num_points};
         double *objective_points  = (double *)malloc(num_points * 2 * sizeof(double));;
-        objective_points[0] = 36;  // x coordinate
-        objective_points[1] = 10;  // y coordinate
+        objective_points[0] = 5;  // x coordinate
+        objective_points[1] = 5;  // y coordinate
 
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
         int num_start_points = 1;
         int size_start[2] = {dimensions,num_start_points};
         double *start_points = (double *)malloc(num_start_points * 2 * sizeof(double));;
-        start_points[0] = 10;  // x coordinate
-        start_points[1] = 40;  // y coordinate
+        start_points[0] = 20;  // x coordinate
+        start_points[1] = 22;  // y coordinate
         
         // PARSAMETROS DE LOS PLANNER
         int planner_type = 0;       // tipo de planner a usar
@@ -177,7 +212,7 @@ void main() {
         // Define el tamaño del paso para el descenso del gradiente
         double step = 0.5;
 
-        FILE *file = fopen("./Mapas/mapa.txt", "r");
+        FILE *file = fopen("./Mapas/MAP_1_25_25.txt", "r");
         if (file == NULL) {
             perror("Error al abrir el archivo");
             return;
@@ -199,9 +234,14 @@ void main() {
         fclose(file);
         
         // Check that initial and final points are not inside an obstacle
-        if ((matriz[(int)start_points[1] + (int)start_points[0]*columnas] == 1)||
-            (matriz[(int)objective_points[1] + (int)objective_points[0]*columnas ] == 1)) {
+        if ((matriz[(int)start_points[1] - 1 + ((int)start_points[0]-1)*columnas] == 1)||
+            (matriz[(int)objective_points[1] - 1 + ((int)objective_points[0]-1)*columnas ] == 1)) {
             printf("Error: Initial or objective point is inside an obstacle\n");
+            return;
+        }
+        if (objective_points[0] > size_map[0] || objective_points[1] > size_map[1] 
+            ||start_points[0] > size_map[0] || start_points[1] > size_map[1]){ 
+            printf("Error: Initial or objective point is outside the map\n");
             return;
         }
         // LLamar al planner
@@ -242,6 +282,34 @@ void main() {
                 objective_points, size_objective, start_points, step, traj);
         clock_t end = clock();
         double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+
+        // Save trajectory to file
+        FILE* results_file = fopen("./Archivos/trajectory_results.txt", "w");
+        if (results_file == NULL) {
+            perror("Error opening results file");
+            return;
+        }
+
+        fprintf(results_file, "=== Map Characteristics ===\n");
+        fprintf(results_file, "2D (%d x %d)\n\n", size_map[0], size_map[1]);
+
+        fprintf(results_file, "=== Computation Parameters ===\n");
+        fprintf(results_file, "Computation Time = %.3f s\n", cpu_time_used);
+
+
+        fprintf(results_file, "=== Trajectory Parameters ===\n");
+        fprintf(results_file, "Start point: (%.2f, %.2f)\n", start_points[0], start_points[1]);
+        fprintf(results_file, "End point: (%.2f, %.2f)\n", objective_points[0], objective_points[1]);
+        fprintf(results_file, "Distance threshold: %.2f\n\n", distance_threshold);
+
+        fprintf(results_file, "=== Trajectory Points ===\n");
+        for (int i = 0; i < traj->size; i++) {
+            fprintf(results_file, "Point %d: (%.2f, %.2f)\n", i, traj->points[i].x, traj->points[i].y);
+        }
+
+        fclose(results_file);
+
+
         printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);
     }
     else{
