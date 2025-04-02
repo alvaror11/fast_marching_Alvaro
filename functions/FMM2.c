@@ -8,7 +8,8 @@
 
 
 double* velocities_map3D(double* matriz, int* size_map, int distance_threshold);
-double* main_msfm3D(double* obstacle_distance_map, double* objective_points, double* output_T, int* size_map, int* size_objective);
+double* main_msfm3D(double* obstacle_distance_map, double* objective_points, double* output_T, 
+                    int* size_map, int* size_objective, double* start_points);
 void compute_gradient_3d_discrete(double* input_matrix, double* gradient_matrix, int* size_map);
 
 // Estructura de los puntos de la trayectoria
@@ -75,9 +76,10 @@ void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double sa
             Trajectory* traj){
     
     //Create velocities map
-    
+    printf("Creating velocities map...\n");
     double* obstacle_distance_map = velocities_map(matriz, size_map, distance_threshold, safety_margin);
-    // Save velocities map
+    // Save velocities map 
+    /*
     FILE *output_file1 = fopen("./Archivos/velocities_map.txt", "w");
      if (output_file1 == NULL) {
          perror("Error al abrir el archivo de salida");
@@ -90,12 +92,14 @@ void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double sa
          fprintf(output_file1, "\n");
      }
      fclose(output_file1); 
-
+    */
     //Allocate memory for output map
     double* output_T = (double *)malloc(size_map[1] * size_map[0] * sizeof(double));
+    printf("Calculating times map...\n");  
     output_T = main_msfm(obstacle_distance_map, objective_points, output_T, size_map, size_objective);
 
     // Save times map
+    /*
     FILE *output_file2 = fopen("./Archivos/times_map.txt", "w");
      if (output_file2 == NULL) {
          perror("Error al abrir el archivo de salida");
@@ -110,11 +114,13 @@ void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double sa
          fprintf(output_file2, "\n");
      }
      fclose(output_file2);
-
+    */
     // Crear el gradiente para el mapa de tiempos:
     double* gradient_matrix = (double*)malloc(2 * size_map[1] * size_map[0] * sizeof(double));
+    printf("Calculating gradient...\n");
     compute_gradient_2d_discrete(output_T, gradient_matrix, size_map);
     // Save gradients
+    /*
     FILE *gradient_x_file = fopen("./Archivos/gradient_x.txt", "w");
     FILE *gradient_y_file = fopen("./Archivos/gradient_y.txt", "w");
  
@@ -137,12 +143,13 @@ void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double sa
  
      fclose(gradient_x_file);
      fclose(gradient_y_file);
-
+    */
     // Empezamos a usar el descenso del gradiente para buscar el camino
     bool finished = false;      //mientras no se llegue al punto final es false
      
 
     // Añadir el punto inicial
+    printf("Starting gradient descend...\n");
     addPointToTrajectory(traj, start_points[0], start_points[1]);
     //Definir el pointer para el último punto de la trayectoria y el nuevo punto
     double* last_point = malloc(2 * sizeof(double));
@@ -168,6 +175,7 @@ void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double sa
             printf("Objective reached\n");
         }
     }
+    /*
     FILE *traj_file = fopen("./Archivos/trajectory.txt", "w");
      if (traj_file == NULL) {
          perror("Error al abrir el archivo de trayectoria");
@@ -182,6 +190,7 @@ void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double sa
      }
  
      fclose(traj_file);
+    */
     // Liberar memoria    
     free(output_T);
     free(matriz);
@@ -195,9 +204,14 @@ void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, double*
             int size_objective[2], double* start_points, double step, Trajectory3D* traj){
     
     //Create velocities map
+    printf("Creating velocities map...\n");
+    clock_t start_velocitiesMap = clock();
     double* obstacle_distance_map = velocities_map3D(matriz, size_map, distance_threshold);
-    
+    clock_t end_velocitiesMap = clock();
+    double time_velocitiesMap = ((double) (end_velocitiesMap - start_velocitiesMap)) / CLOCKS_PER_SEC;
+    printf("Time for velocities map: %.3f s\n", time_velocitiesMap);
     // Save velocities map
+    /*
     FILE *output_file1 = fopen("./Archivos/velocities_map3D.txt", "w");
     if (output_file1 == NULL) {
         perror("Error al abrir el archivo de salida");
@@ -218,12 +232,17 @@ void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, double*
     }
     
     fclose(output_file1);
-   
+    */
     //Allocate memory for output map
     double* output_T = (double *)malloc(size_map[0] * size_map[1] * size_map[2] * sizeof(double));
-    output_T = main_msfm3D(obstacle_distance_map, objective_points, output_T, size_map, size_objective);
-
+    printf("Calculating times map...\n");
+    clock_t start_timesMap = clock();
+    output_T = main_msfm3D(obstacle_distance_map, objective_points, output_T, size_map, size_objective, start_points);
+    clock_t end_timesMap = clock();
+    double time_timesMap = ((double) (end_timesMap - start_timesMap)) / CLOCKS_PER_SEC;
+    printf("Time for fast marching: %.3f s\n", time_timesMap);
     // Save times map
+    /*
    FILE *output_file2 = fopen("./Archivos/times_map3D.txt", "w");
     if (output_file2 == NULL) {
         perror("Error al abrir el archivo de salida");
@@ -246,12 +265,18 @@ void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, double*
         fprintf(output_file2, "\n");
     }
     fclose(output_file2);
- 
+    */
     // Crear el gradiente para el mapa de tiempos:
     double* gradient_matrix = (double*)malloc(3 * size_map[0] * size_map[1] * size_map[2] * sizeof(double));
+    printf("Calculating gradient...\n");
+    clock_t start_gradient = clock();
     compute_gradient_3d_discrete(output_T, gradient_matrix, size_map);
+    clock_t end_gradient = clock();
+    double time_gradient = ((double) (end_gradient - start_gradient)) / CLOCKS_PER_SEC;
+    printf("Time for gradient: %.3f s\n", time_gradient);
 
      // Save gradients
+     /*
      FILE *gradient_x_file = fopen("./Archivos/gradient3D_x.txt", "w");
      FILE *gradient_y_file = fopen("./Archivos/gradient3D_y.txt", "w");
      FILE *gradient_z_file = fopen("./Archivos/gradient3D_z.txt", "w");
@@ -294,13 +319,14 @@ void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, double*
      fclose(gradient_x_file);
      fclose(gradient_y_file);
      fclose(gradient_z_file);
-
+        */
     // Empezamos a usar el descenso del gradiente para buscar el camino
     bool finished = false;      //mientras no se llegue al punto final es false
 
     // Añadir el punto inicial
     addPointToTrajectory3D(traj, start_points[0], start_points[1], start_points[2]);
-
+    printf("Starting gradient descend...\n");
+    clock_t start_gradient_descend = clock();
     //Definir el pointer para el último punto de la trayectoria y el nuevo punto
     double* last_point = malloc(3 * sizeof(double));
     double* new_point = malloc(3 * sizeof(double));
@@ -326,10 +352,13 @@ void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, double*
             traj->points[traj->size - 1].x = objective_points[0];
             traj->points[traj->size - 1].y = objective_points[1];
             traj->points[traj->size - 1].z = objective_points[2];
-            printf("Objective point reached\n");
         }
     }
+    clock_t end_gradient_descend = clock();
+    double time_gradient_descend = ((double) (end_gradient_descend - start_gradient_descend)) / CLOCKS_PER_SEC;
+    printf("Time for gradient descend: %.3f s\n", time_gradient_descend);
     // Save trajectory to file
+    /*
     FILE *traj_file = fopen("./Archivos/trajectory3D.txt", "w");
     if (traj_file == NULL) {
         perror("Error al abrir el archivo de trayectoria");
@@ -345,11 +374,27 @@ void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, double*
             traj->points[i].x,
             traj->points[i].y,
             traj->points[i].z);
+        
     }
 
     fclose(traj_file);
-
-
+    */
+    /*
+    // CHECK TRAJECTORY FOR COLLISIONS
+    printf("\nChecking trajectory for obstacle collisions...\n");
+    for (int i = 0; i < traj->size; i++) {
+        int x = (int)round(traj->points[i].x) - 1;
+        int y = (int)round(traj->points[i].y) - 1;
+        int z = (int)round(traj->points[i].z) - 1;
+        
+        
+        // Check if point is in obstacle (matriz has 1s for obstacles)
+        if (matriz[y-1 + (x-1)*size_map[1] + (z-1)*size_map[0]*size_map[1]] == 1) {
+            printf("Warning: Point %d (%.2f, %.2f, %.2f) intersects with obstacle\n", 
+                i, traj->points[i].x, traj->points[i].y, traj->points[i].z);
+        }
+    }
+    */
 
     // Liberar memoria    
     free(output_T);
