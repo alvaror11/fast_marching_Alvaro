@@ -19,7 +19,7 @@ void main() {
     if (dimensions_prob == 3){
         clock_t start = clock();
         // Coord X = ancho, Y = largo, Z = alto
-        int ancho = 50, largo = 50, alto = 50 ; 
+        int ancho = 200, largo = 200, alto = 200 ; 
         int *size_map = (int *)malloc(3 * sizeof(int));
         size_map[0] = ancho;
         size_map[1] = largo;
@@ -28,21 +28,21 @@ void main() {
         int num_points = 1;
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
-        float *objective_points  = (float *)malloc(num_points * 3 * sizeof(float));;
-        objective_points[0] = 5;   // x coordinate
-        objective_points[1] = 5;    // y coordinate
-        objective_points[2] = 1;    // z coordinate
+        double *objective_points  = (double *)malloc(num_points * 3 * sizeof(double));;
+        objective_points[0] = 190;   // x coordinate
+        objective_points[1] = 190;    // y coordinate
+        objective_points[2] = 190;    // z coordinate
 
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
         int num_start_points = 1;
         int size_start[2] = {3, num_start_points};
-        float *start_points = (float *)malloc(num_start_points * 3 * sizeof(float));;
-        start_points[0] = 47;    // x coordinate
-        start_points[1] = 48;   // y coordinate
-        start_points[2] = 35;   // z coordinate
+        double *start_points = (double *)malloc(num_start_points * 3 * sizeof(double));;
+        start_points[0] = 30;    // x coordinate
+        start_points[1] = 30;   // y coordinate
+        start_points[2] = 30;   // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
-        int planner_type = 1;           //tipo de planner a usar
+        int planner_type = 0;           //tipo de planner a usar
         int escalado_vectores = 5;      //valor para escalar los vectores del planner 2
         
         // Define el umbral de distancia para la matriz de velocidades
@@ -51,7 +51,7 @@ void main() {
         // Define el tamaño del paso
         float step = 0.5;
 
-        FILE *file = fopen("./Mapas/MAP_2_50_50_50.txt", "r");
+        FILE *file = fopen("./Mapas/MAP_4_200_200_200.txt", "r");
         if (file == NULL) {
             perror("Error al abrir el archivo");
             return;
@@ -189,16 +189,16 @@ void main() {
         int num_points = 1;
         int dimensions = 2;
         int size_objective[2] = {dimensions,num_points};
-        float *objective_points  = (float *)malloc(num_points * 2 * sizeof(float));;
-        objective_points[0] = 10;  // x coordinate
-        objective_points[1] = 10;  // y coordinate
+        double *objective_points  = (double *)malloc(num_points * 2 * sizeof(double));;
+        objective_points[0] = 5;  // x coordinate
+        objective_points[1] = 5;  // y coordinate
 
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
         int num_start_points = 1;
         int size_start[2] = {dimensions,num_start_points};
-        float *start_points = (float *)malloc(num_start_points * 2 * sizeof(float));;
-        start_points[0] = 40;  // x coordinate
-        start_points[1] = 40;  // y coordinate
+        double *start_points = (double *)malloc(num_start_points * 2 * sizeof(double));;
+        start_points[0] = 20;  // x coordinate
+        start_points[1] = 22;  // y coordinate
         
         // PARSAMETROS DE LOS PLANNER
         int planner_type = 2;       // tipo de planner a usar
