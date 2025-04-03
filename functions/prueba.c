@@ -14,7 +14,7 @@
 void main() {
     
     // Choose dimensions of the trayectory
-     int dimensions_prob = 2;// Removed redefinition of 'dimensions'
+     int dimensions_prob = 3;// Removed redefinition of 'dimensions'
 
     if (dimensions_prob == 3){
         clock_t start = clock();
@@ -37,9 +37,9 @@ void main() {
         int num_start_points = 1;
         int size_start[2] = {3, num_start_points};
         double *start_points = (double *)malloc(num_start_points * 3 * sizeof(double));;
-        start_points[0] = 5;    // x coordinate
-        start_points[1] = 5;   // y coordinate
-        start_points[2] = 5;   // z coordinate
+        start_points[0] = 10;    // x coordinate
+        start_points[1] = 10;   // y coordinate
+        start_points[2] = 10;   // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
         int planner_type = 0;           //tipo de planner a usar
@@ -51,7 +51,7 @@ void main() {
         // Define el tamaño del paso
         double step = 0.5;
 
-        FILE *file = fopen("./Mapas/MAP_3_100_100_100.txt", "r");
+        FILE *file = fopen("./Mapas/MAP_1_25_25_25.txt", "r");
         if (file == NULL) {
             perror("Error al abrir el archivo");
             return;
