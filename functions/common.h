@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 #define eps 2.2204460492503131e-16
-#define doublemax 1e50
+#define floatmax 1e50
 #define INF 2e50
 #define listINF 2.345e50
 
@@ -20,29 +20,29 @@
 #endif
 
 /* Function declarations */
-int minarray(double *A, int l);
-int maxarray(double *A, int l);
-double pow2(double val);
-int iszero(double a);
-int isnotzero(double a);
-void roots(double *Coeff, double *ans);
+int minarray(float *A, int l);
+int maxarray(float *A, int l);
+float pow2(float val);
+int iszero(float a);
+int isnotzero(float a);
+void roots(float *Coeff, float *ans);
 int p2x(int x);
-void show_list(double **listval, int *listprop);
-void initialize_list(double **listval, int *listprop);
-void destroy_list(double **listval, int *listprop);
-void list_add(double **listval, int *listprop, double val);
-int list_minimum(double **listval, int *listprop);
-void list_remove(double **listval, int *listprop, int index);
-void list_remove_replace(double **listval, int *listprop, int index);
-void listupdate(double **listval, int *listprop, int index, double val);
+void show_list(float **listval, int *listprop);
+void initialize_list(float **listval, int *listprop);
+void destroy_list(float **listval, int *listprop);
+void list_add(float **listval, int *listprop, float val);
+int list_minimum(float **listval, int *listprop);
+void list_remove(float **listval, int *listprop, int index);
+void list_remove_replace(float **listval, int *listprop, int index);
+void listupdate(float **listval, int *listprop, int index, float val);
 
 int mindex3(int x, int y, int z, int sizx, int sizy) ;
 
-bool IsFinite(double x);
+bool IsFinite(float x);
 
-bool IsInf(double x);
+bool IsInf(float x);
 
-bool IsListInf(double x);
+bool IsListInf(float x);
 
 bool isntfrozen3d(int i, int j, int k, int *dims, bool *Frozen);
 
@@ -56,9 +56,9 @@ bool isfrozen2d(int i, int j, int *dims, bool *Frozen);
 
 void print_memory_usage(const char* checkpoint);
 
-double euclidean_distance(int x1, int y1, int x2, int y2);
+float euclidean_distance(int x1, int y1, int x2, int y2);
 
-double euclidean_distance3D(int x1, int y1, int z1, int x2, int y2, int z2);
+float euclidean_distance3D(int x1, int y1, int z1, int x2, int y2, int z2);
 
 
 #endif // COMMON_H
