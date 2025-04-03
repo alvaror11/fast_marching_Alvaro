@@ -59,76 +59,12 @@ void planners_2D(double* matriz, int* size_map, double* objective_points, int si
             for (int i = 0; i < (int)size_map[1]; i++) {
                 for (int j = 0; j < (int)size_map[0]; j++) {
                     if (i < y_min || i > y_max || j < x_min || j > x_max) {
-                        matriz[i * size_map[0] + j] = 1;
+                        matriz[i * size_map[0] + j] = 0;
                     }
                 }
             }
-            FILE *file = fopen("reduced_map.txt", "w");
-            if (file == NULL) {
-                printf("Error opening file for writing\n");
-                return;
-            }
-
-
-            // Write the map data
-            for (int i = 0; i < (int)size_map[1]; i++) {
-                for (int j = 0; j < (int)size_map[0]; j++) {
-                    fprintf(file, "%.2f ", matriz[i * (int)size_map[0] + j]);
-                }
-                fprintf(file, "\n");  // New line after each row
-            }
-
-            fclose(file);
-
-            /*
-            // Create reduced map
-            double* reduced_map = (double*)malloc(new_cols * new_rows * sizeof(double));
             
-            // Copy relevant portion of the map
-            for (int i = 0; i < new_rows; i++) {
-                for (int j = 0; j < new_cols; j++) {
-                    reduced_map[i * new_cols + j] = matriz[size_map[0] * (i + x_min) + (j + y_min)];
-                }
-            }
 
-            // Update objective points coordinates
-            for (int i = 0; i < size_objective[1]; i++) {
-                objective_points[i*2] -= x_min;
-                objective_points[i*2 + 1] -= y_min;
-            }
-
-            // Update start points coordinates
-            for (int i = 0; i < size_objective[1]; i++) {
-                start_points[i*2] -= x_min;
-                start_points[i*2 + 1] -= y_min;
-            }
-            
-            matriz = (double*)realloc(matriz, new_cols * new_rows * sizeof(double));
-            memcpy(matriz, reduced_map, new_cols * new_rows * sizeof(double));
-            free(reduced_map);
-            // Update map size
-            size_map[0] = new_cols;
-            size_map[1] = new_rows;
-
-            FILE *file = fopen("reduced_map.txt", "w");
-            if (file == NULL) {
-                printf("Error opening file for writing\n");
-                return;
-            }
-
-            // Write dimensions in the first line
-            fprintf(file, "%d %d\n", new_rows, new_cols);
-
-            // Write the map data
-            for (int i = 0; i < new_rows; i++) {
-                for (int j = 0; j < new_cols; j++) {
-                    fprintf(file, "%.2f ", matriz[i * new_cols + j]);
-                }
-                fprintf(file, "\n");  // New line after each row
-            }
-
-            fclose(file);
-            */
         }
         case 2:{
             // Select a rectangle that connects all objective and start
@@ -195,11 +131,27 @@ void planners_2D(double* matriz, int* size_map, double* objective_points, int si
             for (int i = 0; i < (int)size_map[1]; i++) {
                 for (int j = 0; j < (int)size_map[0]; j++) {
                     if (i < y_min || i > y_max || j < x_min || j > x_max) {
-                        matriz[i * size_map[0] + j] = 1;
+                        matriz[i * size_map[0] + j] = 0;
                     }
                 }
             }
-            break;       
+            break;
+
+            FILE *file = fopen("reduced_map.txt", "w");
+            if (file == NULL) {
+                printf("Error opening file for writing\n");
+                return;
+            }
+
+            // Write the map data
+            for (int i = 0; i < (int)size_map[1]; i++) {
+                for (int j = 0; j < (int)size_map[0]; j++) {
+                    fprintf(file, "%.2f ", matriz[i * (int)size_map[0] + j]);
+                }
+                fprintf(file, "\n");  // New line after each row
+            }
+
+            fclose(file);       
         }   
     }
 }

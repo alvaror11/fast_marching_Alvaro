@@ -2,18 +2,18 @@ clear;
 clc;
 close all;
 
-filas = 200;
-columnas = 200;
+filas = 50;
+columnas = 50;
 
 % Punto para iniciar la traj.
-punto_x = 170;  % columna
-punto_y = 10; % fila
+punto_x = 20;  % columna
+punto_y = 22; % fila
 files_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Archivos";
 main_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Ver_Resultados";
 
 %% Mapa Original
 cd(files_folder);
-file = fopen('MAP_4_200_200.txt','r');
+file = fopen('mapa.txt','r');
 
 matriz_vel = zeros(filas, columnas); 
 
@@ -55,8 +55,8 @@ cd(files_folder);
 file = fopen('velocities_map.txt','r');
 
 %solo sumar filas y columnas si no se usan planners
-filas = filas + 2;
-columnas = columnas + 2;
+%filas = filas + 2;
+%columnas = columnas + 2;
 matriz_vel = zeros(filas, columnas); 
 
 % Leer los datos línea por línea y almacenarlos en la matriz
