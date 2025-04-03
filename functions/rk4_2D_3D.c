@@ -24,27 +24,27 @@
  //int mindex2(int x, int y, int sizx)  { return y*sizx+x;}
 
 
- int checkBounds2d( float *point, int *Isize) {
+ int checkBounds2d( double *point, int *Isize) {
     if((point[0]<0)||(point[1]<0)||(point[0]>(Isize[0]-1))||(point[1]>(Isize[1]-1))) { return false; }
     return true;
 }
 
-int checkBounds3d( float *point, int *Isize) {
+int checkBounds3d( double *point, int *Isize) {
     if((point[0]<0)||(point[1]<0)||(point[2]<0)||(point[0]>(Isize[0]-1))||(point[1]>(Isize[1]-1))||(point[2]>(Isize[2]-1))) { return false; }
     return true;
 }
 
 
- float norm2(float *a) { return sqrt(a[0]*a[0]+a[1]*a[1]); }
- float norm3(float *a) { return sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]); }
+ double norm2(double *a) { return sqrt(a[0]*a[0]+a[1]*a[1]); }
+ double norm3(double *a) { return sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]); }
 
 
- void interpgrad2d(float *Ireturn, float *I, int *Isize, float *point) {
+ void interpgrad2d(double *Ireturn, double *I, int *Isize, double *point) {
     /*  Linear interpolation variables */
     int xBas0, xBas1, yBas0, yBas1;
-    float perc[4]={0, 0, 0, 0};
-    float xCom, yCom, xComi, yComi;
-    float fTlocalx, fTlocaly;
+    double perc[4]={0, 0, 0, 0};
+    double xCom, yCom, xComi, yComi;
+    double fTlocalx, fTlocaly;
     int f;
     int index[4];
     
@@ -80,16 +80,16 @@ int checkBounds3d( float *point, int *Isize) {
     Ireturn[1]=I[index[0]+f]*perc[0]+I[index[1]+f]*perc[1]+I[index[2]+f]*perc[2]+I[index[3]+f]*perc[3];
 }
 
-void interpgrad3d(float *Ireturn, float *I, int *Isize, float *point) {
+void interpgrad3d(double *Ireturn, double *I, int *Isize, double *point) {
     /*  Linear interpolation variables */
     int xBas0, xBas1, yBas0, yBas1, zBas0, zBas1;
-    float perc[8];
-    float xCom, yCom, zCom;
-    float xComi, yComi, zComi;
-    float fTlocalx, fTlocaly, fTlocalz;
+    double perc[8];
+    double xCom, yCom, zCom;
+    double xComi, yComi, zComi;
+    double fTlocalx, fTlocaly, fTlocalz;
     int f0, f1;
     int index[8];
-    float temp;
+    double temp;
     
     fTlocalx = floor(point[0]); fTlocaly = floor(point[1]); fTlocalz = floor(point[2]);
     xBas0=(int) fTlocalx; yBas0=(int) fTlocaly; zBas0=(int) fTlocalz;
@@ -134,12 +134,12 @@ void interpgrad3d(float *Ireturn, float *I, int *Isize, float *point) {
     Ireturn[2]=temp+I[index[4]+f1]*perc[4]+I[index[5]+f1]*perc[5]+I[index[6]+f1]*perc[6]+I[index[7]+f1]*perc[7];
 }
  
-bool RK4STEP_2D(float *gradientArray, int *gradientArraySize, float *startPoint, float *nextPoint, float stepSize) {
+bool RK4STEP_2D(double *gradientArray, int *gradientArraySize, double *startPoint, double *nextPoint, double stepSize) {
     /* Perform one step of the RK4 algorithm */
-    float k1[2], k2[2], k3[2], k4[2];
-    float tempPoint[2];
-    float tempnorm;
-    /*float D[2],dl;*/
+    double k1[2], k2[2], k3[2], k4[2];
+    double tempPoint[2];
+    double tempnorm;
+    /*double D[2],dl;*/
     
    /*Calculate k1 */
     interpgrad2d(k1, gradientArray, gradientArraySize, startPoint);
@@ -204,10 +204,10 @@ bool RK4STEP_2D(float *gradientArray, int *gradientArraySize, float *startPoint,
     return true;
 }
 
-bool RK4STEP_3D(float *gradientArray, int *gradientArraySize, float *startPoint, float *nextPoint, float stepSize) {
-    float k1[3], k2[3], k3[3], k4[3];
-    float tempPoint[3];
-    float tempnorm;
+bool RK4STEP_3D(double *gradientArray, int *gradientArraySize, double *startPoint, double *nextPoint, double stepSize) {
+    double k1[3], k2[3], k3[3], k4[3];
+    double tempPoint[3];
+    double tempnorm;
     
    /*Calculate k1 */
     interpgrad3d(k1, gradientArray, gradientArraySize, startPoint);
@@ -269,7 +269,7 @@ bool RK4STEP_3D(float *gradientArray, int *gradientArraySize, float *startPoint,
     return true;
 }
 //solo funciona con un punto inicial
-void gradient_descend_rk4(float* startPoint, float *gradientArray, int* size_map, int* size_point, float *nextPoint, float stepSize) {
+void gradient_descend_rk4(double* startPoint, double *gradientArray, int* size_map, int* size_point, double *nextPoint, double stepSize) {
 
     int stepSizeArray;
     int i;
@@ -291,7 +291,7 @@ void gradient_descend_rk4(float* startPoint, float *gradientArray, int* size_map
    /*Perform the RK4 raytracing step */
     if(PointLength==2) {
         int gradientArraySize[2];
-        float startPoint1[2];
+        double startPoint1[2];
         gradientArraySize[0]=size_map[0];
         gradientArraySize[1]=size_map[1];
         startPoint1[0]=startPoint[0]-1.0; 
@@ -307,7 +307,7 @@ void gradient_descend_rk4(float* startPoint, float *gradientArray, int* size_map
     }
     else if(PointLength==3) {
         int gradientArraySize[3];
-        float startPoint1[3];
+        double startPoint1[3];
         gradientArraySize[0]=size_map[0];
         gradientArraySize[1]=size_map[1];
         gradientArraySize[2]=size_map[2];

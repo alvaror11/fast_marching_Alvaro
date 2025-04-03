@@ -1,5 +1,5 @@
 #define eps 2.2204460492503131e-16
-#define floatmax 1e50
+#define doublemax 1e50
 #define INF 2e50
 #define listINF 2.345e50
 #ifndef min
@@ -53,24 +53,24 @@ void print_memory_usage(const char* checkpoint) {
 }
 
 /* Find minimum value of an array and return its index */
-int minarray(float *A, int l) {
+int minarray(double *A, int l) {
     int i;
     int minind=0;
     for (i=0; i<l; i++) { if(A[i]<A[minind]){ minind=i; } }
     return minind;
 }
 
-float pow2(float val) { return val*val; }
+double pow2(double val) { return val*val; }
 
-int iszero(float a){ return a*a<eps; }
-int isnotzero(float a){ return a*a>eps; }
+int iszero(double a){ return a*a<eps; }
+int isnotzero(double a){ return a*a>eps; }
 
-void roots(float* Coeff, float* ans) {
-    float a=Coeff[0];
-    float b=Coeff[1];
-    float c=Coeff[2];
-    float r1, r2;
-    float d;
+void roots(double* Coeff, double* ans) {
+    double a=Coeff[0];
+    double b=Coeff[1];
+    double c=Coeff[2];
+    double r1, r2;
+    double d;
     
     d=max(pow2(b)-4.0*a*c,0);
     if(isnotzero(a)) {
@@ -103,7 +103,7 @@ void roots(float* Coeff, float* ans) {
 }
 
 
-int maxarray(float *A, int l) {
+int maxarray(double *A, int l) {
     int i;
     int maxind=0;
     for (i=0; i<l; i++) { if(A[i]>A[maxind]){ maxind=i; } }
@@ -120,7 +120,7 @@ int p2x(int x) /* 2^x */
     return y*p2x[x];
 }
 
-void show_list(float **listval, int *listprop) {
+void show_list(double **listval, int *listprop) {
     int z, k;
     for(z=0;z<listprop[1]; z++) {
         for(k=0;k<p2x(z+1); k++) {
@@ -135,19 +135,19 @@ void show_list(float **listval, int *listprop) {
     }
 }
 
-void initialize_list(float ** listval, int *listprop) {
+void initialize_list(double ** listval, int *listprop) {
     /* Loop variables */
     int i;
     /* Current Length, Orde and Current Max Length */
     listprop[0]=0; listprop[1]=1; listprop[2]=2;
     /* Make first orde storage of 2 values */
-    listval[0]=(float*)malloc(2 * sizeof(float));
+    listval[0]=(double*)malloc(2 * sizeof(double));
     /* Initialize on infinite */
     for(i=0;i<2;i++) { listval[0][i]=listINF; }
 }
 
 
-void destroy_list(float ** listval, int *listprop) {
+void destroy_list(double ** listval, int *listprop) {
     /* Loop variables */
     int i, list_orde;
     /* Get list orde */
@@ -158,7 +158,7 @@ void destroy_list(float ** listval, int *listprop) {
     free(listprop);
 }
 
-void list_add(float ** listval, int *listprop, float val) {
+void list_add(double ** listval, int *listprop, double val) {
     /* List parameters */
     int list_length, list_orde, list_lengthmax;
     /* Loop variable */
@@ -172,10 +172,10 @@ void list_add(float ** listval, int *listprop, float val) {
         list_lengthmax=list_lengthmax*2;
         for (i=list_orde; i>0; i--) {
             listval[i]=listval[i-1];
-            listval[i] = (float *)realloc(listval[i], p2x(i+1)*sizeof(float));
+            listval[i] = (double *)realloc(listval[i], p2x(i+1)*sizeof(double));
             for(j=p2x(i); j<p2x(i+1); j++) { listval[i][j]=listINF;  }
         }
-        listval[0]=(float *)malloc(2*sizeof(float));
+        listval[0]=(double *)malloc(2*sizeof(double));
         listval[0][0]=min(listval[1][0], listval[1][1]);
         listval[0][1]=listINF;
         list_orde++;
@@ -186,14 +186,14 @@ void list_add(float ** listval, int *listprop, float val) {
     listval[list_orde-1][listp]=val;
     /* Update the links minimum */
     for (i=list_orde-1; i>0; i--) {
-        listp=(int)floor(((float)listp)/2);
+        listp=(int)floor(((double)listp)/2);
         if(val<listval[i-1][listp]) { listval[i-1][listp]=val; } else { break; }
     }
     /* Set list parameters */
     listprop[0]=list_length; listprop[1]=list_orde; listprop[2]=list_lengthmax;
 }
 
-int list_minimum(float ** listval, int *listprop) {
+int list_minimum(double ** listval, int *listprop) {
     /* List parameters */
     int list_length, list_orde, list_lengthmax;
     /* Loop variable */
@@ -215,15 +215,15 @@ int list_minimum(float ** listval, int *listprop) {
     if(listval[i][listp]<=listval[i][listp+1]){minindex=listp; } else { minindex=listp+1; }
     return minindex;
 }
-void list_remove(float ** listval, int *listprop, int index) {
+void list_remove(double ** listval, int *listprop, int index) {
     /* List parameters */
     int list_length, list_orde, list_lengthmax;
     /* Loop variable */
     int i;
     /* Temp index */
     int index2;
-    float val;
-    float valmin;
+    double val;
+    double valmin;
     /* Get list parameters */
     list_length=listprop[0];
     list_orde=listprop[1];
@@ -240,7 +240,7 @@ void list_remove(float ** listval, int *listprop, int index) {
     while(true) {
         if((index%2)==0) { index2=index+1; } else { index2=index-1; }
         if(val<listval[i][index2]) {
-            index=(int)floor(((float)index2)/2.0);
+            index=(int)floor(((double)index2)/2.0);
             if(listval[i][index2]<valmin) { valmin=listval[i][index2]; }
 			if(i==0) { break; }
             listval[i-1][index]=valmin;
@@ -250,13 +250,13 @@ void list_remove(float ** listval, int *listprop, int index) {
     }
 }
 
-void list_remove_replace(float ** listval, int *listprop, int index) {
+void list_remove_replace(double ** listval, int *listprop, int index) {
     /* List parameters */
     int list_length, list_orde, list_lengthmax;
     /* Loop variable */
     int i, listp;
     /* Temporary store value */
-    float val;
+    double val;
     int templ;
     /* Get list parameters */
     list_length=listprop[0];
@@ -276,7 +276,7 @@ void list_remove_replace(float ** listval, int *listprop, int index) {
         listval[list_orde-1][index]=val;
         /* Update the links minimum */
         for (i=(list_orde-1); i>0; i--) {
-            listp=(int)floor(((float)listp)/2);
+            listp=(int)floor(((double)listp)/2);
             if(val<listval[i-1][listp]) { listval[i-1][listp]=val; } else {  break; }
         }
     }
@@ -293,7 +293,7 @@ void list_remove_replace(float ** listval, int *listprop, int index) {
         for (i=0; i<list_orde; i++) {
             listval[i]=listval[i+1];
             /* Resize arrays to their new shorter size */
-            listval[i] = (float *)realloc(listval[i], templ*sizeof(float));
+            listval[i] = (double *)realloc(listval[i], templ*sizeof(double));
             templ*=2;
         }
     }
@@ -301,7 +301,7 @@ void list_remove_replace(float ** listval, int *listprop, int index) {
     listprop[0]=list_length; listprop[1]=list_orde; listprop[2]=list_lengthmax;
 }
 
-void listupdate(float **listval, int *listprop, int index, float val) {
+void listupdate(double **listval, int *listprop, int index, double val) {
     /* List parameters */
     int list_length, list_orde, list_lengthmax;
     /* loop variable */
@@ -315,7 +315,7 @@ void listupdate(float **listval, int *listprop, int index, float val) {
     listval[list_orde-1][index]=val;
     /* Update the links minimum */
     for (i=(list_orde-1); i>0; i--) {
-        listp=(int)floor(((float)listp)/2);
+        listp=(int)floor(((double)listp)/2);
         if(val<listval[i-1][listp]) { listval[i-1][listp]=val; } else { break; }
     }
     /* Set list parameters */
@@ -329,15 +329,15 @@ int mindex3(int x, int y, int z, int sizx, int sizy) {
 int mindex2(int x, int y, int sizx) { 
     return x + y * sizx; 
 }
-bool IsFinite(float x) { 
-    return (x <= floatmax && x >= -floatmax); 
+bool IsFinite(double x) { 
+    return (x <= doublemax && x >= -doublemax); 
 }
 
-bool IsInf(float x) { 
-    return (x >= floatmax); 
+bool IsInf(double x) { 
+    return (x >= doublemax); 
 }
 
-bool IsListInf(float x) { 
+bool IsListInf(double x) { 
     return (x == listINF); 
 }
 
@@ -364,15 +364,15 @@ bool isfrozen2d(int i, int j, int *dims, bool *Frozen) {
            (Frozen[i + j * dims[0]] == 1);
 }
 
-float euclidean_distance(int x1, int y1, int x2, int y2) {
-    float dx = (float)(x2 - x1);
-    float dy = (float)(y2 - y1);
+double euclidean_distance(int x1, int y1, int x2, int y2) {
+    double dx = (double)(x2 - x1);
+    double dy = (double)(y2 - y1);
     return sqrt(dx*dx + dy*dy);
 }
 
-float euclidean_distance3D(int x1, int y1, int z1, int x2, int y2, int z2){
-    float dx = (float)(x2 - x1);
-    float dy = (float)(y2 - y1);
-    float dz = (float)(z2 - z1);
+double euclidean_distance3D(int x1, int y1, int z1, int x2, int y2, int z2){
+    double dx = (double)(x2 - x1);
+    double dy = (double)(y2 - y1);
+    double dz = (double)(z2 - z1);
     return sqrt(dx*dx + dy*dy + dz*dz);
 }

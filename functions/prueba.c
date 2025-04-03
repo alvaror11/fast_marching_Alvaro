@@ -19,7 +19,7 @@ void main() {
     if (dimensions_prob == 3){
         clock_t start = clock();
         // Coord X = ancho, Y = largo, Z = alto
-        int ancho = 200, largo = 200, alto = 200 ; 
+        int ancho = 25, largo = 25, alto = 25 ; 
         int *size_map = (int *)malloc(3 * sizeof(int));
         size_map[0] = ancho;
         size_map[1] = largo;
@@ -29,35 +29,35 @@ void main() {
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         double *objective_points  = (double *)malloc(num_points * 3 * sizeof(double));;
-        objective_points[0] = 190;   // x coordinate
-        objective_points[1] = 190;    // y coordinate
-        objective_points[2] = 190;    // z coordinate
+        objective_points[0] = 22;   // x coordinate
+        objective_points[1] = 22;    // y coordinate
+        objective_points[2] = 22;    // z coordinate
 
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
         int num_start_points = 1;
         int size_start[2] = {3, num_start_points};
         double *start_points = (double *)malloc(num_start_points * 3 * sizeof(double));;
-        start_points[0] = 30;    // x coordinate
-        start_points[1] = 30;   // y coordinate
-        start_points[2] = 30;   // z coordinate
+        start_points[0] = 10;    // x coordinate
+        start_points[1] = 10;   // y coordinate
+        start_points[2] = 10;   // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
         int planner_type = 0;           //tipo de planner a usar
         int escalado_vectores = 5;      //valor para escalar los vectores del planner 2
         
         // Define el umbral de distancia para la matriz de velocidades
-        float distance_threshold = 4.0;
+        double distance_threshold = 4.0;
 
         // Define el tamaño del paso
-        float step = 0.5;
+        double step = 0.5;
 
-        FILE *file = fopen("./Mapas/MAP_4_200_200_200.txt", "r");
+        FILE *file = fopen("./Mapas/MAP_1_25_25_25.txt", "r");
         if (file == NULL) {
             perror("Error al abrir el archivo");
             return;
         }
         
-        float *matriz = (float *)malloc(ancho * largo * alto* sizeof(float));
+        double *matriz = (double *)malloc(ancho * largo * alto* sizeof(double));
         //printf("\nReading 3D map with dimensions: %d x %d x %d\n", ancho, largo, alto);
 
         // Leer los datos y asignarlos a la matriz
@@ -67,7 +67,7 @@ void main() {
                     int valor;
                     fscanf(file, "%d", &valor);
                     int index = j + i*largo + k*ancho*largo;
-                    matriz[index] = (float)valor;
+                    matriz[index] = (double)valor;
                 }
             }
             char newline[2];
@@ -93,7 +93,7 @@ void main() {
         clock_t start_planner = clock();
         //planners_3D(matriz, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
         clock_t end_planner = clock();
-        float time_planner = ((float) (end_planner - start_planner)) / CLOCKS_PER_SEC;    
+        double time_planner = ((double) (end_planner - start_planner)) / CLOCKS_PER_SEC;    
         printf("Time for planner: %.3f s\n", time_planner);
 
         // Adding a layer of obstacles surrounding the map
@@ -111,7 +111,7 @@ void main() {
             start_points[1] = start_points[1] + 1;
             start_points[2] = start_points[2] + 1;
 
-            float *matriz2 = (float *)malloc(ancho * largo * alto * sizeof(float));
+            double *matriz2 = (double *)malloc(ancho * largo * alto * sizeof(double));
             //printf("\nCreating surrounded 3D map with dimensions: %d x %d x %d\n", ancho, largo, alto);
 
             // Fill the new matrix with surrounding obstacles
@@ -147,7 +147,7 @@ void main() {
         FMM2_3D(matriz, size_map, distance_threshold, 
             objective_points, size_objective, start_points, step, traj);
         clock_t end = clock();
-        float cpu_time_used = ((float) (end - start)) / CLOCKS_PER_SEC;
+        double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
         // Save trajectory to file
         /*
         FILE* results_file = fopen("./Archivos/trajectory_results.txt", "w");
@@ -190,26 +190,26 @@ void main() {
         int dimensions = 2;
         int size_objective[2] = {dimensions,num_points};
         double *objective_points  = (double *)malloc(num_points * 2 * sizeof(double));;
-        objective_points[0] = 5;  // x coordinate
-        objective_points[1] = 5;  // y coordinate
+        objective_points[0] = 10;  // x coordinate
+        objective_points[1] = 10;  // y coordinate
 
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
         int num_start_points = 1;
         int size_start[2] = {dimensions,num_start_points};
         double *start_points = (double *)malloc(num_start_points * 2 * sizeof(double));;
-        start_points[0] = 20;  // x coordinate
-        start_points[1] = 22;  // y coordinate
+        start_points[0] = 40;  // x coordinate
+        start_points[1] = 40;  // y coordinate
         
         // PARSAMETROS DE LOS PLANNER
         int planner_type = 2;       // tipo de planner a usar
         int escalado_vectores = 6; // valor para escalar los vectores del planner 2
 
         // Define el umbral de distancia para la matriz de velocidades
-        float distance_threshold = 4;
-        float safety_margin = 2.5;  // por ahora no se usa
+        double distance_threshold = 4;
+        double safety_margin = 2.5;  // por ahora no se usa
 
         // Define el tamaño del paso para el descenso del gradiente
-        float step = 0.5;
+        double step = 0.5;
 
         FILE *file = fopen("./Mapas/mapa.txt", "r");
         if (file == NULL) {
@@ -217,7 +217,7 @@ void main() {
             return;
         }
 
-        float *matriz = (float *)malloc((int)size_map[1] * (int)size_map[0] * sizeof(float));
+        double *matriz = (double *)malloc((int)size_map[1] * (int)size_map[0] * sizeof(double));
         // Leer los datos y asignarlos a la matriz
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
@@ -225,7 +225,7 @@ void main() {
                 fscanf(file, "%d", &valor);
                 //printf("%d", valor);
                 // Invertir valores (0->1 y 1->0) y guardar en el formato esperado
-                matriz[j + i * columnas] = (float)valor;
+                matriz[j + i * columnas] = (double)valor;
                 //printf("%.1f\n",  matriz[i + j * columnas]);
             }
         }
@@ -253,7 +253,7 @@ void main() {
         FMM2_2D(matriz, size_map, distance_threshold, safety_margin, 
                 objective_points, size_objective, start_points, size_start, step, traj, planner_type, escalado_vectores);
         clock_t end = clock();
-        float cpu_time_used = ((float) (end - start)) / CLOCKS_PER_SEC;
+        double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
         // Save trajectory to file
         FILE* results_file = fopen("./Archivos/trajectory_results.txt", "w");

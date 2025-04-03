@@ -27,20 +27,20 @@
  *Function is written by D.Kroon University of Twente (June 2009)
  */
 
-float CalculateDistance(float *T, float Fij, int *dims, int i, int j, bool usesecond, bool usecross, bool *Frozen) {
+double CalculateDistance(double *T, double Fij, int *dims, int i, int j, bool usesecond, bool usecross, bool *Frozen) {
     /* Derivatives */
-    float Tm[4]={0, 0, 0, 0};
-    float Tm2[4]={0, 0, 0, 0};
-    float Coeff[3];
+    double Tm[4]={0, 0, 0, 0};
+    double Tm2[4]={0, 0, 0, 0};
+    double Coeff[3];
     
     /* local derivatives in distance image */
-    float Tpatch_2_3, Txm2, Tpatch_4_3, Txp2;
-    float Tpatch_3_2, Tym2, Tpatch_3_4, Typ2;
-    float Tpatch_2_2, Tr1m2, Tpatch_4_4, Tr1p2;
-    float Tpatch_2_4, Tr2m2, Tpatch_4_2, Tr2p2;
+    double Tpatch_2_3, Txm2, Tpatch_4_3, Txp2;
+    double Tpatch_3_2, Tym2, Tpatch_3_4, Typ2;
+    double Tpatch_2_2, Tr1m2, Tpatch_4_4, Tr1p2;
+    double Tpatch_2_4, Tr2m2, Tpatch_4_2, Tr2p2;
     
     /* Return values root of polynomial */
-    float ansroot[2]={0, 0};
+    double ansroot[2]={0, 0};
     
     /* Loop variables  */
     int q, t;
@@ -55,9 +55,9 @@ float CalculateDistance(float *T, float Fij, int *dims, int i, int j, bool usese
     int in, jn;
     
     /* Constant cross term */
-    const float c1=0.5;
+    const double c1=0.5;
     
-    float Tt, Tt2;
+    double Tt, Tt2;
     /*Get First order derivatives (only use frozen pixel)  */
     in=i-1; jn=j+0; if(isfrozen2d(in, jn, dims, Frozen)) { Tpatch_2_3=T[mindex2(in, jn, dims[0])]; } else { Tpatch_2_3=INF; }
     in=i+0; jn=j-1; if(isfrozen2d(in, jn, dims, Frozen)) { Tpatch_3_2=T[mindex2(in, jn, dims[0])]; } else { Tpatch_3_2=INF; }
@@ -204,17 +204,17 @@ float CalculateDistance(float *T, float Fij, int *dims, int i, int j, bool usese
 }
 
 /* The matlab mex funtion  */
-float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* size_target) {
+double* main_msfm(double* F, double* source_points, double* T, int* size_map, int* size_target) {
      /* The input variables */;
     bool usesecond = true;  // Default values
     bool usecross = true;   // Default values
 
     
     /* Euclidian distance image */
-    float *Y;
+    double *Y;
     
     /* Current distance values */
-    float Tt, Ty;
+    double Tt, Ty;
     
     /* Matrix containing the Frozen Pixels" */
     bool *Frozen;
@@ -241,13 +241,13 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
     /* Neighbour list */
     int neg_free;
     int neg_pos;
-    float *neg_listv;
-    float *neg_listx;
-    float *neg_listy;
-    float *neg_listo;
+    double *neg_listv;
+    double *neg_listx;
+    double *neg_listy;
+    double *neg_listo;
     
     int *listprop;
-    float **listval;
+    double **listval;
     
     /* Neighbours 4x2 */
     int ne[8]={-1, 1, 0, 0, 0, 0, -1, 1};
@@ -266,10 +266,10 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
     
     /* Allocate memory for the distance image. IT MAY NOT BE NEEDED, if the memory is allocated before running the function */
    
-    //T = (float *)malloc(npixels * sizeof(float)); 
+    //T = (double *)malloc(npixels * sizeof(double)); 
 
     if(Ed) { 
-        Y = (float *)malloc(npixels * sizeof(float));
+        Y = (double *)malloc(npixels * sizeof(double));
     }
     
     /* Pixels which are processed and have a final distance are frozen */
@@ -283,16 +283,16 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
     /*Free memory to store neighbours of the (segmented) region */
     neg_free = 100000;
     neg_pos=0;
-    neg_listx = (float *)malloc( neg_free*sizeof(float) );
-    neg_listy = (float *)malloc( neg_free*sizeof(float) );
+    neg_listx = (double *)malloc( neg_free*sizeof(double) );
+    neg_listy = (double *)malloc( neg_free*sizeof(double) );
     if(Ed) {
-        neg_listo = (float *)malloc( neg_free*sizeof(float) );
+        neg_listo = (double *)malloc( neg_free*sizeof(double) );
         for(q=0;q<neg_free;q++) { neg_listo[q]=0; }
     }
     /* List parameters array */
     listprop=(int*)malloc(3* sizeof(int));
     /* Make jagged list to store a maximum of 2^64 values */
-    listval= (float **)malloc( 64* sizeof(float *) );
+    listval= (double **)malloc( 64* sizeof(double *) );
     
     /* Initialize parameter list */
     initialize_list(listval, listprop);
@@ -349,10 +349,10 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
                     /*If running out of memory at a new block  */
                     if(neg_pos>=neg_free) {
                         neg_free+=100000;
-                        neg_listx = (float *)realloc(neg_listx, neg_free*sizeof(float) );
-                        neg_listy = (float *)realloc(neg_listy, neg_free*sizeof(float) );
+                        neg_listx = (double *)realloc(neg_listx, neg_free*sizeof(double) );
+                        neg_listy = (double *)realloc(neg_listy, neg_free*sizeof(double) );
                         if(Ed) {
-                            neg_listo = (float *)realloc(neg_listo, neg_free*sizeof(float) );
+                            neg_listo = (double *)realloc(neg_listo, neg_free*sizeof(double) );
                         }
                     }
                     list_add(listval, listprop, Tt);
@@ -431,10 +431,10 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
                     /*If running out of memory at a new block */
                     if(neg_pos>=neg_free) {
                         neg_free+=100000;
-                        neg_listx = (float *)realloc(neg_listx, neg_free*sizeof(float) );
-                        neg_listy = (float *)realloc(neg_listy, neg_free*sizeof(float) );
+                        neg_listx = (double *)realloc(neg_listx, neg_free*sizeof(double) );
+                        neg_listy = (double *)realloc(neg_listy, neg_free*sizeof(double) );
                         if(Ed) {
-                            neg_listo = (float *)realloc(neg_listo, neg_free*sizeof(float) );
+                            neg_listo = (double *)realloc(neg_listo, neg_free*sizeof(double) );
                         }
                     }
                     list_add(listval, listprop, Tt);
@@ -450,7 +450,7 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
         }
         
     }
-    return (float*)T;
+    return (double*)T;
     /* Free memory */
     /* Destroy parameter list */
     destroy_list(listval, listprop);
@@ -463,13 +463,13 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
     free(Y);
 }
 
-float* velocities_map(float* binary_map, int* size_map, int threshold, float safety_margin) {
+double* velocities_map(double* binary_map, int* size_map, int threshold, double safety_margin) {
     // Creates the velocities map from the binary occupational map.
     //2D only
     int rows = size_map[1];
     int cols = size_map[0];
-    float* distance_map = malloc(rows * cols * sizeof(float));
-    float max_distance = sqrt(rows*rows + cols*cols);  // diagonal distance
+    double* distance_map = malloc(rows * cols * sizeof(double));
+    double max_distance = sqrt(rows*rows + cols*cols);  // diagonal distance
 
     // First pass: mark obstacles as 0 and other cells as infinity
     for (int i = 0; i < rows; i++) {
@@ -485,13 +485,13 @@ float* velocities_map(float* binary_map, int* size_map, int threshold, float saf
     // Create the kernel to be applied to the distance map
     int size_kernel = (threshold*2) + 1;
     int center = size_kernel / 2;
-    float* kernel = malloc(size_kernel * size_kernel * sizeof(float));
+    double* kernel = malloc(size_kernel * size_kernel * sizeof(double));
 
 
     for (int i = 0; i < size_kernel; i++) {
         for (int j = 0; j < size_kernel; j++) {
-            float dx = (float)(i - center);
-            float dy = (float)(j - center);
+            double dx = (double)(i - center);
+            double dy = (double)(j - center);
             kernel[j + i * size_kernel] = sqrt((dx*dx + dy*dy));
         }
     }
@@ -513,8 +513,8 @@ float* velocities_map(float* binary_map, int* size_map, int threshold, float saf
                             int kernel_i = ki + center;
                             int kernel_j = kj + center;
                             // Apply kernel to target cell
-                            float new_dist = kernel[kernel_j + kernel_i * size_kernel];
-                            float current_dist = distance_map[target_j + target_i * cols];
+                            double new_dist = kernel[kernel_j + kernel_i * size_kernel];
+                            double current_dist = distance_map[target_j + target_i * cols];
                             if (new_dist < current_dist) {
                                 distance_map[target_j + target_i * cols] = new_dist;
                             }
@@ -529,7 +529,7 @@ float* velocities_map(float* binary_map, int* size_map, int threshold, float saf
     for (int i = 0; i < rows * cols; i++) {
         if (distance_map[i] != 0.0) {
             // Normalize and apply threshold to create smooth gradient
-            float normalized_dist = distance_map[i] / threshold;
+            double normalized_dist = distance_map[i] / threshold;
             
             if (normalized_dist > 1.0) {
                 distance_map[i] = 1.0;  // Maximum velocity
@@ -544,7 +544,7 @@ float* velocities_map(float* binary_map, int* size_map, int threshold, float saf
     return distance_map;
 }
 
-void compute_gradient_2d_discrete(float* input_matrix, float* gradient_matrix, int* size_map) {
+void compute_gradient_2d_discrete(double* input_matrix, double* gradient_matrix, int* size_map) {
     
     int rows = size_map[1];
     int cols = size_map[0];
@@ -558,9 +558,9 @@ void compute_gradient_2d_discrete(float* input_matrix, float* gradient_matrix, i
     // For each point in the matrix, including edges
     for(int i = 0; i < rows; i++) {
         for(int j = 0; j < cols; j++) {
-            float current_value = input_matrix[i*cols + j];
-            float min_value = current_value;
-            float fx = 0, fy = 0;
+            double current_value = input_matrix[i*cols + j];
+            double min_value = current_value;
+            double fx = 0, fy = 0;
             int valid_neighbors = 0;
             
             // Check all 8 neighbors
@@ -571,12 +571,12 @@ void compute_gradient_2d_discrete(float* input_matrix, float* gradient_matrix, i
                 // Only process neighbor if it's within bounds
                 if(ni >= 0 && ni < rows && nj >= 0 && nj < cols) {
                     valid_neighbors++;
-                    float neighbor_value = input_matrix[ni*cols + nj];
+                    double neighbor_value = input_matrix[ni*cols + nj];
                     
                     if(neighbor_value < min_value) {
                         min_value = neighbor_value;
                         // Normalize direction vector
-                        float norm = sqrt(Ne[n][0]*Ne[n][0] + Ne[n][1]*Ne[n][1]);
+                        double norm = sqrt(Ne[n][0]*Ne[n][0] + Ne[n][1]*Ne[n][1]);
                         fx = Ne[n][1]/norm; // x component in the columns direction
                         fy = Ne[n][0]/norm; // y component in the rows direction
                     }

@@ -8,60 +8,60 @@ cd(files_folder)
 %% Occupation map
 %% Read and create 3D map from text file
 cd(files_folder);
-fileID = fopen('mapa3D.txt', 'r');
+fileID = fopen('MAP_1_25_25_25.txt', 'r');
 if fileID == -1
     error('Could not open Mapa3D.txt file');
 end
 
 % Read dimensions from first line
-ancho = 50;
-largo = 50;
-altura = 50;
+ancho = 25;
+largo = 25;
+altura = 25;
 
 % Initialize 3D matrix
 Wgr = zeros(ancho, largo, altura);
 
 % Read data layer by layer for original 50x50x50 map
-for k = 1:altura  
-    % Read each row of the layer
-    for i = 1:ancho
-        line = fgetl(fileID);
-        if ~ischar(line)
-            error(['Error reading line ' num2str(i) ' of layer ' num2str(k)]);
-        end
-        values = str2num(line);
-        longitud = length(values);
-        if length(values) ~= (largo)
-            error(['Incorrect number of values in line ' num2str(i) ' of layer ' num2str(k)]);
-        end
-        Wgr(i,:,k) = values;
-    end
-
-    empty_line = fgetl(fileID); % Skip empty line between layers
-end
+% for k = 1:altura  
+%     % Read each row of the layer
+%     for i = 1:ancho
+%         line = fgetl(fileID);
+%         if ~ischar(line)
+%             error(['Error reading line ' num2str(i) ' of layer ' num2str(k)]);
+%         end
+%         values = str2num(line);
+%         longitud = length(values);
+%         if length(values) ~= (largo*ancho)
+%             error(['Incorrect number of values in line ' num2str(i) ' of layer ' num2str(k)]);
+%         end
+%         Wgr(i,:,k) = values;
+%     end
+% 
+%     empty_line = fgetl(fileID); % Skip empty line between layers
+% end
 
 % Read data layer by layer
-% for k = 1:altura  
-%     % Read one line containing the whole layer
-%     line = fgetl(fileID);
-%     if ~ischar(line)
-%         error(['Error reading layer ' num2str(k)]);
-%     end
-% 
-%     % Convert string to array of numbers
-%     values = str2num(line);
-%     if length(values) ~= (largo*ancho)
-%         error(['Incorrect number of values in layer ' num2str(k) ...
-%                '. Expected ' num2str(largo*ancho) ' but got ' num2str(length(values))]);
-%     end
-% 
-%     % Reshape the values into a 2D layer and store in Wgr
-%     layer_values = reshape(values, [largo, ancho])';
-%     Wgr(:,:,k) = layer_values;
-% 
-%     % Skip empty line between layers if present
-%     %empty_line = fgetl(fileID);
-% end
+for k = 1:altura  
+    % Read one line containing the whole layer
+    line = fgetl(fileID);
+    if ~ischar(line)
+        error(['Error reading layer ' num2str(k)]);
+    end
+    
+    % Convert string to array of numbers
+    values = str2num(line);
+    if length(values) ~= (largo*ancho)
+        error(['Incorrect number of values in layer ' num2str(k) ...
+               '. Expected ' num2str(largo*ancho) ' but got ' num2str(length(values))]);
+    end
+    
+    % Reshape the values into a 2D layer and store in Wgr
+    layer_values = reshape(values, [largo, ancho])';
+    Wgr(:,:,k) = layer_values;
+    
+    % Skip empty line between layers if present
+    %empty_line = fgetl(fileID);
+end
 fclose(fileID);
 cd(main_folder);
 
