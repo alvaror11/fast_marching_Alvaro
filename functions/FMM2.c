@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "msfm2d_MOD.h"
 #include "msfm3d_MOD.h"
 #include "common.h"
 #include "rk4_2D_3D.h"
-#include <time.h>
+#include "planner.h"
+
 
 
 double* velocities_map3D(double* matriz, int* size_map, int distance_threshold);
@@ -72,12 +74,42 @@ void addPointToTrajectory3D(Trajectory3D* traj, double x, double y, double z) {
 
 
 void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double safety_margin,
-             double* objective_points, int size_objective[2], double* start_points, double step,
-            Trajectory* traj){
+             double* objective_points, int size_objective[2], double* start_points, int size_start[2], double step,
+            Trajectory* traj, int planner_type, int escalado_vectores){
     
+
+    if (planner_type == 0){
+        // Solo se añade un borde de obstaculos alrededor del mapa si no se ha aplicado ningun planner
+        size_map[0] += 2;
+        size_map[1] += 2;
+        int columnas = size_map[0];
+        int filas = size_map[1];
+        
+        objective_points[0] = objective_points[0] + 1;
+        objective_points[1] = objective_points[1] + 1;
+        start_points[0] = start_points[0] + 1;
+        start_points[1] = start_points[1] + 1;
+        double *matriz2 = (double *)malloc(filas * columnas * sizeof(double));
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++) {
+                if (i == 0 || j == 0 || i == filas-1 || j == columnas-1) {
+                    matriz2[j + i * columnas] = 1;
+                } else {
+                    matriz2[j + i * columnas] = matriz[j-1 + (i-1) * (columnas-2)];
+                }
+            }
+        }
+
+        free(matriz);
+        matriz = matriz2;
+    }     
     //Create velocities map
     printf("Creating velocities map...\n");
     double* obstacle_distance_map = velocities_map(matriz, size_map, distance_threshold, safety_margin);
+    
+    // Apply planner
+    planners_2D(obstacle_distance_map, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
+    
     // Save velocities map 
     /*
     FILE *output_file1 = fopen("./Archivos/velocities_map.txt", "w");
@@ -91,8 +123,12 @@ void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double sa
          }
          fprintf(output_file1, "\n");
      }
-     fclose(output_file1); 
-    */
+     fclose(output_file1);
+     */
+    
+    
+     
+    
     //Allocate memory for output map
     double* output_T = (double *)malloc(size_map[1] * size_map[0] * sizeof(double));
     printf("Calculating times map...\n");  
@@ -144,10 +180,10 @@ void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double sa
      fclose(gradient_x_file);
      fclose(gradient_y_file);
     */
+
     // Empezamos a usar el descenso del gradiente para buscar el camino
     bool finished = false;      //mientras no se llegue al punto final es false
      
-
     // Añadir el punto inicial
     printf("Starting gradient descend...\n");
     addPointToTrajectory(traj, start_points[0], start_points[1]);
@@ -190,7 +226,7 @@ void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double sa
      }
  
      fclose(traj_file);
-    */
+    
     // Liberar memoria    
     free(output_T);
     free(matriz);
@@ -198,7 +234,7 @@ void FMM2_2D(double* matriz, int* size_map, double distance_threshold, double sa
     free(start_points);
     //free(obstacle_distance_map);
     free(last_point);
-    
+    */
 }
 void FMM2_3D(double* matriz, int size_map[3], double distance_threshold, double* objective_points, 
             int size_objective[2], double* start_points, double step, Trajectory3D* traj){

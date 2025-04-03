@@ -6,7 +6,6 @@
 #include "msfm3d_MOD.h"
 #include "common.h"
 #include "rk4_2D_3D.h"
-#include "planner.h"
 #include "FMM2.h"
 
 
@@ -15,7 +14,7 @@
 void main() {
     
     // Choose dimensions of the trayectory
-     int dimensions_prob = 3;// Removed redefinition of 'dimensions'
+     int dimensions_prob = 2;// Removed redefinition of 'dimensions'
 
     if (dimensions_prob == 3){
         clock_t start = clock();
@@ -92,7 +91,7 @@ void main() {
 
         // Aplicar el planner
         clock_t start_planner = clock();
-        planners_3D(matriz, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
+        //planners_3D(matriz, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
         clock_t end_planner = clock();
         double time_planner = ((double) (end_planner - start_planner)) / CLOCKS_PER_SEC;    
         printf("Time for planner: %.3f s\n", time_planner);
@@ -181,7 +180,7 @@ void main() {
     else if (dimensions_prob == 2){
         clock_t start = clock();
         // Define las dimensiones de la matriz
-        int filas = 25, columnas = 25; 
+        int filas = 50, columnas = 50; 
         int *size_map = (int *)malloc(2 * sizeof(int));
         size_map[0] = columnas;
         size_map[1] = filas;
@@ -191,18 +190,18 @@ void main() {
         int dimensions = 2;
         int size_objective[2] = {dimensions,num_points};
         double *objective_points  = (double *)malloc(num_points * 2 * sizeof(double));;
-        objective_points[0] = 5;  // x coordinate
-        objective_points[1] = 5;  // y coordinate
+        objective_points[0] = 10;  // x coordinate
+        objective_points[1] = 10;  // y coordinate
 
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
         int num_start_points = 1;
         int size_start[2] = {dimensions,num_start_points};
         double *start_points = (double *)malloc(num_start_points * 2 * sizeof(double));;
-        start_points[0] = 20;  // x coordinate
-        start_points[1] = 22;  // y coordinate
+        start_points[0] = 40;  // x coordinate
+        start_points[1] = 40;  // y coordinate
         
         // PARSAMETROS DE LOS PLANNER
-        int planner_type = 0;       // tipo de planner a usar
+        int planner_type = 2;       // tipo de planner a usar
         int escalado_vectores = 6; // valor para escalar los vectores del planner 2
 
         // Define el umbral de distancia para la matriz de velocidades
@@ -212,7 +211,7 @@ void main() {
         // Define el tamaño del paso para el descenso del gradiente
         double step = 0.5;
 
-        FILE *file = fopen("./Mapas/MAP_1_25_25.txt", "r");
+        FILE *file = fopen("./Mapas/mapa.txt", "r");
         if (file == NULL) {
             perror("Error al abrir el archivo");
             return;
@@ -244,33 +243,6 @@ void main() {
             printf("Error: Initial or objective point is outside the map\n");
             return;
         }
-        // LLamar al planner
-        planners_2D(matriz, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
-
-        if (planner_type == 0){
-            // Solo se añade un borde de obstaculos alrededor del mapa si no se ha aplicado ningun planner
-            columnas = columnas+2;
-            filas = filas+2;
-            size_map[0] = columnas;
-            size_map[1] = filas;
-            objective_points[0] = objective_points[0] + 1;
-            objective_points[1] = objective_points[1] + 1;
-            start_points[0] = start_points[0] + 1;
-            start_points[1] = start_points[1] + 1;
-            double *matriz2 = (double *)malloc(filas * columnas * sizeof(double));
-            for (int i = 0; i < filas; i++) {
-                for (int j = 0; j < columnas; j++) {
-                    if (i == 0 || j == 0 || i == filas-1 || j == columnas-1) {
-                        matriz2[j + i * columnas] = 1;
-                    } else {
-                        matriz2[j + i * columnas] = matriz[j-1 + (i-1) * (columnas-2)];
-                    }
-                }
-            }
-
-            free(matriz);
-            matriz = matriz2;
-        }
         
         // Crear la trayectoria
         int initial_capacity = 10;
@@ -279,7 +251,7 @@ void main() {
         traj->size = 0;
         traj->capacity = initial_capacity;
         FMM2_2D(matriz, size_map, distance_threshold, safety_margin, 
-                objective_points, size_objective, start_points, step, traj);
+                objective_points, size_objective, start_points, size_start, step, traj, planner_type, escalado_vectores);
         clock_t end = clock();
         double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
