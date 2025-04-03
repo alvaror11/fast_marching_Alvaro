@@ -5,14 +5,14 @@
 
 // Point structures
 typedef struct {
-    double x;
-    double y;
+    float x;
+    float y;
 } Point2D;
 
 typedef struct {
-    double x;
-    double y;
-    double z;
+    float x;
+    float y;
+    float z;
 } Point3D;
 
 // Trajectory structures
@@ -29,17 +29,18 @@ typedef struct {
 } Trajectory3D;
 
 // Function declarations
-void FMM2_2D(double* matriz, int* size_map, double distance_threshold, 
-             double safety_margin, double* objective_points, int size_objective[2], 
-             double* start_points, double step, Trajectory* traj);
+void FMM2_2D(float* matriz, int* size_map, float distance_threshold, 
+             float safety_margin, float* objective_points, int size_objective[2], 
+             float* start_points, int size_start[2], float step, Trajectory* traj, 
+             int planner_type, int escalado_vectores);
 
-void FMM2_3D(double* matriz, int* size_map, double distance_threshold,
-             double* objective_points, int size_objective[2], 
-             double* start_points, double step, 
+void FMM2_3D(float* matriz, int* size_map, float distance_threshold,
+             float* objective_points, int size_objective[2], 
+             float* start_points, float step, 
              Trajectory3D* traj);  
 
 // Helper functions
-void addPointToTrajectory(Trajectory* traj, double x, double y);
-void addPointToTrajectory3D(Trajectory3D* traj, double x, double y, double z);
+void addPointToTrajectory(Trajectory* traj, float x, float y);
+void addPointToTrajectory3D(Trajectory3D* traj, float x, float y, float z);
 
 #endif // FMM2_H
