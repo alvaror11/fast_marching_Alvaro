@@ -17,7 +17,7 @@
 void main() {
     
     // Choose dimensions of the trayectory
-     int dimensions_prob = 3;// Removed redefinition of 'dimensions'
+     int dimensions_prob = 2;// Removed redefinition of 'dimensions'
 
     if (dimensions_prob == 3){
         clock_t start = clock();
@@ -149,7 +149,7 @@ void main() {
     else if (dimensions_prob == 2){
         clock_t start = clock();
         // Define las dimensiones de la matriz
-        const char* mapfile = "./Mapas/MAP_4_200_200.txt";
+        const char* mapfile = "./Mapas/MAP_2_50_50.txt";
         int filas, columnas;
         if (sscanf(mapfile, "./Mapas/MAP_%*d_%d_%d.txt", &filas, &columnas) != 2) {
             printf("Error: Could not extract dimensions from filename. Using defaults.\n");
@@ -171,18 +171,18 @@ void main() {
         int dimensions = 2;
         int size_objective[2] = {dimensions,num_points};
         float *objective_points  = (float *)malloc(num_points * 2 * sizeof(float));;
-        objective_points[0] = 10;  // x coordinate
-        objective_points[1] = 15;  // y coordinate
+        objective_points[0] = 38;  // x coordinate
+        objective_points[1] = 10;  // y coordinate
 
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
         int num_start_points = 1;
         int size_start[2] = {dimensions,num_start_points};
         float *start_points = (float *)malloc(num_start_points * 2 * sizeof(float));;
-        start_points[0] = 164;  // x coordinate
-        start_points[1] = 180;  // y coordinate
+        start_points[0] = 15;  // x coordinate
+        start_points[1] = 40;  // y coordinate
         
         // PARSAMETROS DE LOS PLANNER
-        int planner_type = 2;       // tipo de planner a usar
+        int planner_type = 0;       // tipo de planner a usar
         int escalado_vectores = 6; // valor para escalar los vectores del planner 2
 
         // Define el umbral de distancia para la matriz de velocidades
@@ -198,8 +198,6 @@ void main() {
             for (int j = 0; j < columnas; j++) {
                 int valor;
                 fscanf(file, "%d", &valor);
-                //printf("%d", valor);
-                // Invertir valores (0->1 y 1->0) y guardar en el formato esperado
                 matriz[j + i * columnas] = (float)valor;
                 //printf("%.1f\n",  matriz[i + j * columnas]);
             }
@@ -208,8 +206,8 @@ void main() {
         fclose(file);
         
         // Check that initial and final points are not inside an obstacle
-        if ((matriz[(int)start_points[1] - 1 + ((int)start_points[0]-1)*columnas] == 1)||
-            (matriz[(int)objective_points[1] - 1 + ((int)objective_points[0]-1)*columnas ] == 1)) {
+        if ((matriz[(int)start_points[0] - 1 + ((int)start_points[1]-1)*columnas] == 1)||
+            (matriz[(int)objective_points[0] - 1 + ((int)objective_points[1]-1)*columnas ] == 1)) {
             printf("Error: Initial or objective point is inside an obstacle\n");
             return;
         }

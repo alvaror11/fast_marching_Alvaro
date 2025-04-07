@@ -2,8 +2,8 @@ clear;
 clc;
 close all;
 
-filas = 200;
-columnas = 200;
+filas = 50;
+columnas = 50;
 
 % Punto para iniciar la traj.
 punto_x = 20;  % columna
@@ -14,7 +14,7 @@ maps_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fas
 
 %% Mapa Original
 cd(maps_folder);
-file = fopen('MAP_4_200_200.txt','r');
+file = fopen('MAP_2_50_50.txt','r');
 
 matriz_vel = zeros(filas, columnas); 
 
@@ -56,8 +56,8 @@ cd(files_folder);
 file = fopen('velocities_map.txt','r');
 
 %solo sumar filas y columnas si no se usan planners
-%filas = filas + 2;
-%columnas = columnas + 2;
+filas = filas + 2;
+columnas = columnas + 2;
 matriz_vel = zeros(filas, columnas); 
 
 % Leer los datos línea por línea y almacenarlos en la matriz
@@ -134,10 +134,10 @@ figure;
 imagesc(matrizClipped);
 colorbar;
 colormap(jet);
-clim([0 200]);
+clim([0 80]);
 
 % Etiquetas y título
-title('Times Map', 'FontSize', 12);
+title('Trajectory', 'FontSize', 12);
 xlabel('X', 'FontSize', 11);
 ylabel('Y', 'FontSize', 11);
 set(gca, 'FontSize', 10);
@@ -169,7 +169,7 @@ plot(traj_x(1), traj_y(1), 'go', 'MarkerSize', 15, 'LineWidth', 2);
 plot(traj_x(end), traj_y(end), 'ro', 'MarkerSize', 15, 'LineWidth', 2);
 
 % Add legend
-legend('Path', 'Waypoints', 'Start', 'Goal', 'Location', 'southeast');
+
 
 hold off;
 
