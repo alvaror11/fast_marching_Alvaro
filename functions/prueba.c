@@ -8,7 +8,10 @@
 #include "rk4_2D_3D.h"
 #include "FMM2.h"
 
-
+#ifdef WINDOWS
+#include <windows.h>
+#include <psapi.h>
+#endif
 
 
 void main() {
