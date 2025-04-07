@@ -2,6 +2,6 @@
 #define RK4_2D_H
 #include <stdbool.h>
 
-void gradient_descend_rk4(double* point, double *matriz, int* size_map, int* size_point, double *new_point, double step);
+void gradient_descend_rk4(float* point, float *matriz, int* size_map, int* size_point, float *new_point, float step);
 
 #endif 

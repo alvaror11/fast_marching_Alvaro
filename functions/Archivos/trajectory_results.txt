@@ -2,7 +2,7 @@
 2D (50 x 50)
 
 === Computation Parameters ===
-Computation Time = 0.007 s
+Computation Time = 0.005 s
 === Trajectory Parameters ===
 Start point: (40.00, 40.00)
 End point: (10.00, 10.00)
