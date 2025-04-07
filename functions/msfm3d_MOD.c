@@ -30,9 +30,9 @@
 
 
 
-double second_derivative(double Txm1, double Txm2, double Txp1, double Txp2) {
+float second_derivative(float Txm1, float Txm2, float Txp1, float Txp2) {
     bool ch1, ch2;
-    double Tm;
+    float Tm;
     Tm=INF;
     ch1=(Txm2<Txm1)&&IsFinite(Txm1); ch2=(Txp2<Txp1)&&IsFinite(Txp1);
     if(ch1&&ch2) { Tm =min( (4.0*Txm1-Txm2)/3.0 , (4.0*Txp1-Txp2)/3.0);}
@@ -41,7 +41,7 @@ double second_derivative(double Txm1, double Txm2, double Txp1, double Txp2) {
     return Tm;
 }
 
-double CalculateDistance3D(double *T, double Fijk, int *dims, int i, int j, int k, bool usesecond, bool usecross, bool *Frozen) {
+float CalculateDistance3D(float *T, float Fijk, int *dims, int i, int j, int k, bool usesecond, bool usecross, bool *Frozen) {
     
     /* Loop variables */
     int q, t;
@@ -50,36 +50,36 @@ double CalculateDistance3D(double *T, double Fijk, int *dims, int i, int j, int 
     int in, jn, kn;
     
     /* Derivatives */
-    double Tm[18]={0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    double Tm2[18]={0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    double Coeff[3];
+    float Tm[18]={0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    float Tm2[18]={0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    float Coeff[3];
     
     /* local derivatives in distance image */
-    double Txm1, Txm2, Txp1, Txp2;
-    double Tym1, Tym2, Typ1, Typ2;
-    double Tzm1, Tzm2, Tzp1, Tzp2;
+    float Txm1, Txm2, Txp1, Txp2;
+    float Tym1, Tym2, Typ1, Typ2;
+    float Tzm1, Tzm2, Tzp1, Tzp2;
     /* local cross derivatives in distance image */
-    double Tr2t1m1, Tr2t1m2, Tr2t1p1, Tr2t1p2;
-    double Tr2t2m1, Tr2t2m2, Tr2t2p1, Tr2t2p2;
-    double Tr2t3m1, Tr2t3m2, Tr2t3p1, Tr2t3p2;
-    double Tr3t1m1, Tr3t1m2, Tr3t1p1, Tr3t1p2;
-    double Tr3t2m1, Tr3t2m2, Tr3t2p1, Tr3t2p2;
-    double Tr3t3m1, Tr3t3m2, Tr3t3p1, Tr3t3p2;
-    double Tr4t1m1, Tr4t1m2, Tr4t1p1, Tr4t1p2;
-    double Tr4t2m1, Tr4t2m2, Tr4t2p1, Tr4t2p2;
-    double Tr4t3m1, Tr4t3m2, Tr4t3p1, Tr4t3p2;
-    double Tr5t1m1, Tr5t1m2, Tr5t1p1, Tr5t1p2;
-    double Tr5t2m1, Tr5t2m2, Tr5t2p1, Tr5t2p2;
-    double Tr5t3m1, Tr5t3m2, Tr5t3p1, Tr5t3p2;
-    double Tr6t1m1, Tr6t1m2, Tr6t1p1, Tr6t1p2;
-    double Tr6t2m1, Tr6t2m2, Tr6t2p1, Tr6t2p2;
-    double Tr6t3m1, Tr6t3m2, Tr6t3p1, Tr6t3p2;
+    float Tr2t1m1, Tr2t1m2, Tr2t1p1, Tr2t1p2;
+    float Tr2t2m1, Tr2t2m2, Tr2t2p1, Tr2t2p2;
+    float Tr2t3m1, Tr2t3m2, Tr2t3p1, Tr2t3p2;
+    float Tr3t1m1, Tr3t1m2, Tr3t1p1, Tr3t1p2;
+    float Tr3t2m1, Tr3t2m2, Tr3t2p1, Tr3t2p2;
+    float Tr3t3m1, Tr3t3m2, Tr3t3p1, Tr3t3p2;
+    float Tr4t1m1, Tr4t1m2, Tr4t1p1, Tr4t1p2;
+    float Tr4t2m1, Tr4t2m2, Tr4t2p1, Tr4t2p2;
+    float Tr4t3m1, Tr4t3m2, Tr4t3p1, Tr4t3p2;
+    float Tr5t1m1, Tr5t1m2, Tr5t1p1, Tr5t1p2;
+    float Tr5t2m1, Tr5t2m2, Tr5t2p1, Tr5t2p2;
+    float Tr5t3m1, Tr5t3m2, Tr5t3p1, Tr5t3p2;
+    float Tr6t1m1, Tr6t1m2, Tr6t1p1, Tr6t1p2;
+    float Tr6t2m1, Tr6t2m2, Tr6t2p1, Tr6t2p2;
+    float Tr6t3m1, Tr6t3m2, Tr6t3p1, Tr6t3p2;
     
-    double Tt, Tt2;
+    float Tt, Tt2;
     
     
     /* Return values root of polynomial */
-    double ansroot[2]={0, 0};
+    float ansroot[2]={0, 0};
     
     /* Order derivatives in a certain direction */
     int Order[18]={0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -88,8 +88,8 @@ double CalculateDistance3D(double *T, double Fijk, int *dims, int i, int j, int 
     int ne[18]={-1,  0,  0, 1, 0, 0, 0, -1,  0, 0, 1, 0, 0,  0, -1, 0, 0, 1};
     
     /* Stencil constants */
-    double G1[18]={1, 1, 1, 1, 0.5, 0.5, 1, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 0.3333333333333, 0.3333333333333, 0.5, 0.3333333333333, 0.3333333333333};
-    double G2[18]={2.250, 2.250, 2.250, 2.250, 1.125, 1.125, 2.250, 1.125, 1.125, 2.250, 1.125, 1.125, 1.125, 0.750, 0.750, 1.125, 0.750, 0.750};
+    float G1[18]={1, 1, 1, 1, 0.5, 0.5, 1, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 0.3333333333333, 0.3333333333333, 0.5, 0.3333333333333, 0.3333333333333};
+    float G2[18]={2.250, 2.250, 2.250, 2.250, 1.125, 1.125, 2.250, 1.125, 1.125, 2.250, 1.125, 1.125, 1.125, 0.750, 0.750, 1.125, 0.750, 0.750};
     
     
     /*Get First order derivatives (only use frozen pixel) */
@@ -297,7 +297,7 @@ double CalculateDistance3D(double *T, double Fijk, int *dims, int i, int j, int 
 }
 
 /* The matlab mex function */
-double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, int* size_target, double* start_points) {
+float* main_msfm3D(float* F, float* SourcePoints, float* T, int* size_map, int* size_target, float* start_points) {
     /* The input variables */
     bool *useseconda, *usecrossa;
     bool usesecond=true;
@@ -305,10 +305,10 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
     
     //printf("Starting MSFM3D\n");
     /* Euclidian distance image */
-    double *Y;
+    float *Y;
     
     /* Current distance values */
-    double Tt, Ty;
+    float Tt, Ty;
     
     /* Matrix containing the Frozen Pixels" */
     bool *Frozen;
@@ -330,14 +330,14 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
     /* Neighbour list */
     int neg_free;
     int neg_pos;
-    double *neg_listv;
-    double *neg_listx;
-    double *neg_listy;
-    double *neg_listz;
-    double *neg_listo;
+    float *neg_listv;
+    float *neg_listx;
+    float *neg_listy;
+    float *neg_listz;
+    float *neg_listo;
     
     int *listprop;
-    double **listval;
+    float **listval;
     
     /* Neighbours 6x3 */
     int ne[18]={-1,  0,  0, 1, 0, 0, 0, -1,  0, 0, 1, 0, 0,  0, -1, 0, 0, 1};
@@ -362,11 +362,11 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
     }
     */
     /* Check data input types /* 
-    if(mxGetClassID(prhs[0])!=mxDOUBLE_CLASS) {
-        mexErrMsgTxt("Speed image must be of class double");
+    if(mxGetClassID(prhs[0])!=mxfloat_CLASS) {
+        mexErrMsgTxt("Speed image must be of class float");
     }
-    if(mxGetClassID(prhs[1])!=mxDOUBLE_CLASS) {
-        mexErrMsgTxt("SourcePoints must be of class double");
+    if(mxGetClassID(prhs[1])!=mxfloat_CLASS) {
+        mexErrMsgTxt("SourcePoints must be of class float");
     }
     
     if((nrhs>2)&&(mxGetClassID(prhs[2])!= mxLOGICAL_CLASS)) {
@@ -387,9 +387,9 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
     npixels=size_map[0]*size_map[1]*size_map[2];
 
     // Allocate memory for outputs. IT WONT BE NEEDED, allocate in prueba
-    T = (double *)malloc(npixels * sizeof(double));
+    T = (float *)malloc(npixels * sizeof(float));
     if(Ed) { 
-        Y = (double *)malloc(npixels * sizeof(double));
+        Y = (float *)malloc(npixels * sizeof(float));
     }
     
     /* Pixels which are processed and have a final distance are frozen */
@@ -404,18 +404,18 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
     neg_free = 100000;
     neg_pos=0;
     
-    neg_listx = (double *)malloc( neg_free*sizeof(double) );
-    neg_listy = (double *)malloc( neg_free*sizeof(double) );
-    neg_listz = (double *)malloc( neg_free*sizeof(double) );
+    neg_listx = (float *)malloc( neg_free*sizeof(float) );
+    neg_listy = (float *)malloc( neg_free*sizeof(float) );
+    neg_listz = (float *)malloc( neg_free*sizeof(float) );
     if(Ed) {
-        neg_listo = (double *)malloc( neg_free*sizeof(double) );
+        neg_listo = (float *)malloc( neg_free*sizeof(float) );
         for(q=0;q<neg_free;q++) { neg_listo[q]=0; }
     }
     
     /* List parameters array */
     listprop=(int*)malloc(3* sizeof(int));
     /* Make jagged list to store a maximum of 2^64 values */
-    listval= (double **)malloc( 64* sizeof(double *) );
+    listval= (float **)malloc( 64* sizeof(float *) );
     
     /* Initialize parameter list */
     initialize_list(listval, listprop);
@@ -472,11 +472,11 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
                     /*If running out of memory at a new block */
                     if(neg_pos>=neg_free) {
                         neg_free+=100000;
-                        neg_listx = (double *)realloc(neg_listx, neg_free*sizeof(double) );
-                        neg_listy = (double *)realloc(neg_listy, neg_free*sizeof(double) );
-                        neg_listz = (double *)realloc(neg_listz, neg_free*sizeof(double) );
+                        neg_listx = (float *)realloc(neg_listx, neg_free*sizeof(float) );
+                        neg_listy = (float *)realloc(neg_listy, neg_free*sizeof(float) );
+                        neg_listz = (float *)realloc(neg_listz, neg_free*sizeof(float) );
                         if(Ed) {
-                            neg_listo = (double *)realloc(neg_listo, neg_free*sizeof(double) );
+                            neg_listo = (float *)realloc(neg_listo, neg_free*sizeof(float) );
                         }
                     }
                     list_add(listval, listprop, Tt);
@@ -546,11 +546,11 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
                     /*If running out of memory at a new block */
                     if(neg_pos>=neg_free) {
                         neg_free+=100000;
-                        neg_listx = (double *)realloc(neg_listx, neg_free*sizeof(double) );
-                        neg_listy = (double *)realloc(neg_listy, neg_free*sizeof(double) );
-                        neg_listz = (double *)realloc(neg_listz, neg_free*sizeof(double) );
+                        neg_listx = (float *)realloc(neg_listx, neg_free*sizeof(float) );
+                        neg_listy = (float *)realloc(neg_listy, neg_free*sizeof(float) );
+                        neg_listz = (float *)realloc(neg_listz, neg_free*sizeof(float) );
                         if(Ed) {
-                            neg_listo = (double *)realloc(neg_listo, neg_free*sizeof(double) );
+                            neg_listo = (float *)realloc(neg_listo, neg_free*sizeof(float) );
                         }
                     }
                     list_add(listval, listprop, Tt);
@@ -572,7 +572,7 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
         }
         
     }
-    return (double*)T;
+    return (float*)T;
     /* Free memory */
     /* Destroy parameter list */
     destroy_list(listval, listprop);
@@ -583,13 +583,13 @@ double* main_msfm3D(double* F, double* SourcePoints, double* T, int* size_map, i
     free(Y);
 }
 
-double* velocities_map3D(double* binary_map, int* size_map, int threshold) {
+float* velocities_map3D(float* binary_map, int* size_map, int threshold) {
     int ancho = size_map[0];
     int largo = size_map[1];
     int alto = size_map[2];
     int slice_size = ancho * largo;
-    double* distance_map = malloc(ancho * largo * alto * sizeof(double));
-    double max_val = sqrt(ancho*ancho + largo*largo + alto*alto);
+    float* distance_map = malloc(ancho * largo * alto * sizeof(float));
+    float max_val = sqrt(ancho*ancho + largo*largo + alto*alto);
 
     //printf("Calculating distance map\n");
     //First pass: marks obstacles as 0 and other cells as infinity
@@ -610,13 +610,13 @@ double* velocities_map3D(double* binary_map, int* size_map, int threshold) {
 
     int size_kernel = (threshold*2) + 1;
     int center = size_kernel / 2;
-    double* kernel = malloc(size_kernel * size_kernel * size_kernel * sizeof(double));
+    float* kernel = malloc(size_kernel * size_kernel * size_kernel * sizeof(float));
     for (int k = 0; k < size_kernel; k++) {
         for (int i = 0; i < size_kernel; i++) {
             for (int j = 0; j < size_kernel; j++) {
-                double dx = (double)(i - center);
-                double dy = (double)(j - center);
-                double dz = (double)(k - center);
+                float dx = (float)(i - center);
+                float dy = (float)(j - center);
+                float dz = (float)(k - center);
                 kernel[j + i*size_kernel + k*size_kernel*size_kernel] = sqrt(dx*dx + dy*dy + dz*dz);
                 
             }
@@ -644,8 +644,8 @@ double* velocities_map3D(double* binary_map, int* size_map, int threshold) {
                                     int kernel_j = kj + center;
                                     int kernel_k = kk + center;
                                     // Apply kernel to target cell
-                                    double new_dist = kernel[kernel_j + kernel_i * size_kernel + kernel_k * size_kernel * size_kernel];
-                                    double current_dist = distance_map[target_j + target_i*largo + target_k*slice_size];
+                                    float new_dist = kernel[kernel_j + kernel_i * size_kernel + kernel_k * size_kernel * size_kernel];
+                                    float current_dist = distance_map[target_j + target_i*largo + target_k*slice_size];
                                     if (new_dist < current_dist) {
                                         distance_map[target_j + target_i*largo + target_k*slice_size] = new_dist;
                                     }
@@ -661,7 +661,7 @@ double* velocities_map3D(double* binary_map, int* size_map, int threshold) {
     // Covert distances to velocities using threshold
     for (int i = 0; i < slice_size*alto; i++) {
         // Normalize and apply threshold to create smooth gradient
-        double normalized_dist = distance_map[i] / threshold;
+        float normalized_dist = distance_map[i] / threshold;
                     
         if (normalized_dist > 1.0) {
             distance_map[i] = 1.0;  // Maximum velocity
@@ -675,7 +675,7 @@ double* velocities_map3D(double* binary_map, int* size_map, int threshold) {
     free(kernel);
 }
 
-void compute_gradient_3d_discrete(double* input_matrix, double* gradient_matrix, int* size_map){
+void compute_gradient_3d_discrete(float* input_matrix, float* gradient_matrix, int* size_map){
 
     int ancho = size_map[0];
     int largo = size_map[1];
@@ -703,9 +703,9 @@ void compute_gradient_3d_discrete(double* input_matrix, double* gradient_matrix,
         for(int i = 0; i < ancho; i++) {
             for(int j = 0; j < largo; j++) {
                 int current_idx = j + i*largo + k*slice_size;
-                double current_value = input_matrix[current_idx];
-                double min_value = current_value;
-                double fx = 0, fy = 0, fz = 0;
+                float current_value = input_matrix[current_idx];
+                float min_value = current_value;
+                float fx = 0, fy = 0, fz = 0;
                 int valid_neighbors = 0;
 
                 // Check all 26 neighbors
@@ -719,12 +719,12 @@ void compute_gradient_3d_discrete(double* input_matrix, double* gradient_matrix,
                        nj >= 0 && nj < largo && 
                        nk >= 0 && nk < alto) {
                         valid_neighbors++;
-                        double neighbor_value = input_matrix[nj + ni*largo + nk*slice_size];
+                        float neighbor_value = input_matrix[nj + ni*largo + nk*slice_size];
 
                         if(neighbor_value < min_value) {
                             min_value = neighbor_value;
                             // Normalize direction vector
-                            double norm = sqrt(Ne[n][0]*Ne[n][0] + 
+                            float norm = sqrt(Ne[n][0]*Ne[n][0] + 
                                             Ne[n][1]*Ne[n][1] + 
                                             Ne[n][2]*Ne[n][2]);
                             fx = Ne[n][0]/norm; // x component
