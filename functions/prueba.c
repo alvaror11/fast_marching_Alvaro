@@ -14,13 +14,13 @@
 void main() {
     
     // Choose dimensions of the trayectory
-     int dimensions_prob = 2;// Removed redefinition of 'dimensions'
+     int dimensions_prob = 3;// Removed redefinition of 'dimensions'
 
     if (dimensions_prob == 3){
         clock_t start = clock();
         // Coord X = ancho, Y = largo, Z = alto
 
-       const char* mapfile = "./Mapas/MAP_2_50_50_50.txt";
+       const char* mapfile = "./Mapas/MAP_3_100_100_100.txt";
         int ancho, largo, alto;
         if (sscanf(mapfile, "./Mapas/MAP_%*d_%d_%d_%d.txt", &ancho, &largo, &alto) != 3) {
             printf("Error: Could not extract dimensions from filename. Using defaults.\n");
@@ -39,22 +39,23 @@ void main() {
         size_map[0] = ancho;
         size_map[1] = largo;
         size_map[2] = alto;
+        
+        //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
+        int num_start_points = 1;
+        int size_start[2] = {3, num_start_points};
+        float *start_points = (float *)malloc(num_start_points * 3 * sizeof(float));;
+        start_points[0] = 10;    // x coordinate
+        start_points[1] = 10;   // y coordinate
+        start_points[2] = 10;   // z coordinate
+
         // Define las coordenadas objetivo
         int num_points = 1;
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         float *objective_points  = (float *)malloc(num_points * 3 * sizeof(float));;
-        objective_points[0] = 5;   // x coordinate
-        objective_points[1] = 5;    // y coordinate
-        objective_points[2] = 1;    // z coordinate
-
-        //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
-        int num_start_points = 1;
-        int size_start[2] = {3, num_start_points};
-        float *start_points = (float *)malloc(num_start_points * 3 * sizeof(float));;
-        start_points[0] = 47;    // x coordinate
-        start_points[1] = 48;   // y coordinate
-        start_points[2] = 35;   // z coordinate
+        objective_points[0] = 86;   // x coordinate
+        objective_points[1] = 80;    // y coordinate
+        objective_points[2] = 92;    // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
         int planner_type = 1;           //tipo de planner a usar
@@ -66,8 +67,6 @@ void main() {
         // Define el tamaño del paso
         float step = 0.5;
 
-        
-        
         float *matriz = (float *)malloc(ancho * largo * alto* sizeof(float));
         //printf("\nReading 3D map with dimensions: %d x %d x %d\n", ancho, largo, alto);
 
@@ -100,51 +99,6 @@ void main() {
             return;
         }
 
-        // Aplicar el planner
-        clock_t start_planner = clock();
-        //planners_3D(matriz, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
-        clock_t end_planner = clock();
-        float time_planner = ((float) (end_planner - start_planner)) / CLOCKS_PER_SEC;    
-        printf("Time for planner: %.3f s\n", time_planner);
-
-        // Adding a layer of obstacles surrounding the map
-        if (planner_type == 0){
-            ancho = ancho+2;
-            largo = largo+2;
-            alto = alto+2;
-            size_map[0] = ancho;
-            size_map[1] = largo;
-            size_map[2] = alto;
-            objective_points[0] = objective_points[0] + 1;
-            objective_points[1] = objective_points[1] + 1;
-            objective_points[2] = objective_points[2] + 1;
-            start_points[0] = start_points[0] + 1;
-            start_points[1] = start_points[1] + 1;
-            start_points[2] = start_points[2] + 1;
-
-            float *matriz2 = (float *)malloc(ancho * largo * alto * sizeof(float));
-            //printf("\nCreating surrounded 3D map with dimensions: %d x %d x %d\n", ancho, largo, alto);
-
-            // Fill the new matrix with surrounding obstacles
-            for (int k = 0; k < alto; k++) {
-                for (int i = 0; i < ancho; i++) {
-                    for (int j = 0; j < largo; j++) {
-                        // Check if current position is on any face of the cube
-                        if (i == 0 || i == ancho-1 || j == 0 || j == largo-1 || k == 0 || k == alto-1) {
-                            matriz2[j + i*largo + k*ancho*largo] = 1;  // Set obstacle
-                        } else {
-                            // Copy original map data
-                            matriz2[j + i*largo + k*ancho*largo] = 
-                                matriz[(j-1) + (i-1)*(largo-2) + (k-1)*(ancho-2)*(largo-2)];
-                        }
-                    }
-                }
-            }
-
-            free(matriz);
-            matriz = matriz2;
-        }
-        
 
         // In your compute_3d_trajectory function:
         int initial_capacity = 100;
@@ -156,7 +110,8 @@ void main() {
         // Call th FMM2 function
         
         FMM2_3D(matriz, size_map, distance_threshold, 
-            objective_points, size_objective, start_points, step, traj);
+            objective_points, size_objective, start_points, size_start,
+             step, traj, planner_type, escalado_vectores);
         clock_t end = clock();
         float cpu_time_used = ((float) (end - start)) / CLOCKS_PER_SEC;
         // Save trajectory to file
@@ -191,7 +146,7 @@ void main() {
     else if (dimensions_prob == 2){
         clock_t start = clock();
         // Define las dimensiones de la matriz
-        const char* mapfile = "./Mapas/MAP_2_50_50.txt";
+        const char* mapfile = "./Mapas/MAP_4_200_200.txt";
         int filas, columnas;
         if (sscanf(mapfile, "./Mapas/MAP_%*d_%d_%d.txt", &filas, &columnas) != 2) {
             printf("Error: Could not extract dimensions from filename. Using defaults.\n");
@@ -214,14 +169,14 @@ void main() {
         int size_objective[2] = {dimensions,num_points};
         float *objective_points  = (float *)malloc(num_points * 2 * sizeof(float));;
         objective_points[0] = 10;  // x coordinate
-        objective_points[1] = 10;  // y coordinate
+        objective_points[1] = 15;  // y coordinate
 
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
         int num_start_points = 1;
         int size_start[2] = {dimensions,num_start_points};
         float *start_points = (float *)malloc(num_start_points * 2 * sizeof(float));;
-        start_points[0] = 40;  // x coordinate
-        start_points[1] = 40;  // y coordinate
+        start_points[0] = 164;  // x coordinate
+        start_points[1] = 180;  // y coordinate
         
         // PARSAMETROS DE LOS PLANNER
         int planner_type = 2;       // tipo de planner a usar

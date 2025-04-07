@@ -171,8 +171,6 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
             int num_start = size_start[1];
             int num_end = size_objective[1];
 
-            printf("\nCalculating 3D corridor bounds...\n");
-
             for (int i = 0; i < num_start; i++) {
                 float start_x = start_points[i*3];
                 float start_y = start_points[i*3 + 1];

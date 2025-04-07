@@ -111,7 +111,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold, float safet
     planners_2D(obstacle_distance_map, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
     
     // Save velocities map 
-    /*
+    
     FILE *output_file1 = fopen("./Archivos/velocities_map.txt", "w");
      if (output_file1 == NULL) {
          perror("Error al abrir el archivo de salida");
@@ -124,7 +124,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold, float safet
          fprintf(output_file1, "\n");
      }
      fclose(output_file1);
-     */
+     
     
     
      
@@ -135,7 +135,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold, float safet
     output_T = main_msfm(obstacle_distance_map, objective_points, output_T, size_map, size_objective);
 
     // Save times map
-    /*
+    
     FILE *output_file2 = fopen("./Archivos/times_map.txt", "w");
      if (output_file2 == NULL) {
          perror("Error al abrir el archivo de salida");
@@ -150,13 +150,13 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold, float safet
          fprintf(output_file2, "\n");
      }
      fclose(output_file2);
-    */
+    
     // Crear el gradiente para el mapa de tiempos:
     float* gradient_matrix = (float*)malloc(2 * size_map[1] * size_map[0] * sizeof(float));
     printf("Calculating gradient...\n");
     compute_gradient_2d_discrete(output_T, gradient_matrix, size_map);
     // Save gradients
-    /*
+    
     FILE *gradient_x_file = fopen("./Archivos/gradient_x.txt", "w");
     FILE *gradient_y_file = fopen("./Archivos/gradient_y.txt", "w");
  
@@ -179,7 +179,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold, float safet
  
      fclose(gradient_x_file);
      fclose(gradient_y_file);
-    */
+    
 
     // Empezamos a usar el descenso del gradiente para buscar el camino
     bool finished = false;      //mientras no se llegue al punto final es false
@@ -211,7 +211,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold, float safet
             printf("Objective reached\n");
         }
     }
-    /*
+    
     FILE *traj_file = fopen("./Archivos/trajectory.txt", "w");
      if (traj_file == NULL) {
          perror("Error al abrir el archivo de trayectoria");
@@ -234,10 +234,53 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold, float safet
     free(start_points);
     //free(obstacle_distance_map);
     free(last_point);
-    */
+    
 }
 void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* objective_points, 
-            int size_objective[2], float* start_points, float step, Trajectory3D* traj){
+            int size_objective[2], float* start_points, int size_start[2], float step, Trajectory3D* traj, 
+            int planner_type, int escalado_vectores){
+    
+    // Adding a layer of obstacles surrounding the map
+    if (planner_type == 0){
+        size_map[0] += 2;
+        size_map[1] += 2;
+        size_map[2] += 2;
+        int ancho = size_map[0];
+        int largo = size_map[1];
+        int alto = size_map[2];
+        objective_points[0] = objective_points[0] + 1;
+        objective_points[1] = objective_points[1] + 1;
+        objective_points[2] = objective_points[2] + 1;
+        start_points[0] = start_points[0] + 1;
+        start_points[1] = start_points[1] + 1;
+        start_points[2] = start_points[2] + 1;
+
+        float *matriz2 = (float *)malloc(ancho * largo * alto * sizeof(float));
+        if (matriz2 == NULL) {
+            printf("Error: Memory allocation failed for enlarged matrix\n");
+            return;
+        }
+        //printf("\nCreating surrounded 3D map with dimensions: %d x %d x %d\n", ancho, largo, alto);
+
+        // Fill the new matrix with surrounding obstacles
+        for (int k = 0; k < alto; k++) {
+            for (int i = 0; i < ancho; i++) {
+                for (int j = 0; j < largo; j++) {
+                    // Check if current position is on any face of the cube
+                    if (i == 0 || i == ancho-1 || j == 0 || j == largo-1 || k == 0 || k == alto-1) {
+                        matriz2[j + i*largo + k*ancho*largo] = 1;  // Set obstacle
+                    } else {
+                        // Copy original map data
+                        matriz2[j + i*largo + k*ancho*largo] = 
+                            matriz[(j-1) + (i-1)*(largo-2) + (k-1)*(ancho-2)*(largo-2)];
+                    }
+                }
+            }
+        }
+
+        free(matriz);
+        matriz = matriz2;
+    }
     
     //Create velocities map
     printf("Creating velocities map...\n");
@@ -269,6 +312,15 @@ void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* ob
     
     fclose(output_file1);
     
+    // Apply planner
+    printf("Applying planner...\n");
+     clock_t start_planner = clock();
+     planners_3D(obstacle_distance_map, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
+     clock_t end_planner = clock();
+     float time_planner = ((float) (end_planner - start_planner)) / CLOCKS_PER_SEC;    
+     printf("Time for planner: %.3f s\n", time_planner);
+
+
     //Allocate memory for output map
     float* output_T = (float *)malloc(size_map[0] * size_map[1] * size_map[2] * sizeof(float));
     printf("Calculating times map...\n");
