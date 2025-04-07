@@ -2,18 +2,19 @@ clear;
 clc;
 close all;
 
-filas = 50;
-columnas = 50;
+filas = 200;
+columnas = 200;
 
 % Punto para iniciar la traj.
 punto_x = 20;  % columna
 punto_y = 22; % fila
 files_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Archivos";
 main_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Ver_Resultados";
+maps_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Mapas";
 
 %% Mapa Original
-cd(files_folder);
-file = fopen('mapa.txt','r');
+cd(maps_folder);
+file = fopen('MAP_4_200_200.txt','r');
 
 matriz_vel = zeros(filas, columnas); 
 

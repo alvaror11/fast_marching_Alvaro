@@ -3,11 +3,13 @@ clc;
 close all;
 main_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Ver_Resultados";
 files_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Archivos";
+maps_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Mapas";
+
 cd(files_folder)
 
 %% Occupation map
 %% Read and create 3D map from text file
-cd(files_folder);
+cd(maps_folder);
 fileID = fopen('mapa3D.txt', 'r');
 if fileID == -1
     error('Could not open Mapa3D.txt file');
