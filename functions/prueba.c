@@ -2,11 +2,13 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
+#include <string.h>
 #include "msfm2d_MOD.h"
 #include "msfm3d_MOD.h"
 #include "common.h"
 #include "rk4_2D_3D.h"
 #include "FMM2.h"
+#include "map.h"
 
 #ifdef WINDOWS
 #include <windows.h>
@@ -148,6 +150,7 @@ void main() {
     }
     else if (dimensions_prob == 2){
         clock_t start = clock();
+        /*
         // Define las dimensiones de la matriz
         const char* mapfile = "./Mapas/MAP_2_50_50.txt";
         int filas, columnas;
@@ -162,6 +165,9 @@ void main() {
             perror("Error al abrir el archivo");
             return;
         }
+            */
+        int columnas = MAP_COLS;
+        int filas = MAP_ROWS;
         int *size_map = (int *)malloc(2 * sizeof(int));
         size_map[0] = columnas;
         size_map[1] = filas;
@@ -179,7 +185,7 @@ void main() {
         int size_start[2] = {dimensions,num_start_points};
         float *start_points = (float *)malloc(num_start_points * 2 * sizeof(float));;
         start_points[0] = 15;  // x coordinate
-        start_points[1] = 40;  // y coordinate
+        start_points[1] = 30;  // y coordinate
         
         // PARSAMETROS DE LOS PLANNER
         int planner_type = 0;       // tipo de planner a usar
@@ -193,6 +199,9 @@ void main() {
         float step = 0.5;
 
         float *matriz = (float *)malloc((int)size_map[1] * (int)size_map[0] * sizeof(float));
+        memcpy(matriz, MAP_DATA, MAP_ROWS * MAP_COLS * sizeof(float));
+
+        /*
         // Leer los datos y asignarlos a la matriz
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
@@ -204,7 +213,7 @@ void main() {
         }
 
         fclose(file);
-        
+        */
         // Check that initial and final points are not inside an obstacle
         if ((matriz[(int)start_points[0] - 1 + ((int)start_points[1]-1)*columnas] == 1)||
             (matriz[(int)objective_points[0] - 1 + ((int)objective_points[1]-1)*columnas ] == 1)) {
