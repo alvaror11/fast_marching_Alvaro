@@ -297,7 +297,6 @@ float CalculateDistance3D(float *T, float Fijk, int *dims, int i, int j, int k, 
 /* The matlab mex function */
 float* main_msfm3D(float* F, float* SourcePoints, float* T, int* size_map, int* size_target, float* start_points) {
     /* The input variables */
-    bool *useseconda, *usecrossa;
     bool usesecond=true;
     bool usecross=true;
     

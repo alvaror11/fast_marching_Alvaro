@@ -469,8 +469,7 @@ float* velocities_map(float* binary_map, int* size_map, int threshold, float saf
     int rows = size_map[1];
     int cols = size_map[0];
     float* distance_map = malloc(rows * cols * sizeof(float));
-    float max_distance = sqrt(rows*rows + cols*cols);  // diagonal distance
-
+    
     // First pass: mark obstacles as 0 and other cells as infinity
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
