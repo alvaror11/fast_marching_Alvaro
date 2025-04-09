@@ -84,8 +84,6 @@ float CalculateDistance3D(float *T, float Fijk, int *dims, int i, int j, int k, 
     /* Order derivatives in a certain direction */
     int Order[18]={0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     
-    /* Neighbours 4x2 */
-    int ne[18]={-1,  0,  0, 1, 0, 0, 0, -1,  0, 0, 1, 0, 0,  0, -1, 0, 0, 1};
     
     /* Stencil constants */
     float G1[18]={1, 1, 1, 1, 0.5, 0.5, 1, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 0.3333333333333, 0.3333333333333, 0.5, 0.3333333333333, 0.3333333333333};
