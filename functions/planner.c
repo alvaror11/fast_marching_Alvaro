@@ -50,10 +50,6 @@ void planners_2D(float* matriz, int* size_map, float* objective_points, int size
             y_min = (y_min - margin >= 0) ? y_min - margin : 0;
             x_max = (x_max + margin < size_map[0]) ? x_max + margin : size_map[0] - 1;
             y_max = (y_max + margin < size_map[1]) ? y_max + margin : size_map[1] - 1;
-            
-            // Calculate new map dimensions
-            int new_cols = x_max - x_min + 1;
-            int new_rows = y_max - y_min + 1;
 
             // LLenar la parte del mapa que no se usa con obstaculos
             for (int i = 0; i < (int)size_map[1]; i++) {

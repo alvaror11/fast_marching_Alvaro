@@ -271,9 +271,6 @@ bool RK4STEP_3D(float *gradientArray, int *gradientArraySize, float *startPoint,
 //solo funciona con un punto inicial
 void gradient_descend_rk4(float* startPoint, float *gradientArray, int* size_map, int* size_point, float *nextPoint, float stepSize) {
 
-    int stepSizeArray;
-    int i;
-
     int PointLength;
     int PointSizeC[2];
 
