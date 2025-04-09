@@ -223,11 +223,11 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
     bool Ed;
     
     /* Size of input image */
-    const size_t *dims_c;
+    
     int dims[2];
     
     /* Size of  SourcePoints array */
-    const size_t *dims_sp_c;
+    
     size_t dims_sp[2];
 
     dims[0] = size_map[0];
