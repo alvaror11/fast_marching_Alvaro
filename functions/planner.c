@@ -161,7 +161,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
             break;
 
         case 1: {
-            // Initialize bounds
+            // Trinchera vert y horizontal combinada
             int x_max = 0, y_max = 0, z_max = 0;
             int x_min = size_map[0], y_min = size_map[1], z_min = size_map[2];
             int num_start = size_start[1];
@@ -250,6 +250,12 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
                 }
             }
             break;
+        }
+        case 2: {
+
+            
+
+
         }
     }
 }
