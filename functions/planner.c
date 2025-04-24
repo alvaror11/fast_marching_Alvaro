@@ -5,6 +5,8 @@
 #include <math.h>
 #include "common.h"
 
+#define PI 3.14159265358979323846
+
 
 void planners_2D(float* matriz, int* size_map, float* objective_points, int size_objective[2], 
                 float* start_points, int size_start[2], int planner_type, int escalado_vectores) {
@@ -252,10 +254,144 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
             break;
         }
         case 2: {
+            int ascension_rate = 1;     // meters up per meters forward
+            int descent_rate = 1;
+            int flight_level = 40;     // Height expressed in meters
+            int resolution = 2;         // Resolution in meters per cell (1 cell = resolution meters)
 
-            
+            int flight_level_cells = (flight_level / resolution) -1; // Convert height to cells
+            int count = 1;
+            int start_x = start_points[0] - 1;
+            int start_y = start_points[1] - 1;
+            int start_z = start_points[2] - 1;
+            int objective_x = objective_points[0] - 1;
+            int objective_y = objective_points[1] - 1;
+            int objective_z = objective_points[2] - 1;    
+            // Create 2d matrix with height values
+            int* height_map = (int*)calloc(size_map[0] * size_map[1], sizeof(int));
+            if (!height_map) {
+                printf("Memory allocation failed for height_map array\n");
+                return;
+            }
+            // create the ascension cone
+            for(int z = start_z; z <= flight_level_cells; z++) {
+                // Calculate radius at this height (in cells)
+                float height_diff = (z - start_z) * resolution;
+                float radius_cells = (height_diff / ascension_rate) / resolution;
+                
+                // Generate circle at this height
+                for(float angle = 0; angle < 2*PI; angle += PI/32) {
+                    int x = start_x + (int)floor(radius_cells * cos(angle));
+                    int y = start_y + (int)floor(radius_cells * sin(angle));
+                    
+                    // Check bounds
+                    if(x >= 0 && x < size_map[0] && y >= 0 && y < size_map[1]) {
+                        // Update projection if this height is higher
+                        int idx = y + size_map[1] * x;
+                        if(height_map[idx] == 0 || z < height_map[idx]) {
+                            height_map[idx] = z;
+                        }
+                    }
+                }
+            }
+            // create the decent cone
+            count = 1;
+            for(int z = objective_z; z <= flight_level_cells; z++) {
+                float height_diff = (z - objective_z) * resolution;
+                float radius_cells = (height_diff / descent_rate) / resolution;
+                
+                for(float angle = 0; angle < 2*PI; angle += PI/32) {
+                    int x = objective_x + (int)floor(radius_cells * cos(angle));
+                    int y = objective_y + (int)floor(radius_cells * sin(angle));
+                    
+                    if(x >= 0 && x < size_map[0] && y >= 0 && y < size_map[1]) {
+                        int idx = y + size_map[0] * x;
+                        if(height_map[idx] == 0 || z < height_map[idx]) {
+                            height_map[idx] = z;
+                        }
+                    }
+                }
+            }
+
+           
+            //Fill the rest of the height map with the flight level height
+            for(int i = 0; i < size_map[0]; i++) {
+                for(int j = 0; j < size_map[1]; j++) {
+                    int idx = j + size_map[1] * i;
+                    if(height_map[idx] == 0) {
+                        height_map[idx] = flight_level_cells;
+                    }
+                }
+            }
+
+             // Save height map to file
+             FILE *height_file = fopen("./Archivos/height_map.txt", "w");
+             if (!height_file) {
+                 printf("Error opening height map file\n");
+                 free(height_map);
+                 return;
+             }
+ 
+             // Write dimensions as header
+             fprintf(height_file, "Map dimensions: %d x %d\n\n", size_map[0], size_map[1]);
+ 
+             // Write height map data in matrix format
+             for(int i = 0; i < size_map[0]; i++) {
+                for(int j = 0; j < size_map[1]; j++) {
+                     fprintf(height_file, "%d ", height_map[i * size_map[1] + j]);
+                 }
+                 fprintf(height_file, "\n");
+             }
+ 
+             fclose(height_file);
 
 
+             // Create 2D occupation map
+            float* occupation_map_2d = (float*)calloc(size_map[0] * size_map[1], sizeof(float));
+            if (!occupation_map_2d) {
+                printf("Memory allocation failed for 2D occupation map\n");
+                free(height_map);
+                return;
+            }
+
+            // Check vertical obstacles for each x,y coordinate
+            // Seguimos con coordenadas estilo 3d, i = x, j = y, k = z
+            for(int i = 0; i < size_map[0]; i++) {
+                for(int j = 0; j < size_map[1]; j++) {
+                    int idx_2d = j + size_map[1] * i;
+                    float z = height_map[idx_2d];
+                    bool is_occupied = false;
+
+                    // Check for obstacles above and below the surface point
+                    for(int k = z - 1; k < (z + 1); k++) {
+                        int idx_3d = j + i*size_map[1] + k*size_map[0]*size_map[1];
+                        if(matriz[idx_3d] == 1.0f) {
+                            is_occupied = true;
+                            break;
+                        }
+                    }
+                    // Set occupation map value
+                    occupation_map_2d[idx_2d] = is_occupied ? 1.0f : 0.0f;
+                }
+            }
+            // Save 2D occupation map to file
+            FILE* occupation_file = fopen("./Archivos/occupation_map_2d.txt", "w");
+            if (!occupation_file) {
+                printf("Error opening 2D occupation map file\n");
+                free(height_map);
+                free(occupation_map_2d);
+                return;
+            }
+
+            // Write 2D occupation map data
+            for(int i = 0; i < size_map[0]; i++) {
+                for(int j = 0; j < size_map[1]; j++) {
+                    fprintf(occupation_file, "%.0f ", occupation_map_2d[j + size_map[1]*i]);
+                }
+                fprintf(occupation_file, "\n");
+            }
+
+            fclose(occupation_file);
         }
     }
 }
