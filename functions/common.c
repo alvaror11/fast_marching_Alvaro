@@ -376,3 +376,57 @@ float euclidean_distance3D(int x1, int y1, int z1, int x2, int y2, int z2){
     float dz = (float)(z2 - z1);
     return sqrt(dx*dx + dy*dy + dz*dz);
 }
+
+void read_map(float* matriz, int* size_map, char* mapfile, int dimensions_prob){
+
+    if (dimensions_prob == 2){
+        int columnas = size_map[0];
+        int filas = size_map[1];
+        FILE *file = fopen(mapfile, "r");
+        if (file == NULL) {
+            perror("Error al abrir el archivo");
+            return;
+        }
+        // Leer los datos y asignarlos a la matriz
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++) {
+                int valor;
+                fscanf(file, "%d", &valor);
+                matriz[j + i * columnas] = (float)valor;
+                //printf("%.1f\n",  matriz[i + j * columnas]);
+            }
+        }
+
+        fclose(file);
+    }
+
+    else if (dimensions_prob == 3){
+        int ancho = size_map[0];
+        int largo = size_map[1];
+        int alto = size_map[2];
+        FILE *file = fopen(mapfile, "r");
+        if (file == NULL) {
+            perror("Error al abrir el archivo");
+            return;
+        }
+        // Leer los datos y asignarlos a la matriz
+        for (int k = 0; k < alto; k++) {
+            for (int i = 0; i < ancho; i++) {
+                for (int j = 0; j < largo; j++) {
+                    int valor;
+                    fscanf(file, "%d", &valor);
+                    int index = j + i*largo + k*ancho*largo;
+                    matriz[index] = (float)valor;
+                }
+            }
+            char newline[2];
+            fgets(newline, sizeof(newline), file);
+        }
+
+
+        fclose(file);
+    }
+    else{
+        printf("Error: Invalid dimensions for the map.\n");
+    }
+}

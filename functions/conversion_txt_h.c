@@ -72,7 +72,7 @@ void convert_txt_to_header(const char *input_file, const char *output_file, cons
            output_file, rows, cols);
 }
 
-int main() {
+int main2() {
     const char *input_file = "./Mapas/MAP_1_25_25.txt";
     const char *output_file = "map25.h";
     const char *variable_name = "MAP_DATA";

@@ -2,10 +2,10 @@
 2D (52 x 52)
 
 === Computation Parameters ===
-Computation Time = 0.022 s
+Computation Time = 0.025 s
 === Trajectory Parameters ===
-Start point: (580857856.00, 0.00)
-End point: (529824256.00, 0.00)
+Start point: (-158839966806181746533156862930074992640.00, -158839966806181746533156862930074992640.00)
+End point: (0.00, 0.00)
 Distance threshold: 4.00
 
 === Trajectory Points ===
