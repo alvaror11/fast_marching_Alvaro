@@ -8,7 +8,6 @@
 #include "common.h"
 #include "rk4_2D_3D.h"
 #include "FMM2.h"
-#include "map.h"
 
 #ifdef WINDOWS
 #include <windows.h>
@@ -34,11 +33,7 @@ void main() {
             alto = 50;
         }
         
-        FILE *file = fopen(mapfile, "r");
-        if (file == NULL) {
-            perror("Error al abrir el archivo");
-            return;
-        }
+        
         //int ancho = 50, largo = 50, alto = 50 ; 
         int *size_map = (int *)malloc(3 * sizeof(int));
         size_map[0] = ancho;
@@ -72,25 +67,9 @@ void main() {
         // Define el tamaño del paso
         float step = 0.5;
 
+        // Read the map from the file
         float *matriz = (float *)malloc(ancho * largo * alto* sizeof(float));
-        //printf("\nReading 3D map with dimensions: %d x %d x %d\n", ancho, largo, alto);
-
-        // Leer los datos y asignarlos a la matriz
-        for (int k = 0; k < alto; k++) {
-            for (int i = 0; i < ancho; i++) {
-                for (int j = 0; j < largo; j++) {
-                    int valor;
-                    fscanf(file, "%d", &valor);
-                    int index = j + i*largo + k*ancho*largo;
-                    matriz[index] = (float)valor;
-                }
-            }
-            char newline[2];
-            fgets(newline, sizeof(newline), file);
-        }
-
-
-        fclose(file);
+        read_map(matriz, size_map, mapfile, dimensions_prob);
 
         // Check that initial and final points are not inside an obstacle
         if ((matriz[(int)start_points[0] - 1 + ((int)start_points[1] -1)*largo + ((int)start_points[2] - 1)*ancho*largo] == 1)||
@@ -150,7 +129,7 @@ void main() {
     }
     else if (dimensions_prob == 2){
         clock_t start = clock();
-        /*
+        
         // Define las dimensiones de la matriz
         const char* mapfile = "./Mapas/MAP_2_50_50.txt";
         int filas, columnas;
@@ -160,14 +139,7 @@ void main() {
             columnas = 50;
         }
         
-        FILE *file = fopen(mapfile, "r");
-        if (file == NULL) {
-            perror("Error al abrir el archivo");
-            return;
-        }
-            */
-        int columnas = MAP_COLS;
-        int filas = MAP_ROWS;
+    
         int *size_map = (int *)malloc(2 * sizeof(int));
         size_map[0] = columnas;
         size_map[1] = filas;
@@ -197,23 +169,12 @@ void main() {
 
         // Define el tamaño del paso para el descenso del gradiente
         float step = 0.5;
-
+        
+        // Read the map from the file
         float *matriz = (float *)malloc((int)size_map[1] * (int)size_map[0] * sizeof(float));
-        memcpy(matriz, MAP_DATA, MAP_ROWS * MAP_COLS * sizeof(float));
+        read_map(matriz, size_map, mapfile, dimensions_prob);
+        
 
-        /*
-        // Leer los datos y asignarlos a la matriz
-        for (int i = 0; i < filas; i++) {
-            for (int j = 0; j < columnas; j++) {
-                int valor;
-                fscanf(file, "%d", &valor);
-                matriz[j + i * columnas] = (float)valor;
-                //printf("%.1f\n",  matriz[i + j * columnas]);
-            }
-        }
-
-        fclose(file);
-        */
         // Check that initial and final points are not inside an obstacle
         if ((matriz[(int)start_points[0] - 1 + ((int)start_points[1]-1)*columnas] == 1)||
             (matriz[(int)objective_points[0] - 1 + ((int)objective_points[1]-1)*columnas ] == 1)) {

@@ -60,5 +60,7 @@ float euclidean_distance(int x1, int y1, int x2, int y2);
 
 float euclidean_distance3D(int x1, int y1, int z1, int x2, int y2, int z2);
 
+void read_map(float* matriz, int* size_map, char* mapfile, int dimensions_prob);
+
 
 #endif // COMMON_H
