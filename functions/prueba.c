@@ -18,13 +18,13 @@
 void main() {
     
     // Choose dimensions of the trayectory
-     int dimensions_prob = 2;// Removed redefinition of 'dimensions'
+     int dimensions_prob = 3;// Removed redefinition of 'dimensions'
 
     if (dimensions_prob == 3){
         clock_t start = clock();
         // Coord X = ancho, Y = largo, Z = alto
 
-       const char* mapfile = "./Mapas/MAP_3_100_100_100.txt";
+       const char* mapfile = "./Mapas/MAP_2_50_50_50.txt";
         int ancho, largo, alto;
         if (sscanf(mapfile, "./Mapas/MAP_%*d_%d_%d_%d.txt", &ancho, &largo, &alto) != 3) {
             printf("Error: Could not extract dimensions from filename. Using defaults.\n");
@@ -44,21 +44,21 @@ void main() {
         int num_start_points = 1;
         int size_start[2] = {3, num_start_points};
         float *start_points = (float *)malloc(num_start_points * 3 * sizeof(float));;
-        start_points[0] = 10;    // x coordinate
-        start_points[1] = 10;   // y coordinate
-        start_points[2] = 10;   // z coordinate
+        start_points[0] = 5;    // x coordinate
+        start_points[1] = 7;   // y coordinate
+        start_points[2] = 5;   // z coordinate
 
         // Define las coordenadas objetivo
         int num_points = 1;
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         float *objective_points  = (float *)malloc(num_points * 3 * sizeof(float));;
-        objective_points[0] = 86;   // x coordinate
-        objective_points[1] = 80;    // y coordinate
-        objective_points[2] = 92;    // z coordinate
+        objective_points[0] = 37;   // x coordinate
+        objective_points[1] = 30;    // y coordinate
+        objective_points[2] = 5;    // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
-        int planner_type = 1;           //tipo de planner a usar
+        int planner_type = 2;           //tipo de planner a usar
         int escalado_vectores = 5;      //valor para escalar los vectores del planner 2
         
         // Define el umbral de distancia para la matriz de velocidades
@@ -69,7 +69,7 @@ void main() {
 
         // Read the map from the file
         float *matriz = (float *)malloc(ancho * largo * alto* sizeof(float));
-        read_map(matriz, size_map, mapfile, dimensions_prob);
+        read_map(matriz, size_map, (char*)mapfile, dimensions_prob);
 
         // Check that initial and final points are not inside an obstacle
         if ((matriz[(int)start_points[0] - 1 + ((int)start_points[1] -1)*largo + ((int)start_points[2] - 1)*ancho*largo] == 1)||
@@ -172,7 +172,7 @@ void main() {
         
         // Read the map from the file
         float *matriz = (float *)malloc((int)size_map[1] * (int)size_map[0] * sizeof(float));
-        read_map(matriz, size_map, mapfile, dimensions_prob);
+        read_map(matriz, size_map, (char*)mapfile, dimensions_prob);
         
 
         // Check that initial and final points are not inside an obstacle

@@ -346,7 +346,7 @@ void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* ob
         for (int i = 0; i < size_map[1]; i++) {
             for (int j = 0; j < size_map[0]; j++) {
                 fprintf(output_file2, "%.2f ", 
-                    output_T[j + i*size_map[0] + k*size_map[0]*size_map[1]]);
+                    output_T[j + i*size_map[1] + k*size_map[0]*size_map[1]]);
             }
             fprintf(output_file2, "\n");
         }
