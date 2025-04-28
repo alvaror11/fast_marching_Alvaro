@@ -69,7 +69,54 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
     traj_2D->size = 0;
     traj_2D->capacity = initial_capacity;
 
-    FMM2_2D(matriz, size_map_2d, distance_threshold, 
+    FMM2_2D(occupation_map_2d, size_map_2d, distance_threshold, 
             objective_points, size_objective, start_points, size_start, step, traj_2D, planner_type, escalado_vectores);
     
+    
+    // Print 2D trajectory debug info
+    printf("\n=== 2D Trajectory Debug Info ===\n");
+    printf("Start point: (%.2f, %.2f)\n", start_points[0], start_points[1]);
+    printf("Goal point: (%.2f, %.2f)\n", objective_points[0], objective_points[1]);
+    printf("Total points: %d\n", traj_2D->size);
+
+    // Print trajectory points
+    for(int i = 0; i < traj_2D->size; i++) {
+        printf("Point %d: (%.2f, %.2f)\n", 
+               i, 
+               traj_2D->points[i].x,
+               traj_2D->points[i].y);
     }
+    printf("==============================\n");
+
+    // Adjust the capacity of the 3D trajectory to match the 2D trajectory
+    traj->points = realloc(traj->points, traj_2D->size * sizeof(Point3D));
+    if (!traj->points) {
+        printf("Memory reallocation failed for 3D trajectory points\n");
+        free(height_map);
+        free(occupation_map_2d);
+        free(size_map_2d);
+        free(traj_2D->points);
+        free(traj_2D);
+        return;
+    }
+    traj->size = traj_2D->size;
+    traj->capacity = traj_2D->size;
+
+    // Transform the 2D trajectory to 3D
+    for (int i = 0; i < traj_2D->size; i++) {
+        traj->points[i].x = traj_2D->points[i].y;
+        traj->points[i].y = traj_2D->points[i].x;
+        traj->points[i].z = height_map[(int)traj_2D->points[i].x + (int)traj_2D->points[i].y * size_map[0]];
+    }
+
+    // Print trajectory points
+    for(int i = 0; i < traj->size; i++) {
+        printf("Point %d: (%.2f, %.2f, %.2f)\n", 
+               i, 
+               traj->points[i].x,
+               traj->points[i].y,
+               traj->points[i].z);
+    }
+    printf("==============================\n");
+
+}
