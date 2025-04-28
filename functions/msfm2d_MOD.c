@@ -463,7 +463,7 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
     free(Y);
 }
 
-float* velocities_map(float* binary_map, int* size_map, int threshold, float safety_margin) {
+float* velocities_map(float* binary_map, int* size_map, int threshold) {
     // Creates the velocities map from the binary occupational map.
     //2D only
     int rows = size_map[1];

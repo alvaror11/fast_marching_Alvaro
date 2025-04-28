@@ -155,7 +155,8 @@ void planners_2D(float* matriz, int* size_map, float* objective_points, int size
 }
 
 void planners_3D(float* matriz, int* size_map, float* objective_points, int size_objective[2], 
-    float* start_points, int size_start[2], int planner_type, int escalado_vectores){
+    float* start_points, int size_start[2], int planner_type, int escalado_vectores, 
+    int* height_map, float* occupation_map_2d) {
         
     switch(planner_type){        
         case 0:
@@ -259,7 +260,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
             int flight_level = 40;     // Height expressed in meters
             int resolution = 2;         // Resolution in meters per cell (1 cell = resolution meters)
 
-            int flight_level_cells = (flight_level / resolution) -1; // Convert height to cells
+            int flight_level_cells = (flight_level / resolution) - 1; // Convert height to cells
             int count = 1;
             int start_x = start_points[0] - 1;
             int start_y = start_points[1] - 1;
@@ -268,11 +269,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
             int objective_y = objective_points[1] - 1;
             int objective_z = objective_points[2] - 1;    
             // Create 2d matrix with height values
-            int* height_map = (int*)calloc(size_map[0] * size_map[1], sizeof(int));
-            if (!height_map) {
-                printf("Memory allocation failed for height_map array\n");
-                return;
-            }
+           
             // create the ascension cone
             for(int z = start_z; z <= flight_level_cells; z++) {
                 // Calculate radius at this height (in cells)
@@ -315,6 +312,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
 
            
             //Fill the rest of the height map with the flight level height
+            // Flight Level Cells: written as index in the map, level 20 will be 19 in the map
             for(int i = 0; i < size_map[0]; i++) {
                 for(int j = 0; j < size_map[1]; j++) {
                     int idx = j + size_map[1] * i;
@@ -330,11 +328,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
                  printf("Error opening height map file\n");
                  free(height_map);
                  return;
-             }
- 
-             // Write dimensions as header
-             fprintf(height_file, "Map dimensions: %d x %d\n\n", size_map[0], size_map[1]);
- 
+             } 
              // Write height map data in matrix format
              for(int i = 0; i < size_map[0]; i++) {
                 for(int j = 0; j < size_map[1]; j++) {
@@ -345,14 +339,6 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
  
              fclose(height_file);
 
-
-             // Create 2D occupation map
-            float* occupation_map_2d = (float*)calloc(size_map[0] * size_map[1], sizeof(float));
-            if (!occupation_map_2d) {
-                printf("Memory allocation failed for 2D occupation map\n");
-                free(height_map);
-                return;
-            }
 
             // Check vertical obstacles for each x,y coordinate
             // Seguimos con coordenadas estilo 3d, i = x, j = y, k = z
@@ -382,7 +368,6 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
                 free(occupation_map_2d);
                 return;
             }
-
             // Write 2D occupation map data
             for(int i = 0; i < size_map[0]; i++) {
                 for(int j = 0; j < size_map[1]; j++) {
