@@ -8,6 +8,7 @@
 #include "common.h"
 #include "rk4_2D_3D.h"
 #include "FMM2.h"
+#include "ascension_restraint.h"
 
 #ifdef WINDOWS
 #include <windows.h>
@@ -83,49 +84,69 @@ void main() {
             return;
         }
 
+        // Check the planner type to call one function or another
+        if (planner_type == 2){
+            // If the planner is 2, we need to call the ascension restraint function
+            // Crear la trayectoria
+            int initial_capacity = 100;
+            Trajectory3D* traj = malloc(sizeof(Trajectory3D));
+            traj->points = malloc(initial_capacity * sizeof(Point3D));  // Initial capacity
+            traj->size = 0;
+            traj->capacity = initial_capacity;
 
-        // In your compute_3d_trajectory function:
-        int initial_capacity = 100;
-        Trajectory3D* traj = malloc(sizeof(Trajectory3D));
-        traj->points = malloc(initial_capacity * sizeof(Point3D));  // Initial capacity
-        traj->size = 0;
-        traj->capacity = initial_capacity;
+            asc_restraint_planner(matriz, size_map, distance_threshold, 
+                objective_points, size_objective, start_points, size_start,
+                step, traj, planner_type, escalado_vectores);
 
-        // Call th FMM2 function
-        
-        FMM2_3D(matriz, size_map, distance_threshold, 
-            objective_points, size_objective, start_points, size_start,
-             step, traj, planner_type, escalado_vectores);
-        clock_t end = clock();
-        float cpu_time_used = ((float) (end - start)) / CLOCKS_PER_SEC;
-        // Save trajectory to file
-        /*
-        FILE* results_file = fopen("./Archivos/trajectory_results.txt", "w");
-        if (results_file == NULL) {
-            perror("Error opening results file");
-            return;
+            clock_t end = clock();
+            float cpu_time_used = ((float) (end - start)) / CLOCKS_PER_SEC;
+            printf("Tiempo de ejecución: %f segundos\n", cpu_time_used); 
         }
+        else{
+            // In your compute_3d_trajectory function:
+            int initial_capacity = 100;
+            Trajectory3D* traj = malloc(sizeof(Trajectory3D));
+            traj->points = malloc(initial_capacity * sizeof(Point3D));  // Initial capacity
+            traj->size = 0;
+            traj->capacity = initial_capacity;
 
-        fprintf(results_file, "=== Map Characteristics ===\n");
-        fprintf(results_file, "3D (%d x %d x %d)\n\n", size_map[0], size_map[1], size_map[2]);
+            // Call th FMM2 function
+            
+            FMM2_3D(matriz, size_map, distance_threshold, 
+                objective_points, size_objective, start_points, size_start,
+                step, traj, planner_type, escalado_vectores);
+            clock_t end = clock();
+            float cpu_time_used = ((float) (end - start)) / CLOCKS_PER_SEC;
+            printf("Tiempo de ejecución: %f segundos\n", cpu_time_used); 
+            // Save trajectory to file
+            /*
+            FILE* results_file = fopen("./Archivos/trajectory_results.txt", "w");
+            if (results_file == NULL) {
+                perror("Error opening results file");
+                return;
+            }
 
-        fprintf(results_file, "=== Computation Parameters ===\n");
-        fprintf(results_file, "Computation Time = %.3f s\n", cpu_time_used);
+            fprintf(results_file, "=== Map Characteristics ===\n");
+            fprintf(results_file, "3D (%d x %d x %d)\n\n", size_map[0], size_map[1], size_map[2]);
+
+            fprintf(results_file, "=== Computation Parameters ===\n");
+            fprintf(results_file, "Computation Time = %.3f s\n", cpu_time_used);
 
 
-        fprintf(results_file, "=== Trajectory Parameters ===\n");
-        fprintf(results_file, "Start point: (%.2f, %.2f. %.2f)\n", start_points[0], start_points[1], start_points[2]);
-        fprintf(results_file, "End point: (%.2f, %.2f, %.2f)\n", objective_points[0], objective_points[1], objective_points[2]);
-        fprintf(results_file, "Distance threshold: %.2f\n\n", distance_threshold);
+            fprintf(results_file, "=== Trajectory Parameters ===\n");
+            fprintf(results_file, "Start point: (%.2f, %.2f. %.2f)\n", start_points[0], start_points[1], start_points[2]);
+            fprintf(results_file, "End point: (%.2f, %.2f, %.2f)\n", objective_points[0], objective_points[1], objective_points[2]);
+            fprintf(results_file, "Distance threshold: %.2f\n\n", distance_threshold);
 
-        fprintf(results_file, "=== Trajectory Points ===\n");
-        for (int i = 0; i < traj->size; i++) {
-            fprintf(results_file, "Point %d: (%.2f, %.2f, %.2f)\n", i, traj->points[i].x, traj->points[i].y, traj->points[i].z);
+            fprintf(results_file, "=== Trajectory Points ===\n");
+            for (int i = 0; i < traj->size; i++) {
+                fprintf(results_file, "Point %d: (%.2f, %.2f, %.2f)\n", i, traj->points[i].x, traj->points[i].y, traj->points[i].z);
+            }
+
+            fclose(results_file);
+            */
         }
-
-        fclose(results_file);
-        */
-        printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);        
+               
     }
     else if (dimensions_prob == 2){
         clock_t start = clock();
@@ -165,7 +186,6 @@ void main() {
 
         // Define el umbral de distancia para la matriz de velocidades
         float distance_threshold = 4;
-        float safety_margin = 2.5;  // por ahora no se usa
 
         // Define el tamaño del paso para el descenso del gradiente
         float step = 0.5;
@@ -188,17 +208,18 @@ void main() {
         }
         
         // Crear la trayectoria
-        int initial_capacity = 10;
+        int initial_capacity = 100;
         Trajectory* traj = malloc(sizeof(Trajectory));
         traj->points = malloc(initial_capacity * sizeof(Point2D));
         traj->size = 0;
         traj->capacity = initial_capacity;
-        FMM2_2D(matriz, size_map, distance_threshold, safety_margin, 
+        FMM2_2D(matriz, size_map, distance_threshold, 
                 objective_points, size_objective, start_points, size_start, step, traj, planner_type, escalado_vectores);
         clock_t end = clock();
         float cpu_time_used = ((float) (end - start)) / CLOCKS_PER_SEC;
 
         // Save trajectory to file
+        /*
         FILE* results_file = fopen("./Archivos/trajectory_results.txt", "w");
         if (results_file == NULL) {
             perror("Error opening results file");
@@ -223,7 +244,7 @@ void main() {
         }
 
         fclose(results_file);
-
+        */
 
         printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);
     }

@@ -13,6 +13,7 @@
                 "${workspaceFolder}\\rk4_2D_3D.c",
                 "${workspaceFolder}\\FMM2.c",
                 "${workspaceFolder}\\planner.c",
+                "${workspaceFolder}\\ascension_restraint.c",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],

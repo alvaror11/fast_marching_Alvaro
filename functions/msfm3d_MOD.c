@@ -3,6 +3,7 @@
 #include "math.h"
 #include "common.h"
 #include "msfm3d_MOD.h"
+#include "FMM2.h"
 
 
 
@@ -314,11 +315,9 @@ float* main_msfm3D(float* F, float* SourcePoints, float* T, int* size_map, int* 
     bool Ed;
     
     /* Size of input image */
-    const size_t *dims_c;
     int dims[3];
     
     /* Size of  SourcePoints array */
-    const size_t *dims_sp_c;
     size_t dims_sp[3];
     
     /* Number of pixels in image */

@@ -73,7 +73,7 @@ void addPointToTrajectory3D(Trajectory3D* traj, float x, float y, float z) {
 }
 
 
-void FMM2_2D(float* matriz, int* size_map, float distance_threshold, float safety_margin,
+void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
              float* objective_points, int size_objective[2], float* start_points, int size_start[2], float step,
             Trajectory* traj, int planner_type, int escalado_vectores){
     
@@ -105,7 +105,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold, float safet
     }     
     //Create velocities map
     printf("Creating velocities map...\n");
-    float* obstacle_distance_map = velocities_map(matriz, size_map, distance_threshold, safety_margin);
+    float* obstacle_distance_map = velocities_map(matriz, size_map, distance_threshold);
     
     // Apply planner
     planners_2D(obstacle_distance_map, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
@@ -289,8 +289,8 @@ void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* ob
     clock_t end_velocitiesMap = clock();
     float time_velocitiesMap = ((float) (end_velocitiesMap - start_velocitiesMap)) / CLOCKS_PER_SEC;
     printf("Time for velocities map: %.3f s\n", time_velocitiesMap);
+
     // Save velocities map
-    
     FILE *output_file1 = fopen("./Archivos/velocities_map3D.txt", "w");
     if (output_file1 == NULL) {
         perror("Error al abrir el archivo de salida");
@@ -315,7 +315,8 @@ void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* ob
     // Apply planner
     printf("Applying planner...\n");
      clock_t start_planner = clock();
-     planners_3D(obstacle_distance_map, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
+     planners_3D(obstacle_distance_map, size_map, objective_points, size_objective, start_points, size_start,
+                planner_type, escalado_vectores, NULL, NULL);
      clock_t end_planner = clock();
      float time_planner = ((float) (end_planner - start_planner)) / CLOCKS_PER_SEC;    
      printf("Time for planner: %.3f s\n", time_planner);
