@@ -257,19 +257,20 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
         case 2: {
             int ascension_rate = 1;     // meters up per meters forward
             int descent_rate = 1;
-            int flight_level = 40;     // Height expressed in meters
+            int flight_level = 70;     // Height expressed in meters
             int resolution = 2;         // Resolution in meters per cell (1 cell = resolution meters)
 
             int flight_level_cells = (flight_level / resolution) - 1; // Convert height to cells
-            int count = 1;
+
+            // Substract 1 to convert from 1-based to 0-based indexing
             int start_x = start_points[0] - 1;
             int start_y = start_points[1] - 1;
             int start_z = start_points[2] - 1;
             int objective_x = objective_points[0] - 1;
             int objective_y = objective_points[1] - 1;
-            int objective_z = objective_points[2] - 1;    
+            int objective_z = objective_points[2] - 1;  
+
             // Create 2d matrix with height values
-           
             // create the ascension cone
             for(int z = start_z; z <= flight_level_cells; z++) {
                 // Calculate radius at this height (in cells)
@@ -292,7 +293,6 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
                 }
             }
             // create the decent cone
-            count = 1;
             for(int z = objective_z; z <= flight_level_cells; z++) {
                 float height_diff = (z - objective_z) * resolution;
                 float radius_cells = (height_diff / descent_rate) / resolution;
@@ -349,7 +349,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
                     bool is_occupied = false;
 
                     // Check for obstacles above and below the surface point
-                    for(int k = z - 1; k < (z + 1); k++) {
+                    for(int k = z - 1; k <  (z + 2); k++) {
                         int idx_3d = j + i*size_map[1] + k*size_map[0]*size_map[1];
                         if(matriz[idx_3d] == 1.0f) {
                             is_occupied = true;
