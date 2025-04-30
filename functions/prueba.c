@@ -45,18 +45,18 @@ void main() {
         int num_start_points = 1;
         int size_start[2] = {3, num_start_points};
         float *start_points = (float *)malloc(num_start_points * 3 * sizeof(float));;
-        start_points[0] = 5;    // x coordinate
-        start_points[1] = 7;   // y coordinate
-        start_points[2] = 5;   // z coordinate
+        start_points[0] = 10;    // x coordinate
+        start_points[1] = 10;   // y coordinate
+        start_points[2] = 15;   // z coordinate
 
         // Define las coordenadas objetivo
         int num_points = 1;
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         float *objective_points  = (float *)malloc(num_points * 3 * sizeof(float));;
-        objective_points[0] = 37;   // x coordinate
-        objective_points[1] = 30;    // y coordinate
-        objective_points[2] = 5;    // z coordinate
+        objective_points[0] = 45;   // x coordinate
+        objective_points[1] = 40;    // y coordinate
+        objective_points[2] = 25;    // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
         int planner_type = 2;           //tipo de planner a usar
@@ -73,9 +73,12 @@ void main() {
         read_map(matriz, size_map, (char*)mapfile, dimensions_prob);
 
         // Check that initial and final points are not inside an obstacle
-        if ((matriz[(int)start_points[0] - 1 + ((int)start_points[1] -1)*largo + ((int)start_points[2] - 1)*ancho*largo] == 1)||
-            (matriz[(int)objective_points[0] - 1 + ((int)objective_points[1] - 1)*largo + ((int)objective_points[2] - 1)*ancho*largo] == 1)) {
-            printf("Error: Initial or objective point is inside an obstacle\n");
+        if ((matriz[(int)start_points[0] - 1 + ((int)start_points[1] -1)*largo + ((int)start_points[2] - 1)*ancho*largo] == 1)) {
+            printf("Error: Initial point is inside an obstacle\n");
+            return;
+        }
+        if((matriz[(int)objective_points[0] - 1 + ((int)objective_points[1] - 1)*largo + ((int)objective_points[2] - 1)*ancho*largo] == 1)){
+            printf("Error: Objective point is inside an obstacle\n");
             return;
         }
         if (objective_points[0] > size_map[0] || objective_points[1] > size_map[1] || objective_points[2] > size_map[2] 

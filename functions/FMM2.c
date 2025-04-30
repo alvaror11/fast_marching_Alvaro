@@ -77,7 +77,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
              float* objective_points, int size_objective[2], float* start_points, int size_start[2], float step,
             Trajectory* traj, int planner_type, int escalado_vectores){
     
-
+    /*
     if (planner_type == 0){
         // Solo se añade un borde de obstaculos alrededor del mapa si no se ha aplicado ningun planner
         size_map[0] += 2;
@@ -102,7 +102,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
 
         free(matriz);
         matriz = matriz2;
-    }     
+    }*/     
     //Create velocities map
     printf("Creating velocities map...\n");
     float* obstacle_distance_map = velocities_map(matriz, size_map, distance_threshold);
@@ -181,9 +181,11 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
      fclose(gradient_y_file);
     
 
-    // Empezamos a usar el descenso del gradiente para buscar el camino
+    //Descenso del gradiente 
     bool finished = false;      //mientras no se llegue al punto final es false
      
+    // ATENCION, los puntos se guardan  empezando con i = 1, y ademas normalmente se considera que estan encapsulados
+    // en el futuro habra que mirar de que forma se guardan las coordenadas y se debera modificar
     // Añadir el punto inicial
     printf("Starting gradient descend...\n");
     addPointToTrajectory(traj, start_points[0], start_points[1]);
@@ -191,6 +193,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
     float* last_point = malloc(2 * sizeof(float));
     float* new_point = malloc(2 * sizeof(float));
 
+    int iteraciones
     while (finished == false){
         // Obtener las coordenadas del último punto de la trayectoria
         
@@ -217,7 +220,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
          perror("Error al abrir el archivo de trayectoria");
          return;
      }
- 
+     
      for (int i = 0; i < traj->size; i++) {
          float traj_x = traj->points[i].x;
          float traj_y = traj->points[i].y;
@@ -234,6 +237,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
     free(start_points);
     //free(obstacle_distance_map);
     free(last_point);
+    free(new_point);
     
 }
 void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* objective_points, 
@@ -241,6 +245,7 @@ void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* ob
             int planner_type, int escalado_vectores){
     
     // Adding a layer of obstacles surrounding the map
+    /*
     if (planner_type == 0){
         size_map[0] += 2;
         size_map[1] += 2;
@@ -280,7 +285,7 @@ void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* ob
 
         free(matriz);
         matriz = matriz2;
-    }
+    }*/
     
     //Create velocities map
     printf("Creating velocities map...\n");
@@ -409,9 +414,11 @@ void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* ob
      fclose(gradient_y_file);
      fclose(gradient_z_file);
         
-    // Empezamos a usar el descenso del gradiente para buscar el camino
+    // Descenso del gradiente
     bool finished = false;      //mientras no se llegue al punto final es false
 
+    // ATENCION, los puntos se guardan  empezando con i = 1, y ademas normalmente se considera que estan encapsulados
+    // en el futuro habra que mirar de que forma se guardan las coordenadas y se debera modificar
     // Añadir el punto inicial
     addPointToTrajectory3D(traj, start_points[0], start_points[1], start_points[2]);
     printf("Starting gradient descend...\n");
