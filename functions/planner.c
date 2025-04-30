@@ -257,7 +257,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
         case 2: {
             int ascension_rate = 1;     // meters up per meters forward
             int descent_rate = 1;
-            int flight_level = 70;     // Height expressed in meters
+            int flight_level = 110;     // Height expressed in meters
             int resolution = 2;         // Resolution in meters per cell (1 cell = resolution meters)
 
             int flight_level_cells = (flight_level / resolution) - 1; // Convert height to cells
@@ -270,15 +270,21 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
             int objective_y = objective_points[1] - 1;
             int objective_z = objective_points[2] - 1;  
 
+            printf("\n=== Height Map Debug Info ===\n");
+            printf("Flight level (cells): %d\n", flight_level_cells);
+            printf("Start point: (%d, %d, %d)\n", start_x, start_y, start_z);
+            printf("Objective point: (%d, %d, %d)\n", objective_x, objective_y, objective_z);
+
             // Create 2d matrix with height values
             // create the ascension cone
             for(int z = start_z; z <= flight_level_cells; z++) {
+                printf("Height: %d\n", z);
                 // Calculate radius at this height (in cells)
                 float height_diff = (z - start_z) * resolution;
                 float radius_cells = (height_diff / ascension_rate) / resolution;
                 
                 // Generate circle at this height
-                for(float angle = 0; angle < 2*PI; angle += PI/32) {
+                for(float angle = 0; angle < 2*PI; angle += PI/(32*height_diff)) {
                     int x = start_x + (int)floor(radius_cells * cos(angle));
                     int y = start_y + (int)floor(radius_cells * sin(angle));
                     
@@ -288,6 +294,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
                         int idx = y + size_map[1] * x;
                         if(height_map[idx] == 0 || z < height_map[idx]) {
                             height_map[idx] = z;
+                            printf("Height map at (%d, %d) to %d\n", x, y, z);
                         }
                     }
                 }
@@ -297,7 +304,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
                 float height_diff = (z - objective_z) * resolution;
                 float radius_cells = (height_diff / descent_rate) / resolution;
                 
-                for(float angle = 0; angle < 2*PI; angle += PI/32) {
+                for(float angle = 0; angle < 2*PI; angle += PI/(height_diff*32)) {
                     int x = objective_x + (int)floor(radius_cells * cos(angle));
                     int y = objective_y + (int)floor(radius_cells * sin(angle));
                     

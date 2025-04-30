@@ -193,7 +193,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
     float* last_point = malloc(2 * sizeof(float));
     float* new_point = malloc(2 * sizeof(float));
 
-    int iteraciones
+    int iteraciones = 0;
     while (finished == false){
         // Obtener las coordenadas del último punto de la trayectoria
         
@@ -203,6 +203,12 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
         // Llamar a la función mexFunction en rk4_2D con las coordenadas del último punto y el mapa de velocidades
         gradient_descend_rk4(last_point, gradient_matrix, size_map, size_objective, new_point, step);
 
+        if (isnan(new_point[0]) || isnan(new_point[1])) {
+            iteraciones ++;
+        }
+        if (iteraciones > 50) {
+            break;
+        }
         // Añadir el nuevo punto a la trayectoria
         addPointToTrajectory(traj, new_point[0], new_point[1]);
         // Comprobar si se ha llegado al punto objetivo
@@ -214,7 +220,10 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
             printf("Objective reached\n");
         }
     }
-    
+    if (iteraciones > 50){
+        printf("Could not find a path\n");
+        return;
+    }
     FILE *traj_file = fopen("./Archivos/trajectory.txt", "w");
      if (traj_file == NULL) {
          perror("Error al abrir el archivo de trayectoria");
