@@ -25,7 +25,7 @@ void main() {
         clock_t start = clock();
         // Coord X = ancho, Y = largo, Z = alto
 
-       const char* mapfile = "./Mapas/MAP_2_50_50_50.txt";
+       const char* mapfile = "./Mapas/MAP_3_100_100_100.txt";
         int ancho, largo, alto;
         if (sscanf(mapfile, "./Mapas/MAP_%*d_%d_%d_%d.txt", &ancho, &largo, &alto) != 3) {
             printf("Error: Could not extract dimensions from filename. Using defaults.\n");
@@ -54,7 +54,7 @@ void main() {
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         float *objective_points  = (float *)malloc(num_points * 3 * sizeof(float));;
-        objective_points[0] = 45;   // x coordinate
+        objective_points[0] = 95;   // x coordinate
         objective_points[1] = 40;    // y coordinate
         objective_points[2] = 25;    // z coordinate
 
