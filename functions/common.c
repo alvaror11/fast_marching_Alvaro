@@ -430,3 +430,121 @@ void read_map(float* matriz, int* size_map, char* mapfile, int dimensions_prob){
         printf("Error: Invalid dimensions for the map.\n");
     }
 }
+
+float* process_map_file(char* mapfile, int* size_map, int dimensions_prob){
+    const char* extension = strrchr(mapfile, '.');
+    if (!extension) {
+        printf("Error: File has no extension\n");
+        return NULL;
+    }
+
+    if (strcmp(extension, ".txt") == 0) {
+        int ancho, largo, alto;
+        if (sscanf(mapfile, "./Mapas/MAP_%*d_%d_%d_%d.txt", &ancho, &largo, &alto) != 3) {
+            printf("Error: Could not extract dimensions from filename. Using defaults.\n");
+            ancho = 50;
+            largo = 50;
+            alto = 50;
+        }
+        size_map[0] = ancho;
+        size_map[1] = largo;
+        size_map[2] = alto;
+        
+        float *matriz = (float *)malloc(ancho * largo * alto* sizeof(float));
+        read_map(matriz, size_map, mapfile, dimensions_prob);
+        return matriz;
+    }
+    else if (strcmp(extension, ".csv") == 0) {
+        // Handle CSV height map
+        FILE* file = fopen(mapfile, "r");
+        if (!file) {
+            printf("Error opening CSV file\n");
+            return NULL;
+        }
+
+        // Read CSV height map
+        char line[4096];
+        int ancho = 0, largo = 0;
+        int max_height = 0;
+
+        // First pass to get dimensions and max height
+        while (fgets(line, sizeof(line), file)) {
+            char* token = strtok(line, ",");
+            largo = 0;
+            while (token) {
+                int height = atoi(token);
+                if (height > max_height) max_height = height;
+                largo++;
+                token = strtok(NULL, ",");
+            }
+            ancho++;
+        }
+
+        // Set size_map dimensions
+        size_map[0] = ancho;    // width
+        size_map[1] = largo;    // length
+        size_map[2] = (max_height + 1);  // height
+
+        // Reset file pointer
+        rewind(file);
+
+        // Initialize matriz with zeros
+        float* matriz = (float*)malloc(size_map[0] * size_map[1] * size_map[2] * sizeof(float));
+        if (!matriz) {
+            printf("Error allocating memory for occupation matrix\n");
+            fclose(file);
+            return NULL;
+        }
+        memset(matriz, 0, size_map[0] * size_map[1] * size_map[2] * sizeof(float)); // Initialize to 0
+        // Second pass to create occupation matrix
+        ancho = 0;
+        while (fgets(line, sizeof(line), file)) {
+            char* token = strtok(line, ",");
+            largo = 0;
+            while (token && largo < size_map[0]) {
+                int height = atoi(token);
+                // Mark all cells below and including height as occupied
+                for (int z = 0; z <= height; z++) {
+                    int idx = largo + ancho*size_map[1] + z*size_map[0]*size_map[1];
+                    matriz[idx] = 1.0f;
+                }
+                largo++;
+                token = strtok(NULL, ",");
+            }
+            ancho++;
+        }
+
+        fclose(file);
+        printf("Created 3D occupation matrix from height map CSV.\n");
+        printf("Dimensions: %d x %d x %d\n", size_map[0], size_map[1], size_map[2]);
+
+        /*
+        FILE* file_out = fopen("./Mapas/mapa_MAD.txt", "w");
+        if (!file) {
+            printf("Error opening file for writing occupation matrix\n");
+            return NULL;
+        }
+
+        fprintf(file_out, "%d %d %d\n\n", size_map[0], size_map[1], size_map[2]);
+        // Write matrix layer by layer
+        for (int k = 0; k < size_map[2]; k++) {
+            fprintf(file_out, "Layer %d:\n", k);
+            for (int i = 0; i < size_map[0]; i++) {
+                for (int j = 0; j < size_map[1]; j++) {
+                    fprintf(file_out, "%.0f ", matriz[j + i*size_map[1] + k*size_map[0]*size_map[1]]);
+                }
+                fprintf(file_out, "\n");
+            }
+            fprintf(file_out, "\n");
+        }
+
+        fclose(file_out);
+        */
+        return matriz;
+
+    }
+    else {
+        printf("Error: Unsupported file format. Use .txt or .csv\n");
+        return NULL;
+    }
+}
