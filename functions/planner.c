@@ -257,7 +257,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
         case 2: {
             int ascension_rate = 1;     // meters up per meters forward
             int descent_rate = 1;
-            int flight_level = 110;     // Height expressed in meters
+            int flight_level = 130;  // Height expressed in meters
             int resolution = 2;         // Resolution in meters per cell (1 cell = resolution meters)
 
             int flight_level_cells = (flight_level / resolution) - 1; // Convert height to cells
@@ -294,7 +294,6 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
                         int idx = y + size_map[1] * x;
                         if(height_map[idx] == 0 || z < height_map[idx]) {
                             height_map[idx] = z;
-                            printf("Height map at (%d, %d) to %d\n", x, y, z);
                         }
                     }
                 }
@@ -356,7 +355,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
                     bool is_occupied = false;
 
                     // Check for obstacles above and below the surface point
-                    for(int k = z - 1; k <  (z + 2); k++) {
+                    for(int k = (z - 1); k <  (z + 2); k++) {
                         int idx_3d = j + i*size_map[1] + k*size_map[0]*size_map[1];
                         if(matriz[idx_3d] == 1.0f) {
                             is_occupied = true;

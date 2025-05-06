@@ -27,3 +27,24 @@ axis equal;
 min_height = min(height_data(:));
 max_height = max(height_data(:));
 text(10, size(height_data,1)+5, sprintf('Min height: %.1f, Max height: %.1f', min_height, max_height));
+
+
+% Read the occupation map file
+occupation_data = readmatrix('../Archivos/occupation_map_2d.txt');
+
+% Create figure
+figure('Name', 'Occupation Map 2D Visualization', 'Position', [100 100 800 600]);
+
+% Create binary visualization
+imagesc(occupation_data);
+colormap([0.8 0.9 1; 0.2 0.2 0.2]); % Light blue for free space, dark gray for obstacles
+colorbar('Ticks', [0,1], 'TickLabels', {'Free', 'Obstacle'}); % Custom colorbar labels
+
+% Add labels and title
+xlabel('X coordinate');
+ylabel('Y coordinate');
+title('2D Occupation Map');
+
+% Add grid and maintain proportions
+grid on;
+axis equal;
