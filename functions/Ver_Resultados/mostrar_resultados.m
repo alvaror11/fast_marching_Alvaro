@@ -2,8 +2,8 @@ clear;
 clc;
 close all;
 
-filas = 50;
-columnas = 50;
+filas = 100;
+columnas = 100;
 
 % Punto para iniciar la traj.
 punto_x = 20;  % columna

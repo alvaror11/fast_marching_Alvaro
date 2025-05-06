@@ -45,9 +45,9 @@ void main() {
         int num_start_points = 1;
         int size_start[2] = {3, num_start_points};
         float *start_points = (float *)malloc(num_start_points * 3 * sizeof(float));;
-        start_points[0] = 10;    // x coordinate
+        start_points[0] = 30;    // x coordinate
         start_points[1] = 10;   // y coordinate
-        start_points[2] = 15;   // z coordinate
+        start_points[2] = 20;   // z coordinate
 
         // Define las coordenadas objetivo
         int num_points = 1;
@@ -56,7 +56,7 @@ void main() {
         float *objective_points  = (float *)malloc(num_points * 3 * sizeof(float));;
         objective_points[0] = 95;   // x coordinate
         objective_points[1] = 40;    // y coordinate
-        objective_points[2] = 25;    // z coordinate
+        objective_points[2] = 25;     // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
         int planner_type = 2;           //tipo de planner a usar
@@ -103,7 +103,23 @@ void main() {
 
             clock_t end = clock();
             float cpu_time_used = ((float) (end - start)) / CLOCKS_PER_SEC;
-            printf("Tiempo de ejecución: %f segundos\n", cpu_time_used); 
+            printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);
+
+            printf("\nChecking trajectory for obstacle collisions...\n");
+            for (int i = 0; i < traj->size; i++) {
+                int x = (int)round(traj->points[i].x) - 1;
+                int y = (int)round(traj->points[i].y) - 1;
+                int z = (int)round(traj->points[i].z) - 1;
+                
+                
+                // Check if point is in obstacle (matriz has 1s for obstacles)
+                if (matriz[y + (x)*size_map[1] + (z)*size_map[0]*size_map[1]] == 1) {
+                    printf("Warning: Point %d (%.2f, %.2f, %.2f) intersects with obstacle\n", 
+                        i, traj->points[i].x, traj->points[i].y, traj->points[i].z);
+                }
+    }
+
+
         }
         else{
             // In your compute_3d_trajectory function:
