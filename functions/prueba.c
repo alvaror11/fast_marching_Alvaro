@@ -25,22 +25,16 @@ void main() {
         clock_t start = clock();
         // Coord X = ancho, Y = largo, Z = alto
 
-       const char* mapfile = "./Mapas/MAP_3_100_100_100.txt";
-        int ancho, largo, alto;
-        if (sscanf(mapfile, "./Mapas/MAP_%*d_%d_%d_%d.txt", &ancho, &largo, &alto) != 3) {
-            printf("Error: Could not extract dimensions from filename. Using defaults.\n");
-            ancho = 50;
-            largo = 50;
-            alto = 50;
-        }
-        
-        
-        //int ancho = 50, largo = 50, alto = 50 ; 
-        int *size_map = (int *)malloc(3 * sizeof(int));
-        size_map[0] = ancho;
-        size_map[1] = largo;
-        size_map[2] = alto;
-        
+        //const char* mapfile = "./Mapas/MAP_3_100_100_100.txt";         
+        const char* mapfile = "./Mapas/MADRIDALTMAP.csv"; 
+        //Procesar el mapa
+        int* size_map = (int *)malloc(3 * sizeof(int));
+        float *matriz = process_map_file((char*)mapfile, size_map, dimensions_prob);
+
+        int ancho = size_map[0];
+        int largo = size_map[1];
+        int alto = size_map[2];
+
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
         int num_start_points = 1;
         int size_start[2] = {3, num_start_points};
@@ -68,9 +62,6 @@ void main() {
         // Define el tamaño del paso
         float step = 0.5;
 
-        // Read the map from the file
-        float *matriz = (float *)malloc(ancho * largo * alto* sizeof(float));
-        read_map(matriz, size_map, (char*)mapfile, dimensions_prob);
 
         // Check that initial and final points are not inside an obstacle
         if ((matriz[(int)start_points[0] - 1 + ((int)start_points[1] -1)*largo + ((int)start_points[2] - 1)*ancho*largo] == 1)) {
