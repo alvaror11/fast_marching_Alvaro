@@ -79,10 +79,10 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
 
     // Print trajectory points
     for(int i = 0; i < traj_2D->size; i++) {
-        printf("Point %d: (%.2f, %.2f)\n", 
+       /* printf("Point %d: (%.2f, %.2f)\n", 
                i, 
                traj_2D->points[i].x,
-               traj_2D->points[i].y);
+               traj_2D->points[i].y);*/
     }
     printf("==============================\n");
 
@@ -104,25 +104,45 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
     // to the x and y coordinates to get the correct index in the height_map
     // 
     for (int i = 0; i < traj_2D->size; i++) {
-        traj->points[i].x = traj_2D->points[i].y - 1;
-        traj->points[i].y = traj_2D->points[i].x - 1;
-        traj->points[i].z = height_map[((int)traj_2D->points[i].x - 1) + ((int)traj_2D->points[i].y - 1) * size_map[0]];
+        int x_2d = (int)traj_2D->points[i].x - 1;
+        int y_2d = (int)traj_2D->points[i].y - 1;
+        int x_3d = y_2d;
+        int y_3d = x_2d;
+        int height_idx = y_3d + x_3d * size_map[1];
+        
+        if (x_2d < 0 || x_2d >= size_map[0] || y_2d < 0 || y_2d >= size_map[1]) {
+            printf("WARNING: Indices out of bounds!\n");
+        }
+    
+        traj->points[i].x = y_2d;
+        traj->points[i].y = x_2d;
+        traj->points[i].z = height_map[height_idx];
+        
     }
 
+    FILE *traj_file = fopen("./Archivos/trajectory3D.txt", "w");
+    if (traj_file == NULL) {
+        perror("Error al abrir el archivo de trayectoria");
+        return;
+    }
     // Print trajectory points
+    fprintf(traj_file, "%d %d\n", traj->size, 3);
     for(int i = 0; i < traj->size; i++) {
-        printf("Point %d: (%.2f, %.2f, %.2f)\n", 
+        /*printf("Point %d: (%.2f, %.2f, %.2f)\n", 
                i, 
                traj->points[i].x,
                traj->points[i].y,
-               traj->points[i].z);
+               traj->points[i].z);*/
 
         int idx__3d = ((int)traj->points[i].y) + (int)traj->points[i].x * size_map[1] + (int)traj->points[i].z * size_map[0] * size_map[1];
         if (matriz[idx__3d] == 1.0f) {
             printf("Point %d is inside an obstacle\n", i);
             break;
         }
+        fprintf(traj_file, "%.2f %.2f %.2f\n", 
+            traj->points[i].x,
+            traj->points[i].y,
+            traj->points[i].z);
     }
-    printf("==============================\n");
-
+    fclose(traj_file);
 }

@@ -41,16 +41,16 @@ void main() {
         float *start_points = (float *)malloc(num_start_points * 3 * sizeof(float));;
         start_points[0] = 30;    // x coordinate
         start_points[1] = 10;   // y coordinate
-        start_points[2] = 20;   // z coordinate
+        start_points[2] = 15;   // z coordinate
 
         // Define las coordenadas objetivo
         int num_points = 1;
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         float *objective_points  = (float *)malloc(num_points * 3 * sizeof(float));;
-        objective_points[0] = 95;   // x coordinate
-        objective_points[1] = 40;    // y coordinate
-        objective_points[2] = 25;     // z coordinate
+        objective_points[0] = 200;   // x coordinate
+        objective_points[1] = 200;    // y coordinate
+        objective_points[2] = 15;     // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
         int planner_type = 2;           //tipo de planner a usar
