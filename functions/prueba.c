@@ -39,25 +39,25 @@ void main() {
         int num_start_points = 1;
         int size_start[2] = {3, num_start_points};
         float *start_points = (float *)malloc(num_start_points * 3 * sizeof(float));;
-        start_points[0] = 30;    // x coordinate
-        start_points[1] = 10;   // y coordinate
-        start_points[2] = 15;   // z coordinate
+        start_points[0] = 220;    // x coordinate
+        start_points[1] = 200;   // y coordinate
+        start_points[2] = 10;   // z coordinate
 
         // Define las coordenadas objetivo
         int num_points = 1;
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         float *objective_points  = (float *)malloc(num_points * 3 * sizeof(float));;
-        objective_points[0] = 200;   // x coordinate
-        objective_points[1] = 200;    // y coordinate
-        objective_points[2] = 15;     // z coordinate
+        objective_points[0] = 250;   // x coordinate
+        objective_points[1] = 400;    // y coordinate
+        objective_points[2] = 13;     // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
         int planner_type = 2;           //tipo de planner a usar
         int escalado_vectores = 5;      //valor para escalar los vectores del planner 2
         
         // Define el umbral de distancia para la matriz de velocidades
-        float distance_threshold = 4.0;
+        float distance_threshold = 8.0;
 
         // Define el tamaño del paso
         float step = 0.5;
