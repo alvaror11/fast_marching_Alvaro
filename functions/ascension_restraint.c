@@ -110,7 +110,7 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
         int y_3d = x_2d;
         int height_idx = y_3d + x_3d * size_map[1];
         
-        if (x_2d < 0 || x_2d >= size_map[0] || y_2d < 0 || y_2d >= size_map[1]) {
+        if (x_3d < 0 || x_3d >= size_map[0] || y_3d < 0 || y_3d >= size_map[1]) {
             printf("WARNING: Indices out of bounds!\n");
         }
     

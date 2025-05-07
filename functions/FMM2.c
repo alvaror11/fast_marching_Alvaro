@@ -117,6 +117,9 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
          perror("Error al abrir el archivo de salida");
          return;
      }
+     
+     fprintf(output_file1, "%d %d\n", size_map[0], size_map[1]);
+
      for (int i = 0; i < size_map[1]; i++) {
          for (int j = 0; j < size_map[0]; j++) {
              fprintf(output_file1, "%.2f ", obstacle_distance_map[j + i * size_map[0]]);

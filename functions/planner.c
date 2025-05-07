@@ -257,7 +257,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
         case 2: {
             int ascension_rate = 1;     // meters up per meters forward
             int descent_rate = 1;
-            int flight_level = 50;  // Height expressed in meters
+            int flight_level = 30;  // Height expressed in meters
             int resolution = 2;         // Resolution in meters per cell (1 cell = resolution meters)
 
             int flight_level_cells = (flight_level / resolution) - 1; // Convert height to cells
