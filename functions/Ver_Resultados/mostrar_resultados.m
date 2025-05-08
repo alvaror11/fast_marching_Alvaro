@@ -1,6 +1,6 @@
 clear;
 clc;
-%close all;
+close all;
 
 filas = 50;
 columnas = 50;
@@ -85,21 +85,25 @@ cd(main_folder);
 % Crear figura
 figure;
 
-% Usar colormap en escala de grises
-colormap(gray);  % Usar escala de grises: negro (0) a blanco (1)
+% Create a finer grid for interpolation
+[X,Y] = meshgrid(1:columnas, 1:filas);
+[Xq,Yq] = meshgrid(1:0.1:columnas, 1:0.1:filas);
 
-% Mostrar el mapa
-imagesc(velocities_map);
-axis equal;  % Mantener proporciones cuadradas
+% Interpolate velocities map for smoother visualization
+velocities_smooth = interp2(X, Y, velocities_map, Xq, Yq, 'spline');
+
+% Show smoothed map
+imagesc(velocities_smooth);
+axis equal;
+colormap(gray);  % Changed to grayscale
 colorbar;
-clim([0 1]);  % Ajustar límites de color entre 0 y 1
+clim([0 1]);
 
 % Etiquetas y título
 title('Velocities Map', 'FontSize', 12);
 xlabel('X', 'FontSize', 11);
 ylabel('Y', 'FontSize', 11);
 set(gca, 'FontSize', 10);
-
 
 %% Mapa de tiempos
 cd(files_folder);
@@ -125,7 +129,7 @@ cd(main_folder);
 
 %% Mapa de tiempos visualization
 
-umbralMax = 450; 
+umbralMax = 100; 
 
 % Crear una copia de la matriz con valores limitados a 200
 matrizClipped = matriz_tiempos;  
@@ -251,3 +255,36 @@ ylabel('Y');
 axis equal;
 
 hold off;
+
+%% Velocities and trajectory
+
+figure('Name', 'Velocities Map with Trajectory');
+
+% Create and show smoothed velocities map
+[X,Y] = meshgrid(1:columnas, 1:filas);
+[Xq,Yq] = meshgrid(1:0.1:columnas, 1:0.1:filas);
+velocities_smooth = interp2(X, Y, velocities_map, Xq, Yq, 'spline');
+imagesc(velocities_smooth);
+colormap(gray);
+colorbar;
+clim([0 1]);
+axis equal;
+hold on;
+
+% Overlay trajectory
+plot(traj_x*10, traj_y*10, 'r-', 'LineWidth', 2);
+plot(traj_x(2:end-1)*10, traj_y(2:end-1)*10, 'r.', 'MarkerSize', 10);
+plot(traj_x(1)*10, traj_y(1)*10, 'go', 'MarkerSize', 15, 'LineWidth', 2);
+plot(traj_x(end)*10, traj_y(end)*10, 'ro', 'MarkerSize', 15, 'LineWidth', 2);
+
+% Add labels and title
+title('Velocities Map with Trajectory', 'FontSize', 12);
+xlabel('X', 'FontSize', 11);
+ylabel('Y', 'FontSize', 11);
+set(gca, 'FontSize', 10);
+
+% Add legend
+legend('Trajectory', 'Waypoints', 'Start', 'End', 'Location', 'southeast');
+
+hold off;
+

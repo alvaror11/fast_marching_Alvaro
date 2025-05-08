@@ -11,10 +11,12 @@ cd(maps_folder)
 mapa = readmatrix("MADRIDALTMAP.CSV");
 
 figure;
-surf(mapa,"EdgeColor","none")fprintf('Reading terrain data from %s...\n', fullfile(maps_folder, "MADRIDALTMAP.CSV"));
+surf(mapa,"EdgeColor","none")
+fprintf('Reading terrain data from %s...\n', fullfile(maps_folder, "MADRIDALTMAP.CSV"));
 mapa = readmatrix("MADRIDALTMAP.CSV");
 fprintf('Terrain data read successfully.\n');
 
+cd(files_folder)
 fprintf('Reading trajectory data from %s...\n', fullfile(files_folder, 'trajectory3D.txt'));
 fileID = fopen('trajectory3D.txt', 'r');
 if fileID == -1
@@ -87,33 +89,38 @@ fprintf('Successfully read trajectory with %d points\n', size(trajectory, 1));
 % Create figure with terrain and trajectory
 figure('Name', 'Madrid Terrain with 3D Trajectory', 'Position', [100 100 800 600]);
 
-% Plot terrain
-surf(mapa, 'EdgeColor', 'none', 'FaceAlpha', 0.7);  % Added transparency
+% Plot terrain with correct orientation
+[X, Y] = meshgrid(1:size(mapa,2), 1:size(mapa,1));
+surf(Y, X, mapa, 'EdgeColor', 'none', 'FaceAlpha', 0.7);
 hold on;
+trajectory(1,1) = 219;
+% Plot trajectory with correct orientation
+plot3(trajectory(:,1) , trajectory(:,2) , trajectory(:,3) , 'r-', 'LineWidth', 2);
 
-% Plot trajectory
-plot3(trajectory(:,1) +1.5, trajectory(:,2) +1.5, trajectory(:,3) +1.5, 'r-', 'LineWidth', 2);
-
-% Mark start and end points
-plot3(trajectory(1,1), trajectory(1,2), trajectory(1,3), 'go', 'MarkerSize', 10, 'LineWidth', 2);
+% Mark start and end points with correct orientation
+plot3(trajectory(1,1), trajectory(1,1), trajectory(1,3), 'go', 'MarkerSize', 10, 'LineWidth', 2);
 plot3(trajectory(end,1), trajectory(end,2), trajectory(end,3), 'ro', 'MarkerSize', 10, 'LineWidth', 2);
 
 % Add labels and title
-xlabel('X');
-ylabel('Y');
-zlabel('Z');
+xlabel('Y (East)');
+ylabel('X (South)');
+zlabel('Z (Height)');
 title('Madrid Terrain with Flight Path');
 colorbar;
 axis equal;
 grid on;
 
-% Adjust view
+% Adjust view to match new orientation
 view(45, 30);
 lighting gouraud;
 camlight;
 
+% Invert Y axis to match top-left origin
+set(gca, 'YDir', 'reverse');
+
 % Add legend
 legend('Terrain', 'Trajectory', 'Start', 'End', 'Location', 'best');
+
 
 
 

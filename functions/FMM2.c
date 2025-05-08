@@ -102,7 +102,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
 
         free(matriz);
         matriz = matriz2;
-    }*/     
+    }*/  
     //Create velocities map
     printf("Creating velocities map...\n");
     float* obstacle_distance_map = velocities_map(matriz, size_map, distance_threshold);
@@ -111,7 +111,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
     planners_2D(obstacle_distance_map, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
     
     // Save velocities map 
-    
+    /*
     FILE *output_file1 = fopen("./Archivos/velocities_map.txt", "w");
      if (output_file1 == NULL) {
          perror("Error al abrir el archivo de salida");
@@ -127,7 +127,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
          fprintf(output_file1, "\n");
      }
      fclose(output_file1);
-     
+     */
     
     
      
@@ -138,7 +138,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
     output_T = main_msfm(obstacle_distance_map, objective_points, output_T, size_map, size_objective);
 
     // Save times map
-    
+    /*
     FILE *output_file2 = fopen("./Archivos/times_map.txt", "w");
      if (output_file2 == NULL) {
          perror("Error al abrir el archivo de salida");
@@ -153,13 +153,13 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
          fprintf(output_file2, "\n");
      }
      fclose(output_file2);
-    
+    */
     // Crear el gradiente para el mapa de tiempos:
     float* gradient_matrix = (float*)malloc(2 * size_map[1] * size_map[0] * sizeof(float));
     printf("Calculating gradient...\n");
     compute_gradient_2d_discrete(output_T, gradient_matrix, size_map);
     // Save gradients
-    
+    /*
     FILE *gradient_x_file = fopen("./Archivos/gradient_x.txt", "w");
     FILE *gradient_y_file = fopen("./Archivos/gradient_y.txt", "w");
  
@@ -182,7 +182,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
  
      fclose(gradient_x_file);
      fclose(gradient_y_file);
-    
+    */
 
     //Descenso del gradiente 
     bool finished = false;      //mientras no se llegue al punto final es false
@@ -227,6 +227,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
         printf("Could not find a path\n");
         return;
     }
+    /*
     FILE *traj_file = fopen("./Archivos/trajectory.txt", "w");
      if (traj_file == NULL) {
          perror("Error al abrir el archivo de trayectoria");
@@ -240,7 +241,7 @@ void FMM2_2D(float* matriz, int* size_map, float distance_threshold,
          fprintf(traj_file, "%.2f %.2f\n", traj_x, traj_y);
      }
  
-     fclose(traj_file);
+     fclose(traj_file);*/
     
     // Liberar memoria    
     free(output_T);
@@ -308,6 +309,7 @@ void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* ob
     printf("Time for velocities map: %.3f s\n", time_velocitiesMap);
 
     // Save velocities map
+    /*
     FILE *output_file1 = fopen("./Archivos/velocities_map3D.txt", "w");
     if (output_file1 == NULL) {
         perror("Error al abrir el archivo de salida");
@@ -328,7 +330,7 @@ void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* ob
     }
     
     fclose(output_file1);
-    
+    */
     // Apply planner
     printf("Applying planner...\n");
      clock_t start_planner = clock();
@@ -348,7 +350,7 @@ void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* ob
     float time_timesMap = ((float) (end_timesMap - start_timesMap)) / CLOCKS_PER_SEC;
     printf("Time for fast marching: %.3f s\n", time_timesMap);
     // Save times map
-    
+    /*
    FILE *output_file2 = fopen("./Archivos/times_map3D.txt", "w");
     if (output_file2 == NULL) {
         perror("Error al abrir el archivo de salida");
@@ -371,7 +373,7 @@ void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* ob
         fprintf(output_file2, "\n");
     }
     fclose(output_file2);
-    
+    */
     // Crear el gradiente para el mapa de tiempos:
     float* gradient_matrix = (float*)malloc(3 * size_map[0] * size_map[1] * size_map[2] * sizeof(float));
     printf("Calculating gradient...\n");
@@ -382,7 +384,7 @@ void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* ob
     printf("Time for gradient: %.3f s\n", time_gradient);
 
      // Save gradients
-     
+     /*
      FILE *gradient_x_file = fopen("./Archivos/gradient3D_x.txt", "w");
      FILE *gradient_y_file = fopen("./Archivos/gradient3D_y.txt", "w");
      FILE *gradient_z_file = fopen("./Archivos/gradient3D_z.txt", "w");
@@ -425,7 +427,7 @@ void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* ob
      fclose(gradient_x_file);
      fclose(gradient_y_file);
      fclose(gradient_z_file);
-        
+        */
     // Descenso del gradiente
     bool finished = false;      //mientras no se llegue al punto final es false
 
@@ -466,7 +468,7 @@ void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* ob
     float time_gradient_descend = ((float) (end_gradient_descend - start_gradient_descend)) / CLOCKS_PER_SEC;
     printf("Time for gradient descend: %.3f s\n", time_gradient_descend);
     // Save trajectory to file
-    
+    /*
     FILE *traj_file = fopen("./Archivos/trajectory3D.txt", "w");
     if (traj_file == NULL) {
         perror("Error al abrir el archivo de trayectoria");
@@ -486,7 +488,7 @@ void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* ob
     }
 
     fclose(traj_file);
-    
+    */
     
     // CHECK TRAJECTORY FOR COLLISIONS
     printf("\nChecking trajectory for obstacle collisions...\n");
