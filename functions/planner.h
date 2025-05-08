@@ -16,6 +16,7 @@ void planners_3D(float* matriz,
                   int size_objective[2], 
                   float* start_points, int size_start[2], 
                   int planner_type, int escalado_vectores,
-                  int* height_map, float* occupation_map_2d);
+                  int* height_map, float* occupation_map_2d, 
+                  int ascension_rate, int descent_rate, int flight_level, int resolution);
 
 #endif // PLANNER_H

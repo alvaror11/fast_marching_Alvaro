@@ -11,7 +11,44 @@ cd(maps_folder)
 mapa = readmatrix("MADRIDALTMAP.CSV");
 
 figure;
-surf(mapa,"EdgeColor","none")
+surf(mapa,"EdgeColor","none")fprintf('Reading terrain data from %s...\n', fullfile(maps_folder, "MADRIDALTMAP.CSV"));
+mapa = readmatrix("MADRIDALTMAP.CSV");
+fprintf('Terrain data read successfully.\n');
+
+fprintf('Reading trajectory data from %s...\n', fullfile(files_folder, 'trajectory3D.txt'));
+fileID = fopen('trajectory3D.txt', 'r');
+if fileID == -1
+    error('Could not open trajectory file');
+end
+
+fprintf('Reading dimensions from first line...\n');
+dims = fscanf(fileID, '%d');  % Read num_points and dimensions
+num_points = dims(1);
+
+fprintf('Initializing trajectory array...\n');
+% Initialize trajectory array
+trajectory = zeros(num_points, 3);
+
+fprintf('Reading trajectory points...\n');
+% Read trajectory points
+for i = 1:num_points
+    line = fgetl(fileID);
+    if ischar(line)
+        values = sscanf(line, '%f');
+        if length(values) == 3
+            trajectory(i,:) = values';
+        end
+    end
+end
+fclose(fileID);
+fprintf('Trajectory data read successfully.\n');
+
+fprintf('Verifying trajectory data...\n');
+% Verify trajectory data
+if isempty(trajectory)
+    error('No valid data found in trajectory file');
+end
+fprintf('Successfully read trajectory with %d points\n', size(trajectory, 1));
 axis equal;
 
 % Read trajectory data
@@ -55,7 +92,7 @@ surf(mapa, 'EdgeColor', 'none', 'FaceAlpha', 0.7);  % Added transparency
 hold on;
 
 % Plot trajectory
-plot3(trajectory(:,1), trajectory(:,2), trajectory(:,3), 'r-', 'LineWidth', 2);
+plot3(trajectory(:,1) +1.5, trajectory(:,2) +1.5, trajectory(:,3) +1.5, 'r-', 'LineWidth', 2);
 
 % Mark start and end points
 plot3(trajectory(1,1), trajectory(1,2), trajectory(1,3), 'go', 'MarkerSize', 10, 'LineWidth', 2);

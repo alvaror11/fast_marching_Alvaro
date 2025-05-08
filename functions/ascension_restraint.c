@@ -11,7 +11,7 @@
 
 void asc_restraint_planner(float* matriz, int size_map[3], float distance_threshold, float* objective_points, 
     int size_objective[2], float* start_points, int size_start[2], float step, Trajectory3D* traj, 
-    int planner_type, int escalado_vectores){
+    int planner_type, int escalado_vectores, int ascension_rate, int descent_rate, int flight_level, int resolution) {
     
     int* height_map = (int*)calloc(size_map[0] * size_map[1], sizeof(int));
     if (!height_map) {
@@ -27,7 +27,7 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
      }
 
     planners_3D(matriz, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores,
-                height_map, occupation_map_2d);
+                height_map, occupation_map_2d, ascension_rate, descent_rate, flight_level, resolution);
     // Coordinates in the 3D OC.
     int start_x_3d = start_points[0];
     int start_y_3d = start_points[1];
@@ -112,6 +112,7 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
         
         if (x_3d < 0 || x_3d >= size_map[0] || y_3d < 0 || y_3d >= size_map[1]) {
             printf("WARNING: Indices out of bounds!\n");
+            continue;
         }
     
         traj->points[i].x = y_2d;
