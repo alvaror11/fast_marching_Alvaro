@@ -26,7 +26,7 @@ void main() {
         // Coord X = ancho, Y = largo, Z = alto
 
         //const char* mapfile = "./Mapas/MAP_3_100_100_100.txt";         
-        const char* mapfile = "./Mapas/MADRIDALTMAP.csv"; 
+        const char* mapfile = "./Mapas/MAP_3_100_100_100.txt"; 
         //Procesar el mapa
         int* size_map = (int *)malloc(3 * sizeof(int));
         float *matriz = process_map_file((char*)mapfile, size_map, dimensions_prob);
@@ -39,8 +39,8 @@ void main() {
         int num_start_points = 1;
         int size_start[2] = {3, num_start_points};
         float *start_points = (float *)malloc(num_start_points * 3 * sizeof(float));;
-        start_points[0] = 220;    // x coordinate
-        start_points[1] = 200;   // y coordinate
+        start_points[0] = 7;    // x coordinate
+        start_points[1] = 10;   // y coordinate
         start_points[2] = 10;   // z coordinate
 
         // Define las coordenadas objetivo
@@ -48,31 +48,31 @@ void main() {
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         float *objective_points  = (float *)malloc(num_points * 3 * sizeof(float));;
-        objective_points[0] = 250;   // x coordinate
-        objective_points[1] = 400;    // y coordinate
-        objective_points[2] = 13;     // z coordinate
+        objective_points[0] = 80;   // x coordinate
+        objective_points[1] = 90;    // y coordinate
+        objective_points[2] = 85;     // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
         int planner_type = 2;           //tipo de planner a usar
         int escalado_vectores = 5;      //valor para escalar los vectores del planner 1
         int ascension_rate = 1;         
         int descent_rate = 1;           
-        int flight_level = 75;          // Altura de vuelo en metros
+        int flight_level = 175;          // Altura de vuelo en metros
         int resolution = 5;             // Resolution in meters per cell (1 cell = resolution meters)
         
         // Define el umbral de distancia para la matriz de velocidades
-        float distance_threshold = 8.0;
+        float distance_threshold = 4.0;
 
         // Define el tamaño del paso
         float step = 0.5;
 
 
         // Check that initial and final points are not inside an obstacle
-        if ((matriz[(int)start_points[0] - 1 + ((int)start_points[1] -1)*largo + ((int)start_points[2] - 1)*ancho*largo] == 1)) {
+        if ((matriz[(int)start_points[1] - 1 + ((int)start_points[0] -1)*largo + ((int)start_points[2] - 1)*ancho*largo] == 1)) {
             printf("Error: Initial point is inside an obstacle\n");
             return;
         }
-        if((matriz[(int)objective_points[0] - 1 + ((int)objective_points[1] - 1)*largo + ((int)objective_points[2] - 1)*ancho*largo] == 1)){
+        if((matriz[(int)objective_points[1] - 1 + ((int)objective_points[0] - 1)*largo + ((int)objective_points[2] - 1)*ancho*largo] == 1)){
             printf("Error: Objective point is inside an obstacle\n");
             return;
         }
@@ -167,7 +167,7 @@ void main() {
         clock_t start = clock();
         
         // Define las dimensiones de la matriz
-        const char* mapfile = "./Mapas/MAP_2_50_50.txt";
+        const char* mapfile = "./Mapas/MAP_4_200_200.txt";
         int filas, columnas;
         if (sscanf(mapfile, "./Mapas/MAP_%*d_%d_%d.txt", &filas, &columnas) != 2) {
             printf("Error: Could not extract dimensions from filename. Using defaults.\n");
@@ -185,19 +185,19 @@ void main() {
         int dimensions = 2;
         int size_objective[2] = {dimensions,num_points};
         float *objective_points  = (float *)malloc(num_points * 2 * sizeof(float));;
-        objective_points[0] = 38;  // x coordinate
-        objective_points[1] = 10;  // y coordinate
+        objective_points[0] = 15;  // x coordinate
+        objective_points[1] = 9;  // y coordinate
 
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
         int num_start_points = 1;
         int size_start[2] = {dimensions,num_start_points};
         float *start_points = (float *)malloc(num_start_points * 2 * sizeof(float));;
-        start_points[0] = 15;  // x coordinate
-        start_points[1] = 30;  // y coordinate
+        start_points[0] = 187;  // x coordinate
+        start_points[1] = 180;  // y coordinate
         
         // PARSAMETROS DE LOS PLANNER
         int planner_type = 0;       // tipo de planner a usar
-        int escalado_vectores = 6; // valor para escalar los vectores del planner 2
+        int escalado_vectores = 4; // valor para escalar los vectores del planner 2
 
         // Define el umbral de distancia para la matriz de velocidades
         float distance_threshold = 4;
@@ -211,9 +211,12 @@ void main() {
         
 
         // Check that initial and final points are not inside an obstacle
-        if ((matriz[(int)start_points[0] - 1 + ((int)start_points[1]-1)*columnas] == 1)||
-            (matriz[(int)objective_points[0] - 1 + ((int)objective_points[1]-1)*columnas ] == 1)) {
-            printf("Error: Initial or objective point is inside an obstacle\n");
+        if ((matriz[(int)start_points[0] - 1 + ((int)start_points[1]-1)*columnas] == 1)) {
+            printf("Error: Initial point is inside an obstacle\n");
+            return;
+        }
+        if ((matriz[(int)objective_points[0] - 1 + ((int)objective_points[1]-1)*columnas ] == 1)){
+            printf("Error: Objective point is inside an obstacle\n");
             return;
         }
         if (objective_points[0] > size_map[0] || objective_points[1] > size_map[1] 

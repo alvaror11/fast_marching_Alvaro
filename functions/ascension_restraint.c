@@ -103,6 +103,26 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
     // Transform the 2D trajectory to 3D, remember that we are not encapsulating and the index in C start at 0, so we need to substract only 1
     // to the x and y coordinates to get the correct index in the height_map
     // 
+    printf("\n=== Complete 2D Trajectory Information ===\n");
+    printf("Number of points: %d\n", traj_2D->size);
+    printf("Capacity: %d\n", traj_2D->capacity);
+    printf("\nTrajectory Points:\n");
+    printf("Point      X         Y\n");
+    printf("------------------------\n");
+
+    for(int i = 0; i < traj_2D->size; i++) {
+        printf("%4d    %7.2f   %7.2f\n", 
+            i,
+            traj_2D->points[i].x,
+            traj_2D->points[i].y);
+    }
+
+    printf("\nStart point: (%.2f, %.2f)\n", traj_2D->points[0].x, traj_2D->points[0].y);
+    printf("End point:   (%.2f, %.2f)\n", 
+        traj_2D->points[traj_2D->size-1].x, 
+        traj_2D->points[traj_2D->size-1].y);
+    printf("==============================\n\n");
+
     for (int i = 0; i < traj_2D->size; i++) {
         int x_2d = (int)traj_2D->points[i].x - 1;
         int y_2d = (int)traj_2D->points[i].y - 1;
@@ -120,7 +140,7 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
         traj->points[i].z = height_map[height_idx];
         
     }
-
+    /*
     FILE *traj_file = fopen("./Archivos/trajectory3D.txt", "w");
     if (traj_file == NULL) {
         perror("Error al abrir el archivo de trayectoria");
@@ -129,11 +149,6 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
     // Print trajectory points
     fprintf(traj_file, "%d %d\n", traj->size, 3);
     for(int i = 0; i < traj->size; i++) {
-        /*printf("Point %d: (%.2f, %.2f, %.2f)\n", 
-               i, 
-               traj->points[i].x,
-               traj->points[i].y,
-               traj->points[i].z);*/
 
         int idx__3d = ((int)traj->points[i].y) + (int)traj->points[i].x * size_map[1] + (int)traj->points[i].z * size_map[0] * size_map[1];
         if (matriz[idx__3d] == 1.0f) {
@@ -146,4 +161,5 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
             traj->points[i].z);
     }
     fclose(traj_file);
+    */
 }
