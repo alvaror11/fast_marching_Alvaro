@@ -333,7 +333,7 @@ void FMM2_3D(float* matriz, int size_map[3], float distance_threshold, float* ob
     printf("Applying planner...\n");
      clock_t start_planner = clock();
      planners_3D(obstacle_distance_map, size_map, objective_points, size_objective, start_points, size_start,
-                planner_type, escalado_vectores, NULL, NULL);
+                planner_type, escalado_vectores, NULL, NULL, 0, 0, 0, 0);
      clock_t end_planner = clock();
      float time_planner = ((float) (end_planner - start_planner)) / CLOCKS_PER_SEC;    
      printf("Time for planner: %.3f s\n", time_planner);

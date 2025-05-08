@@ -156,7 +156,7 @@ void planners_2D(float* matriz, int* size_map, float* objective_points, int size
 
 void planners_3D(float* matriz, int* size_map, float* objective_points, int size_objective[2], 
     float* start_points, int size_start[2], int planner_type, int escalado_vectores, 
-    int* height_map, float* occupation_map_2d) {
+    int* height_map, float* occupation_map_2d, int ascension_rate, int descent_rate, int flight_level, int resolution) {
         
     switch(planner_type){        
         case 0:
@@ -255,10 +255,6 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
             break;
         }
         case 2: {
-            int ascension_rate = 1;     // meters up per meters forward
-            int descent_rate = 1;
-            int flight_level = 30;  // Height expressed in meters
-            int resolution = 2;         // Resolution in meters per cell (1 cell = resolution meters)
 
             int flight_level_cells = (flight_level / resolution) - 1; // Convert height to cells
 

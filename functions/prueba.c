@@ -54,7 +54,11 @@ void main() {
 
         // PARAMETROS PARA LOS PLANNER
         int planner_type = 2;           //tipo de planner a usar
-        int escalado_vectores = 5;      //valor para escalar los vectores del planner 2
+        int escalado_vectores = 5;      //valor para escalar los vectores del planner 1
+        int ascension_rate = 1;         
+        int descent_rate = 1;           
+        int flight_level = 75;          // Altura de vuelo en metros
+        int resolution = 5;             // Resolution in meters per cell (1 cell = resolution meters)
         
         // Define el umbral de distancia para la matriz de velocidades
         float distance_threshold = 8.0;
@@ -90,7 +94,8 @@ void main() {
 
             asc_restraint_planner(matriz, size_map, distance_threshold, 
                 objective_points, size_objective, start_points, size_start,
-                step, traj, planner_type, escalado_vectores);
+                step, traj, planner_type, escalado_vectores, ascension_rate, 
+                descent_rate, flight_level, resolution);
 
             clock_t end = clock();
             float cpu_time_used = ((float) (end - start)) / CLOCKS_PER_SEC;
