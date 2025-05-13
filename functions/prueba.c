@@ -19,7 +19,7 @@
 void main() {
     
     // Choose dimensions of the trayectory
-     int dimensions_prob = 3;// Removed redefinition of 'dimensions'
+     int dimensions_prob = 2;// Removed redefinition of 'dimensions'
 
     if (dimensions_prob == 3){
         clock_t start = clock();
@@ -53,7 +53,7 @@ void main() {
         objective_points[2] = 85;     // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
-        int planner_type = 2;           //tipo de planner a usar
+        int planner_type = 0;           //tipo de planner a usar
         int escalado_vectores = 5;      //valor para escalar los vectores del planner 1
         int ascension_rate = 1;         
         int descent_rate = 1;           
@@ -100,6 +100,17 @@ void main() {
             clock_t end = clock();
             float cpu_time_used = ((float) (end - start)) / CLOCKS_PER_SEC;
             printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);
+            
+            // Check if a trajectory was generated
+            if (traj->size == 0) {
+                printf("Error: No trajectory generated\n");
+                free(traj->points);
+                free(traj);
+                free(matriz);
+                free(start_points);
+                free(size_map);
+                return;
+            }
 
             printf("\nChecking trajectory for obstacle collisions...\n");
             for (int i = 0; i < traj->size; i++) {
@@ -113,8 +124,13 @@ void main() {
                     printf("Warning: Point %d (%.2f, %.2f, %.2f) intersects with obstacle\n", 
                         i, traj->points[i].x, traj->points[i].y, traj->points[i].z);
                 }
-    }
-
+            }
+            free(traj->points);
+            free(traj);
+            free(matriz);
+            free(objective_points);
+            free(start_points);
+            free(size_map);
 
         }
         else{
@@ -160,6 +176,9 @@ void main() {
 
             fclose(results_file);
             */
+            free(traj->points);
+            free(traj);
+            free(size_map);
         }
                
     }
@@ -167,7 +186,7 @@ void main() {
         clock_t start = clock();
         
         // Define las dimensiones de la matriz
-        const char* mapfile = "./Mapas/MAP_4_200_200.txt";
+        const char* mapfile = "./Mapas/MAP_3_100_100.txt";
         int filas, columnas;
         if (sscanf(mapfile, "./Mapas/MAP_%*d_%d_%d.txt", &filas, &columnas) != 2) {
             printf("Error: Could not extract dimensions from filename. Using defaults.\n");
@@ -192,8 +211,8 @@ void main() {
         int num_start_points = 1;
         int size_start[2] = {dimensions,num_start_points};
         float *start_points = (float *)malloc(num_start_points * 2 * sizeof(float));;
-        start_points[0] = 187;  // x coordinate
-        start_points[1] = 180;  // y coordinate
+        start_points[0] = 87;  // x coordinate
+        start_points[1] = 80;  // y coordinate
         
         // PARSAMETROS DE LOS PLANNER
         int planner_type = 0;       // tipo de planner a usar
@@ -235,7 +254,15 @@ void main() {
                 objective_points, size_objective, start_points, size_start, step, traj, planner_type, escalado_vectores);
         clock_t end = clock();
         float cpu_time_used = ((float) (end - start)) / CLOCKS_PER_SEC;
-
+        
+        // Check if a trajectory was generated
+        if (traj->size == 0) {
+            printf("Error: No trajectory generated\n");
+            free(traj->points);
+            free(traj);
+            free(size_map);
+            return;
+        }
         // Save trajectory to file
         /*
         FILE* results_file = fopen("./Archivos/trajectory_results.txt", "w");
@@ -265,6 +292,9 @@ void main() {
         */
 
         printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);
+        free(traj->points);
+        free(traj);
+        free(size_map);
     }
     else{
         printf("Invalid number of dimensions\n");

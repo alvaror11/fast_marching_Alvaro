@@ -347,31 +347,6 @@ float* main_msfm3D(float* F, float* SourcePoints, float* T, int* size_map, int* 
     /* Index */
     int IJK_index, XYZ_index, index;
     
-    /* Check for proper number of input and output arguments. 
-    if(nrhs<3) {
-        mexErrMsgTxt("2 to 4 inputs are required.");
-    }
-    if(nlhs==1) { Ed=0; }
-    else if (nlhs==2) { Ed=1; }
-    else {
-        mexErrMsgTxt("One or Two outputs required");
-    }
-    */
-    /* Check data input types /* 
-    if(mxGetClassID(prhs[0])!=mxfloat_CLASS) {
-        mexErrMsgTxt("Speed image must be of class float");
-    }
-    if(mxGetClassID(prhs[1])!=mxfloat_CLASS) {
-        mexErrMsgTxt("SourcePoints must be of class float");
-    }
-    
-    if((nrhs>2)&&(mxGetClassID(prhs[2])!= mxLOGICAL_CLASS)) {
-        mexErrMsgTxt("UseSecond must be of class boolean / logical");
-    }
-    
-    if((nrhs>3)&&(mxGetClassID(prhs[3])!= mxLOGICAL_CLASS)) {
-        mexErrMsgTxt("UseCross must be of class boolean / logical");
-    }*/
     
     /* Get the sizes of the input image volume and the source points */
     dims[0] = size_map[0];
