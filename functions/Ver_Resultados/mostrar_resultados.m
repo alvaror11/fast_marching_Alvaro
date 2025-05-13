@@ -2,8 +2,8 @@ clear;
 clc;
 close all;
 
-filas = 50;
-columnas = 50;
+filas = 100;
+columnas = 100;
 
 % Punto para iniciar la traj.
 punto_x = 20;  % columna
@@ -14,16 +14,16 @@ maps_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fas
 
 %% Mapa Original
 cd(maps_folder);
-file = fopen('MAP_2_50_50.txt','r');
+file = fopen('MAP_3_100_100.txt','r');
 
-matriz_vel = zeros(filas, columnas); 
+matriz_occ = zeros(filas, columnas); 
 
 % Leer los datos línea por línea y almacenarlos en la matriz
 for i = 1:filas
     linea = fgetl(file); % Leer una línea del archivo como string
     if ischar(linea)
         line = sscanf(linea, '%f')';
-        matriz_vel(i, :) = sscanf(linea, '%f')'; % Convertir la línea a números y almacenarla
+        matriz_occ(i, :) = sscanf(linea, '%f')'; % Convertir la línea a números y almacenarla
     else
         error('Se alcanzó el final del archivo antes de leer todas las filas.');
     end
@@ -40,7 +40,7 @@ figure;
 colormap(gray);  % Usar escala de grises: negro (0) a blanco (1)
 
 % Mostrar el mapa
-imagesc(matriz_vel);
+imagesc(matriz_occ);
 axis equal;  % Mantener proporciones cuadradas
 %colorbar;
 %clim([0 1]);  % Ajustar límites de color entre 0 y 1

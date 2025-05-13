@@ -72,7 +72,25 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
     FMM2_2D(occupation_map_2d, size_map_2d, distance_threshold, 
             objective_points, size_objective, start_points, size_start, step, traj_2D, planner_type, escalado_vectores);
     
-    
+    // check if a 2d traj was found
+    if (traj_2D->size == 0 || traj_2D->points == NULL) {
+        printf("No valid 2D trajectory found. Stopping operation.\n");
+        // Clean up allocated memory
+        free(height_map);
+        free(size_map_2d);
+        free(traj_2D->points);
+        free(traj_2D);
+        // Set 3D trajectory as empty
+        traj->size = 0;
+        traj->capacity = 0;
+        if (traj->points) {
+            free(traj->points);
+            traj->points = NULL;
+        }
+        return;
+    }
+
+
     // Print 2D trajectory debug info
     printf("\n=== 2D Trajectory Debug Info ===\n");
     printf("Total points: %d\n", traj_2D->size);
@@ -84,7 +102,7 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
                traj_2D->points[i].x,
                traj_2D->points[i].y);*/
     }
-    printf("==============================\n");
+
 
     // Adjust the capacity of the 3D trajectory to match the 2D trajectory
     traj->points = realloc(traj->points, traj_2D->size * sizeof(Point3D));
