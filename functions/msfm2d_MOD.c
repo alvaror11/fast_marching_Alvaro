@@ -562,7 +562,7 @@ float* restrictions2D(float* viscosity_map, int* size_map, char* dir){
             printf("Error: Memory allocation failed for restrictions map.\n");
             fclose(file);
             return NULL;
-        
+        }
         fread(restrictions_map, sizeof(float), size_map[0] * size_map[1], file);
         fclose(file);
         
@@ -581,7 +581,7 @@ float* restrictions2D(float* viscosity_map, int* size_map, char* dir){
         int no_restriction = 1;
         int light_restriction = 0.75;
         int medium_restriction = 0.5;
-        int hard_restriction = 0.2;
+        int hard2_restriction = 0.2;
 
         float* restrictions_map = malloc(size_map[0] * size_map[1] * sizeof(float));
         if (restrictions_map == NULL) {
