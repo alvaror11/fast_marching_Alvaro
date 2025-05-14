@@ -432,6 +432,9 @@ void read_map(float* matriz, int* size_map, char* mapfile, int dimensions_prob){
 }
 
 float* process_map_file(char* mapfile, int* size_map, int dimensions_prob){
+    
+    
+    
     const char* extension = strrchr(mapfile, '.');
     if (!extension) {
         printf("Error: File has no extension\n");

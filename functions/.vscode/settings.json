@@ -8,8 +8,8 @@
         "rk4_2d_3d.h": "c",
         "msfm3d_mod.h": "c",
         "stdlib.h": "c",
-        "ascension_restraint.h": "c"
-        
+        "ascension_restraint.h": "c",
+        "stddef.h": "c"
     },
     "editor.insertMode": "insert",
     "editor.cursorStyle": "line",
