@@ -93,7 +93,7 @@ void main() {
             traj->capacity = initial_capacity;
             if (traj == NULL) {
                 printf("Error: Memory allocation failed for 3D trajectory.\n");
-                return NULL;
+                return;
         }
 
 
