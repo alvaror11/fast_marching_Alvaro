@@ -203,7 +203,7 @@ float CalculateDistance(float *T, float Fij, int *dims, int i, int j, bool usese
     return Tt;
 }
 
-/* The matlab mex funtion  */
+
 float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* size_target) {
      /* The input variables */;
     bool usesecond = true;  // Default values
@@ -542,6 +542,61 @@ float* velocities_map(float* binary_map, int* size_map, int threshold) {
     free(kernel); 
     return distance_map;
 }
+
+
+float* restrictions2D(float* viscosity_map, int* size_map, char* dir){
+
+    // Import/create the soft/hard restrictions map and apply it to the viscosity map
+
+    if (dir != NULL) {
+        // Load the restrictions map from the file
+        FILE* file = fopen(dir, "rb");
+        if (file == NULL) {
+            printf("Error: Unable to open restrictions map file.\n");
+            return NULL;
+        }
+        
+        // Read the restrictions map from the file
+        float* restrictions_map = malloc(size_map[0] * size_map[1] * sizeof(float));
+        if (restrictions_map == NULL) {
+            printf("Error: Memory allocation failed for restrictions map.\n");
+            fclose(file);
+            return NULL;
+        
+        fread(restrictions_map, sizeof(float), size_map[0] * size_map[1], file);
+        fclose(file);
+        
+        // Apply the restrictions map to the viscosity map
+        for (int i = 0; i < size_map[0] * size_map[1]; i++) {
+            viscosity_map[i] *= restrictions_map[i];
+        }
+        
+        return viscosity_map;
+        free(restrictions_map);
+    }
+    else{
+        // If no restrctions map is provided we can create one
+        // Types of restricctions
+        int hard_restriction = 0;
+        int no_restriction = 1;
+        int light_restriction = 0.75;
+        int medium_restriction = 0.5;
+        int hard_restriction = 0.2;
+
+        float* restrictions_map = malloc(size_map[0] * size_map[1] * sizeof(float));
+        if (restrictions_map == NULL) {
+            printf("Error: Memory allocation failed for restrictions map.\n");
+            return NULL;
+        }
+
+    }
+
+
+}
+
+
+
+
 
 void compute_gradient_2d_discrete(float* input_matrix, float* gradient_matrix, int* size_map) {
     

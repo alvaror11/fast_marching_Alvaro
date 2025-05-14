@@ -355,13 +355,13 @@ bool isfrozen3d(int i, int j, int k, int *dims, bool *Frozen) {
 
 
 bool isntfrozen2d(int i, int j, int *dims, bool *Frozen) {
-    return (i >= 0) && (j >= 0) && (i < dims[0]) && (j < dims[1]) && 
-           (Frozen[i + j * dims[0]] == 0);
+    return (i >= 0) && (j >= 0) && (j < dims[0]) && (i < dims[1]) && 
+           (Frozen[j + i * dims[0]] == 0);
 }
 
 bool isfrozen2d(int i, int j, int *dims, bool *Frozen) {
-    return (i >= 0) && (j >= 0) && (i < dims[0]) && (j < dims[1]) && 
-           (Frozen[i + j * dims[0]] == 1);
+    return (i >= 0) && (j >= 0) && (j < dims[0]) && (i < dims[1]) && 
+           (Frozen[j + i * dims[0]] == 1);
 }
 
 float euclidean_distance(int x1, int y1, int x2, int y2) {

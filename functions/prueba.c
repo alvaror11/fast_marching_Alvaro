@@ -19,7 +19,7 @@
 void main() {
     
     // Choose dimensions of the trayectory
-     int dimensions_prob = 2;// Removed redefinition of 'dimensions'
+     int dimensions_prob = 3;// Removed redefinition of 'dimensions'
 
     if (dimensions_prob == 3){
         clock_t start = clock();
@@ -91,6 +91,11 @@ void main() {
             traj->points = malloc(initial_capacity * sizeof(Point3D));  // Initial capacity
             traj->size = 0;
             traj->capacity = initial_capacity;
+            if (traj == NULL) {
+                printf("Error: Memory allocation failed for 3D trajectory.\n");
+                return NULL;
+        }
+
 
             asc_restraint_planner(matriz, size_map, distance_threshold, 
                 objective_points, size_objective, start_points, size_start,
