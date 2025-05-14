@@ -3,11 +3,14 @@
 #include <stdbool.h>
 #include <time.h>
 #include <string.h>
+#include "map_main.h"
+#include "common.h"
+#include "FMM2.h"
+
+
 #include "msfm2d_MOD.h"
 #include "msfm3d_MOD.h"
-#include "common.h"
 #include "rk4_2D_3D.h"
-#include "FMM2.h"
 #include "ascension_restraint.h"
 
 #ifdef WINDOWS
@@ -29,7 +32,6 @@ void main() {
         const char* mapfile = "./Mapas/MAP_3_100_100_100.txt"; 
         //Procesar el mapa
         int* size_map = (int *)malloc(3 * sizeof(int));
-        float *matriz = process_map_file((char*)mapfile, size_map, dimensions_prob);
 
         int ancho = size_map[0];
         int largo = size_map[1];
@@ -66,6 +68,10 @@ void main() {
         // Define el tamaño del paso
         float step = 0.5;
 
+        float *matriz = process_map_file((char*)mapfile, size_map, dimensions_prob);
+        int ancho = size_map[0];
+        int largo = size_map[1];
+        int alto = size_map[2];
 
         // Check that initial and final points are not inside an obstacle
         if ((matriz[(int)start_points[1] - 1 + ((int)start_points[0] -1)*largo + ((int)start_points[2] - 1)*ancho*largo] == 1)) {
@@ -81,6 +87,10 @@ void main() {
             printf("Error: Initial or objective point is outside the map\n");
             return;
         }
+
+        float* restrictions_map = map_main3D(matriz, size_map, distance_threshold, 
+                                            objective_points, size_objective, start_points, size_start, 
+                                            planner_type, escalado_vectores);
 
         // Check the planner type to call one function or another
         if (planner_type == 2){
@@ -193,16 +203,7 @@ void main() {
         // Define las dimensiones de la matriz
         const char* mapfile = "./Mapas/MAP_3_100_100.txt";
         int filas, columnas;
-        if (sscanf(mapfile, "./Mapas/MAP_%*d_%d_%d.txt", &filas, &columnas) != 2) {
-            printf("Error: Could not extract dimensions from filename. Using defaults.\n");
-            filas = 50;
-            columnas = 50;
-        }
-        
-    
         int *size_map = (int *)malloc(2 * sizeof(int));
-        size_map[0] = columnas;
-        size_map[1] = filas;
 
         // Define las coordenadas objetivo
         int num_points = 1;
@@ -229,11 +230,9 @@ void main() {
         // Define el tamaño del paso para el descenso del gradiente
         float step = 0.5;
         
-        // Read the map from the file
-        float *matriz = (float *)malloc((int)size_map[1] * (int)size_map[0] * sizeof(float));
-        read_map(matriz, size_map, (char*)mapfile, dimensions_prob);
-        
-
+        float *matriz = process_map_file((char*)mapfile, size_map, dimensions_prob);
+        size_map[0] = columnas;
+        size_map[1] = filas;
         // Check that initial and final points are not inside an obstacle
         if ((matriz[(int)start_points[0] - 1 + ((int)start_points[1]-1)*columnas] == 1)) {
             printf("Error: Initial point is inside an obstacle\n");
@@ -248,6 +247,10 @@ void main() {
             printf("Error: Initial or objective point is outside the map\n");
             return;
         }
+
+        float* restrictions_map = map_main2D(matriz, size_map, distance_threshold, 
+                                            objective_points, size_objective, start_points, size_start, 
+                                            planner_type, escalado_vectores);
         
         // Crear la trayectoria
         int initial_capacity = 100;
@@ -255,7 +258,7 @@ void main() {
         traj->points = malloc(initial_capacity * sizeof(Point2D));
         traj->size = 0;
         traj->capacity = initial_capacity;
-        FMM2_2D(matriz, size_map, distance_threshold, 
+        FMM2_2D(restrictions_map, size_map, distance_threshold, 
                 objective_points, size_objective, start_points, size_start, step, traj, planner_type, escalado_vectores);
         clock_t end = clock();
         float cpu_time_used = ((float) (end - start)) / CLOCKS_PER_SEC;

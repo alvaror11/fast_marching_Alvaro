@@ -150,7 +150,34 @@ void planners_2D(float* matriz, int* size_map, float* objective_points, int size
             }
 
             fclose(file);       
-        }   
+        } 
+        case 3:{
+            
+            // Solo se añade un borde de obstaculos alrededor del mapa si no se ha aplicado ningun planner
+            size_map[0] += 2;
+            size_map[1] += 2;
+            int columnas = size_map[0];
+            int filas = size_map[1];
+            
+            objective_points[0] = objective_points[0] + 1;
+            objective_points[1] = objective_points[1] + 1;
+            start_points[0] = start_points[0] + 1;
+            start_points[1] = start_points[1] + 1;
+            float *matriz2 = (float *)malloc(filas * columnas * sizeof(float));
+            for (int i = 0; i < filas; i++) {
+                for (int j = 0; j < columnas; j++) {
+                    if (i == 0 || j == 0 || i == filas-1 || j == columnas-1) {
+                        matriz2[j + i * columnas] = 1;
+                    } else {
+                        matriz2[j + i * columnas] = matriz[j-1 + (i-1) * (columnas-2)];
+                    }
+                }
+            }
+
+            free(matriz);
+            matriz = matriz2;
+            
+        }  
     }
 }
 
@@ -321,7 +348,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
 
              // Save height map to file
              /*
-             FILE *height_file = fopen("./Archivos/height_map.txt", "w");
+             FILE *height_file = fopen("../Archivos/height_map.txt", "w");
              if (!height_file) {
                  printf("Error opening height map file\n");
                  free(height_map);
@@ -364,7 +391,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
             }
             // Save 2D occupation map to file
             /*
-            FILE* occupation_file = fopen("./Archivos/occupation_map_2d.txt", "w");
+            FILE* occupation_file = fopen("../Archivos/occupation_map_2d.txt", "w");
             if (!occupation_file) {
                 printf("Error opening 2D occupation map file\n");
                 free(height_map);
@@ -381,6 +408,46 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
 
             fclose(occupation_file);
             */
+        }
+        case 3: {
+            size_map[0] += 2;
+            size_map[1] += 2;
+            size_map[2] += 2;
+            int ancho = size_map[0];
+            int largo = size_map[1];
+            int alto = size_map[2];
+            objective_points[0] = objective_points[0] + 1;
+            objective_points[1] = objective_points[1] + 1;
+            objective_points[2] = objective_points[2] + 1;
+            start_points[0] = start_points[0] + 1;
+            start_points[1] = start_points[1] + 1;
+            start_points[2] = start_points[2] + 1;
+
+            float *matriz2 = (float *)malloc(ancho * largo * alto * sizeof(float));
+            if (matriz2 == NULL) {
+                printf("Error: Memory allocation failed for enlarged matrix\n");
+                return;
+            }
+            //printf("\nCreating surrounded 3D map with dimensions: %d x %d x %d\n", ancho, largo, alto);
+
+            // Fill the new matrix with surrounding obstacles
+            for (int k = 0; k < alto; k++) {
+                for (int i = 0; i < ancho; i++) {
+                    for (int j = 0; j < largo; j++) {
+                        // Check if current position is on any face of the cube
+                        if (i == 0 || i == ancho-1 || j == 0 || j == largo-1 || k == 0 || k == alto-1) {
+                            matriz2[j + i*largo + k*ancho*largo] = 1;  // Set obstacle
+                        } else {
+                            // Copy original map data
+                            matriz2[j + i*largo + k*ancho*largo] = 
+                                matriz[(j-1) + (i-1)*(largo-2) + (k-1)*(ancho-2)*(largo-2)];
+                        }
+                    }
+                }
+            }
+
+            free(matriz);
+            matriz = matriz2;
         }
     }
 }
