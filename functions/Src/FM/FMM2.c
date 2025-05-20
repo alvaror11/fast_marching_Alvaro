@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
 #include "msfm2d_MOD.h"
 #include "msfm3d_MOD.h"
-#include "common.h"
+#include "../common.h"
 #include "rk4_2D_3D.h"
 #include "planner.h"
 

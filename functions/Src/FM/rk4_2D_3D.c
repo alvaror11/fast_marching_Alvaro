@@ -1,9 +1,10 @@
 #include "math.h"
-#include "rk4_2D_3D.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "common.h"
+
+#include "../common.h"
+#include "rk4_2D_3D.h"
 
 /* RK4 is a function which performs one step of the Runge-Kutta 4 ray tracing
  *
