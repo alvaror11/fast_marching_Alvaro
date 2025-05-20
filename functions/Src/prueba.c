@@ -55,7 +55,8 @@ void main() {
         objective_points[2] = 85;     // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
-        int planner_type = 0;           //tipo de planner a usar
+        int planner_type = 0;
+        int planner_type2 = 0;           //tipo de planner a usar
         int escalado_vectores = 5;      //valor para escalar los vectores del planner 1
         int ascension_rate = 1;         
         int descent_rate = 1;           
@@ -68,17 +69,17 @@ void main() {
         // Define el tamaño del paso
         float step = 0.5;
 
-        float *matriz = process_map_file((char*)mapfile, size_map, dimensions_prob);
+        float *occupation_map = process_map_file((char*)mapfile, size_map, dimensions_prob);
         int ancho = size_map[0];
         int largo = size_map[1];
         int alto = size_map[2];
 
         // Check that initial and final points are not inside an obstacle
-        if ((matriz[(int)start_points[1] - 1 + ((int)start_points[0] -1)*largo + ((int)start_points[2] - 1)*ancho*largo] == 1)) {
+        if ((occupation_map[(int)start_points[1] - 1 + ((int)start_points[0] -1)*largo + ((int)start_points[2] - 1)*ancho*largo] == 1)) {
             printf("Error: Initial point is inside an obstacle\n");
             return;
         }
-        if((matriz[(int)objective_points[1] - 1 + ((int)objective_points[0] - 1)*largo + ((int)objective_points[2] - 1)*ancho*largo] == 1)){
+        if((occupation_map[(int)objective_points[1] - 1 + ((int)objective_points[0] - 1)*largo + ((int)objective_points[2] - 1)*ancho*largo] == 1)){
             printf("Error: Objective point is inside an obstacle\n");
             return;
         }
@@ -87,13 +88,18 @@ void main() {
             printf("Error: Initial or objective point is outside the map\n");
             return;
         }
+        if (planner_type == 2){
+            // if we select the 2.5D planner 
+            planner_type = 0;
+            int planner_type2 = 2;
+        }
 
-        float* restrictions_map = map_main3D(matriz, size_map, distance_threshold, 
+        float* restrictions_map = map_main3D(occupation_map, size_map, distance_threshold, 
                                             objective_points, size_objective, start_points, size_start, 
                                             planner_type, escalado_vectores);
 
         // Check the planner type to call one function or another
-        if (planner_type == 2){
+        if (planner_type2 == 2){
             // If the planner is 2, we need to call the ascension restraint function
             // Crear la trayectoria
             int initial_capacity = 100;
@@ -104,12 +110,12 @@ void main() {
             if (traj == NULL) {
                 printf("Error: Memory allocation failed for 3D trajectory.\n");
                 return;
-        }
+            }
 
 
-            asc_restraint_planner(matriz, size_map, distance_threshold, 
+            asc_restraint_planner(occupation_map, size_map, distance_threshold, 
                 objective_points, size_objective, start_points, size_start,
-                step, traj, planner_type, escalado_vectores, ascension_rate, 
+                step, traj, planner_type2, escalado_vectores, ascension_rate, 
                 descent_rate, flight_level, resolution);
 
             clock_t end = clock();
@@ -121,7 +127,7 @@ void main() {
                 printf("Error: No trajectory generated\n");
                 free(traj->points);
                 free(traj);
-                free(matriz);
+                free(occupation_map);
                 free(start_points);
                 free(size_map);
                 return;
@@ -134,15 +140,15 @@ void main() {
                 int z = (int)round(traj->points[i].z) - 1;
                 
                 
-                // Check if point is in obstacle (matriz has 1s for obstacles)
-                if (matriz[y + (x)*size_map[1] + (z)*size_map[0]*size_map[1]] == 1) {
+                // Check if point is in obstacle (occupation_map has 1s for obstacles)
+                if (occupation_map[y + (x)*size_map[1] + (z)*size_map[0]*size_map[1]] == 1) {
                     printf("Warning: Point %d (%.2f, %.2f, %.2f) intersects with obstacle\n", 
                         i, traj->points[i].x, traj->points[i].y, traj->points[i].z);
                 }
             }
             free(traj->points);
             free(traj);
-            free(matriz);
+            free(occupation_map);
             free(objective_points);
             free(start_points);
             free(size_map);
@@ -152,18 +158,33 @@ void main() {
             // In your compute_3d_trajectory function:
             int initial_capacity = 100;
             Trajectory3D* traj = malloc(sizeof(Trajectory3D));
+            if (traj == NULL) {
+                printf("Error: Memory allocation failed for 3D trajectory.\n");
+                return;
+            }
             traj->points = malloc(initial_capacity * sizeof(Point3D));  // Initial capacity
             traj->size = 0;
             traj->capacity = initial_capacity;
 
             // Call th FMM2 function
             
-            FMM2_3D(matriz, size_map, distance_threshold, 
+            FMM2_3D(restrictions_map, size_map, distance_threshold, 
                 objective_points, size_objective, start_points, size_start,
-                step, traj, planner_type, escalado_vectores);
+                step, traj, planner_type, escalado_vectores, occupation_map);
+                
             clock_t end = clock();
             float cpu_time_used = ((float) (end - start)) / CLOCKS_PER_SEC;
             printf("Tiempo de ejecución: %f segundos\n", cpu_time_used); 
+            // Check if a trajectory was generated
+            if (traj->size == 0) {
+                printf("Error: No trajectory generated\n");
+                free(traj->points);
+                free(traj);
+                free(occupation_map);
+                free(start_points);
+                free(size_map);
+                return;
+            }
             // Save trajectory to file
             /*
             FILE* results_file = fopen("./Archivos/trajectory_results.txt", "w");
@@ -200,7 +221,7 @@ void main() {
     else if (dimensions_prob == 2){
         clock_t start = clock();
         
-        // Define las dimensiones de la matriz
+        // Define las dimensiones de la occupation_map
         const char* mapfile = "./Mapas/MAP_3_100_100.txt";
         int filas, columnas;
         int *size_map = (int *)malloc(2 * sizeof(int));
@@ -230,15 +251,15 @@ void main() {
         // Define el tamaño del paso para el descenso del gradiente
         float step = 0.5;
         
-        float *matriz = process_map_file((char*)mapfile, size_map, dimensions_prob);
+        float *occupation_map = process_map_file((char*)mapfile, size_map, dimensions_prob);
         size_map[0] = columnas;
         size_map[1] = filas;
         // Check that initial and final points are not inside an obstacle
-        if ((matriz[(int)start_points[0] - 1 + ((int)start_points[1]-1)*columnas] == 1)) {
+        if ((occupation_map[(int)start_points[0] - 1 + ((int)start_points[1]-1)*columnas] == 1)) {
             printf("Error: Initial point is inside an obstacle\n");
             return;
         }
-        if ((matriz[(int)objective_points[0] - 1 + ((int)objective_points[1]-1)*columnas ] == 1)){
+        if ((occupation_map[(int)objective_points[0] - 1 + ((int)objective_points[1]-1)*columnas ] == 1)){
             printf("Error: Objective point is inside an obstacle\n");
             return;
         }
@@ -248,7 +269,7 @@ void main() {
             return;
         }
 
-        float* restrictions_map = map_main2D(matriz, size_map, distance_threshold, 
+        float* restrictions_map = map_main2D(occupation_map, size_map, distance_threshold, 
                                             objective_points, size_objective, start_points, size_start, 
                                             planner_type, escalado_vectores);
         
