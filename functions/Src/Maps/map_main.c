@@ -5,6 +5,8 @@
 
 #include "2D_map.h"
 #include "3D_map.h"
+#include "planner.h"
+#include "../common.h"
 
 float* map_main2D(float* matriz, int* size_map, int distance_threshold,
                 float* objective_points, int* size_objective, float* start_points, int* size_start,

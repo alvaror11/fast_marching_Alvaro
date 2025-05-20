@@ -6,12 +6,13 @@
 #include "map_main.h"
 #include "common.h"
 #include "FMM2.h"
+#include "ascension_restraint.h"
 
 
 #include "msfm2d_MOD.h"
 #include "msfm3d_MOD.h"
 #include "rk4_2D_3D.h"
-#include "ascension_restraint.h"
+
 
 #ifdef WINDOWS
 #include <windows.h>
@@ -171,7 +172,7 @@ void main() {
             FMM2_3D(restrictions_map, size_map, distance_threshold, 
                 objective_points, size_objective, start_points, size_start,
                 step, traj, planner_type, escalado_vectores, occupation_map);
-                
+
             clock_t end = clock();
             float cpu_time_used = ((float) (end - start)) / CLOCKS_PER_SEC;
             printf("Tiempo de ejecución: %f segundos\n", cpu_time_used); 

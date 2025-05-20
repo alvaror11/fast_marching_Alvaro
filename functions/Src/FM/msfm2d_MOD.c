@@ -1,10 +1,10 @@
 //#include "mex.h"
 #include "math.h"
-#include "common.h"
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include "msfm2d_MOD.h"
+#include "../common.h"
 
 /*
  * This function MSFM2D calculates the shortest distance from a list of

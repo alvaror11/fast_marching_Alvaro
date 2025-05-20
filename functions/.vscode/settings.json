@@ -9,7 +9,9 @@
         "msfm3d_mod.h": "c",
         "stdlib.h": "c",
         "ascension_restraint.h": "c",
-        "stddef.h": "c"
+        "stddef.h": "c",
+        "2d_map.h": "c",
+        "stdio.h": "c"
     },
     "editor.insertMode": "insert",
     "editor.cursorStyle": "line",
