@@ -433,8 +433,7 @@ void read_map(float* matriz, int* size_map, char* mapfile, int dimensions_prob){
 
 float* process_map_file(char* mapfile, int* size_map, int dimensions_prob){
     
-    
-    
+       
     const char* extension = strrchr(mapfile, '.');
     if (!extension) {
         printf("Error: File has no extension\n");
@@ -442,20 +441,35 @@ float* process_map_file(char* mapfile, int* size_map, int dimensions_prob){
     }
 
     if (strcmp(extension, ".txt") == 0) {
-        int ancho, largo, alto;
-        if (sscanf(mapfile, "./Mapas/MAP_%*d_%d_%d_%d.txt", &ancho, &largo, &alto) != 3) {
-            printf("Error: Could not extract dimensions from filename. Using defaults.\n");
-            ancho = 50;
-            largo = 50;
-            alto = 50;
+        if (dimensions_prob == 2){
+            int columnas, filas;
+            if (sscanf(mapfile, "./Mapas/MAP_%*d_%d_%d.txt", &columnas, &filas) != 2) {
+                printf("Error: Could not extract dimensions from filename. Using defaults.\n");
+                columnas = 50;
+                filas = 50;
+            } 
+            size_map[0] = columnas;
+            size_map[1] = filas;
+            float *matriz = (float *)malloc(columnas * filas * sizeof(float));
+            read_map(matriz, size_map, mapfile, dimensions_prob);
+            return matriz;
         }
-        size_map[0] = ancho;
-        size_map[1] = largo;
-        size_map[2] = alto;
-        
-        float *matriz = (float *)malloc(ancho * largo * alto* sizeof(float));
-        read_map(matriz, size_map, mapfile, dimensions_prob);
-        return matriz;
+        else if (dimensions_prob ==3){
+            int ancho, largo, alto;
+            if (sscanf(mapfile, "./Mapas/MAP_%*d_%d_%d_%d.txt", &ancho, &largo, &alto) != 3) {
+                printf("Error: Could not extract dimensions from filename. Using defaults.\n");
+                ancho = 50;
+                largo = 50;
+                alto = 50;
+            }
+            size_map[0] = ancho;
+            size_map[1] = largo;
+            size_map[2] = alto;
+            
+            float *matriz = (float *)malloc(ancho * largo * alto* sizeof(float));
+            read_map(matriz, size_map, mapfile, dimensions_prob);
+            return matriz;
+        }
     }
     else if (strcmp(extension, ".csv") == 0) {
         // Handle CSV height map

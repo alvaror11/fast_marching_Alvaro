@@ -11,7 +11,10 @@
         "ascension_restraint.h": "c",
         "stddef.h": "c",
         "2d_map.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "3d_map.h": "c",
+        "map_main.h": "c",
+        "planner.h": "c",
     },
     "editor.insertMode": "insert",
     "editor.cursorStyle": "line",
