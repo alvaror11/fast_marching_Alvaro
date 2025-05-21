@@ -3,10 +3,10 @@
 #include <stdbool.h>
 #include <time.h>
 #include <string.h>
-#include "map_main.h"
+#include "Maps/map_main.h"
 #include "common.h"
-#include "FMM2.h"
-#include "ascension_restraint.h"
+#include "FM/FMM2.h"
+#include "Maps/ascension_restraint.h"
 
 
 #include "msfm2d_MOD.h"
@@ -23,7 +23,7 @@
 void main() {
     
     // Choose dimensions of the trayectory
-     int dimensions_prob = 3;// Removed redefinition of 'dimensions'
+     int dimensions_prob = 2;// Removed redefinition of 'dimensions'
 
     if (dimensions_prob == 3){
         clock_t start = clock();
@@ -33,10 +33,6 @@ void main() {
         const char* mapfile = "./Mapas/MAP_3_100_100_100.txt"; 
         //Procesar el mapa
         int* size_map = (int *)malloc(3 * sizeof(int));
-
-        int ancho = size_map[0];
-        int largo = size_map[1];
-        int alto = size_map[2];
 
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
         int num_start_points = 1;
@@ -56,8 +52,7 @@ void main() {
         objective_points[2] = 85;     // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
-        int planner_type = 0;
-        int planner_type2 = 0;           //tipo de planner a usar
+        int planner_type = 2;
         int escalado_vectores = 5;      //valor para escalar los vectores del planner 1
         int ascension_rate = 1;         
         int descent_rate = 1;           
@@ -89,18 +84,9 @@ void main() {
             printf("Error: Initial or objective point is outside the map\n");
             return;
         }
-        if (planner_type == 2){
-            // if we select the 2.5D planner 
-            planner_type = 0;
-            int planner_type2 = 2;
-        }
-
-        float* restrictions_map = map_main3D(occupation_map, size_map, distance_threshold, 
-                                            objective_points, size_objective, start_points, size_start, 
-                                            planner_type, escalado_vectores);
-
+        
         // Check the planner type to call one function or another
-        if (planner_type2 == 2){
+        if (planner_type == 2){
             // If the planner is 2, we need to call the ascension restraint function
             // Crear la trayectoria
             int initial_capacity = 100;
@@ -113,10 +99,9 @@ void main() {
                 return;
             }
 
-
             asc_restraint_planner(occupation_map, size_map, distance_threshold, 
                 objective_points, size_objective, start_points, size_start,
-                step, traj, planner_type2, escalado_vectores, ascension_rate, 
+                step, traj, planner_type, escalado_vectores, ascension_rate, 
                 descent_rate, flight_level, resolution);
 
             clock_t end = clock();
@@ -140,7 +125,6 @@ void main() {
                 int y = (int)round(traj->points[i].y) - 1;
                 int z = (int)round(traj->points[i].z) - 1;
                 
-                
                 // Check if point is in obstacle (occupation_map has 1s for obstacles)
                 if (occupation_map[y + (x)*size_map[1] + (z)*size_map[0]*size_map[1]] == 1) {
                     printf("Warning: Point %d (%.2f, %.2f, %.2f) intersects with obstacle\n", 
@@ -156,6 +140,10 @@ void main() {
 
         }
         else{
+
+            float* restrictions_map = map_main3D(occupation_map, size_map, distance_threshold, 
+                                            objective_points, size_objective, start_points, size_start, 
+                                            planner_type, escalado_vectores);
             // In your compute_3d_trajectory function:
             int initial_capacity = 100;
             Trajectory3D* traj = malloc(sizeof(Trajectory3D));
@@ -223,7 +211,7 @@ void main() {
         clock_t start = clock();
         
         // Define las dimensiones de la occupation_map
-        const char* mapfile = "./Mapas/MAP_3_100_100.txt";
+        const char* mapfile = "../Mapas/MAP_2_50_50.txt";
         int filas, columnas;
         int *size_map = (int *)malloc(2 * sizeof(int));
 
@@ -232,15 +220,15 @@ void main() {
         int dimensions = 2;
         int size_objective[2] = {dimensions,num_points};
         float *objective_points  = (float *)malloc(num_points * 2 * sizeof(float));;
-        objective_points[0] = 15;  // x coordinate
+        objective_points[0] = 10;  // x coordinate
         objective_points[1] = 9;  // y coordinate
 
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
         int num_start_points = 1;
         int size_start[2] = {dimensions,num_start_points};
         float *start_points = (float *)malloc(num_start_points * 2 * sizeof(float));;
-        start_points[0] = 87;  // x coordinate
-        start_points[1] = 80;  // y coordinate
+        start_points[0] = 45;  // x coordinate
+        start_points[1] = 40;  // y coordinate
         
         // PARSAMETROS DE LOS PLANNER
         int planner_type = 0;       // tipo de planner a usar
@@ -253,8 +241,8 @@ void main() {
         float step = 0.5;
         
         float *occupation_map = process_map_file((char*)mapfile, size_map, dimensions_prob);
-        size_map[0] = columnas;
-        size_map[1] = filas;
+        columnas = size_map[0];
+        filas = size_map[1];
         // Check that initial and final points are not inside an obstacle
         if ((occupation_map[(int)start_points[0] - 1 + ((int)start_points[1]-1)*columnas] == 1)) {
             printf("Error: Initial point is inside an obstacle\n");

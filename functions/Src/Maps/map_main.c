@@ -21,7 +21,7 @@ float* map_main2D(float* matriz, int* size_map, int distance_threshold,
     FILE *output_file1 = fopen("../Archivos/velocities_map.txt", "w");
      if (output_file1 == NULL) {
          perror("Error al abrir el archivo de salida");
-         return;
+         return NULL;
      }
      
      fprintf(output_file1, "%d %d\n", size_map[0], size_map[1]);
