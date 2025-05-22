@@ -236,9 +236,8 @@ float* restrictions2D(float* viscosity_map, int* size_map, char* dir){
         }
         fclose(output_file2);
 
-        
-
         return viscosity_map;
+        free (restrictions_map);
 
     }
 
