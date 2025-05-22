@@ -104,7 +104,9 @@ float* map_main3D(float* matriz, int* size_map, int distance_threshold,
     */
 
     // Apply restrictions
-    float* restrictions_map = restrictions3D(obstacle_distance_map, size_map, NULL);
+    printf("Applying restrictions...\n");
+    float* restrictions_map = restrictions3D(obstacle_distance_map, size_map, NULL, 
+                                            objective_points, size_objective, start_points, size_start);
 
     // Apply planner
      printf("Applying planner...\n");

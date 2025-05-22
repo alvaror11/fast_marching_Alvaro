@@ -23,14 +23,14 @@
 void main() {
     
     // Choose dimensions of the trayectory
-     int dimensions_prob = 2;// Removed redefinition of 'dimensions'
+     int dimensions_prob = 3;// Removed redefinition of 'dimensions'
 
     if (dimensions_prob == 3){
         clock_t start = clock();
         // Coord X = ancho, Y = largo, Z = alto
 
         //const char* mapfile = "./Mapas/MAP_3_100_100_100.txt";         
-        const char* mapfile = "../Mapas/MAP_3_100_100_100.txt"; 
+        const char* mapfile = "../Mapas/MAP_4_200_200_200.txt"; 
         //Procesar el mapa
         int* size_map = (int *)malloc(3 * sizeof(int));
 
@@ -38,7 +38,7 @@ void main() {
         int num_start_points = 1;
         int size_start[2] = {3, num_start_points};
         float *start_points = (float *)malloc(num_start_points * 3 * sizeof(float));;
-        start_points[0] = 7;    // x coordinate
+        start_points[0] = 20;    // x coordinate
         start_points[1] = 10;   // y coordinate
         start_points[2] = 10;   // z coordinate
 
@@ -47,8 +47,8 @@ void main() {
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         float *objective_points  = (float *)malloc(num_points * 3 * sizeof(float));;
-        objective_points[0] = 80;   // x coordinate
-        objective_points[1] = 90;    // y coordinate
+        objective_points[0] = 140;   // x coordinate
+        objective_points[1] = 130;    // y coordinate
         objective_points[2] = 85;     // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
