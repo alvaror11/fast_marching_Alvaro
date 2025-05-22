@@ -133,5 +133,6 @@ float* restrictions3D(float* viscosity_map, int* size_map, char* dir){
         // If no restrctions map is provided we can create one
         // Types of restricctions
         printf("No restrictions so far\n");
+        return viscosity_map;
     }
 }

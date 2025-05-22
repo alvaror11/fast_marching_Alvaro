@@ -2,19 +2,25 @@ clear;
 clc;
 close all;
 
-filas = 100;
-columnas = 100;
-
-% Punto para iniciar la traj.
-punto_x = 20;  % columna
-punto_y = 22; % fila
 files_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Archivos";
-main_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Ver_Resultados";
+main_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Src\Ver_Resultados";
 maps_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Mapas";
 
 %% Mapa Original
 cd(maps_folder);
-file = fopen('MAP_3_100_100.txt','r');
+filename = 'MAP_3_100_100.txt';
+file = fopen(filename,'r');
+
+tokens = regexp(filename, 'MAP_(\d+)_(\d+)_(\d+)', 'tokens');
+if ~isempty(tokens)
+    % Extract dimensions from filename
+    dims = str2double(tokens{1});
+    dimension = dims(1);  % 2 or 3 for 2D/3D
+    filas = dims(2);     % number of rows
+    columnas = dims(3);  % number of columns
+else
+    error('Could not extract dimensions from filename');
+end
 
 matriz_occ = zeros(filas, columnas); 
 
@@ -53,7 +59,6 @@ set(gca, 'FontSize', 10);
 
 %% Mapa de velocidades
 cd(files_folder);
-cd(files_folder);
 fileID = fopen('velocities_map.txt', 'r');
 if fileID == -1
     error('Could not open velocities map file');
@@ -85,22 +90,65 @@ cd(main_folder);
 % Crear figura
 figure;
 
-% Create a finer grid for interpolation
-[X,Y] = meshgrid(1:columnas, 1:filas);
-[Xq,Yq] = meshgrid(1:0.1:columnas, 1:0.1:filas);
+% Usar colormap en escala de grises
+colormap(gray);  % Usar escala de grises: negro (0) a blanco (1)
 
-% Interpolate velocities map for smoother visualization
-velocities_smooth = interp2(X, Y, velocities_map, Xq, Yq, 'spline');
-
-% Show smoothed map
-imagesc(velocities_smooth);
-axis equal;
-colormap(gray);  % Changed to grayscale
-colorbar;
-clim([0 1]);
+% Mostrar el mapa
+imagesc(velocities_map);
+axis equal;  % Mantener proporciones cuadradas
+%colorbar;
+%clim([0 1]);  % Ajustar límites de color entre 0 y 1
 
 % Etiquetas y título
 title('Velocities Map', 'FontSize', 12);
+xlabel('X', 'FontSize', 11);
+ylabel('Y', 'FontSize', 11);
+set(gca, 'FontSize', 10);
+
+%% Mapa de restricciones
+cd(files_folder);
+fileID1 = fopen('restrictions_map.txt', 'r');
+if fileID1 == -1
+    error('Could not open restrictions map file');
+end
+
+% Read dimensions from first line
+dims = fscanf(fileID1, '%d', [1 2]);  % Read two dimensions [width height]
+restrictions_map = zeros(dims(2), dims(1));
+filas = dims(2);
+columnas = dims(1);
+fgetl(fileID1);
+% Read the map data
+for i = 1:dims(2)
+    line = fgetl(fileID1);
+    if ~ischar(line)
+        error(['Error reading line ' num2str(i)]);
+    end
+    values = str2num(line);
+    long = length(values);
+    if length(values) ~= dims(1)
+        error(['Incorrect number of values in line ' num2str(i)]);
+    end
+    restrictions_map(i,:) = values;
+end
+
+fclose(fileID1);
+cd(main_folder);
+
+% Crear figura
+figure;
+
+% Usar colormap en escala de grises
+colormap(gray);  % Usar escala de grises: negro (0) a blanco (1)
+
+% Mostrar el mapa
+imagesc(restrictions_map);
+axis equal;  % Mantener proporciones cuadradas
+%colorbar;
+%clim([0 1]);  % Ajustar límites de color entre 0 y 1
+
+% Etiquetas y título
+title('Restrictions Map', 'FontSize', 12);
 xlabel('X', 'FontSize', 11);
 ylabel('Y', 'FontSize', 11);
 set(gca, 'FontSize', 10);
@@ -129,7 +177,7 @@ cd(main_folder);
 
 %% Mapa de tiempos visualization
 
-umbralMax = 100; 
+umbralMax = 150; 
 
 % Crear una copia de la matriz con valores limitados a 200
 matrizClipped = matriz_tiempos;  

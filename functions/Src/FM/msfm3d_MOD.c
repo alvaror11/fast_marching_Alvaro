@@ -432,6 +432,21 @@ float* main_msfm3D(float* F, float* SourcePoints, float* T, int* size_map, int* 
             
             /*picture */
             if(isntfrozen3d(i, j, k, dims, Frozen)) {
+                if (IJK_index < 0 || IJK_index >= (dims[0] * dims[1] * dims[2])) {
+                    printf("Invalid array access detected:\n");
+                    printf("Index: %d\n", IJK_index);
+                    printf("Coordinates (i,j,k): (%d,%d,%d)\n", i, j, k);
+                    printf("Dimensions: %d x %d x %d\n", dims[0], dims[1], dims[2]);
+                    printf("Max valid index: %d\n", (dims[0] * dims[1] * dims[2]) - 1);
+                    return NULL;
+                }
+    
+                // Add F validation
+                if (F == NULL) {
+                    printf("Error: F is NULL\n");
+                    return NULL;
+                }
+                
                 Tt=(1/(max(F[IJK_index],eps)));
                 /*Update distance in neigbour list or add to neigbour list */
                 if(T[IJK_index]>0) {
