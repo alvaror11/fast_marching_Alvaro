@@ -80,8 +80,8 @@ void FMM2_2D(float* restrictions_map, int* size_map, float distance_threshold,
     
 
     //Allocate memory for output map
-    float* output_T = (float *)malloc(size_map[1] * size_map[0] * sizeof(float));
-    printf("Calculating times map...\n");  
+     float* output_T = (float *)malloc(size_map[1] * size_map[0] * sizeof(float));
+    printf("Calculating times map...\n"); 
     output_T = main_msfm(restrictions_map, objective_points, output_T, size_map, size_objective);
 
     // Save times map

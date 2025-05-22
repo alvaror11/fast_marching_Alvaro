@@ -209,35 +209,35 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
     bool usesecond = true;  // Default values
     bool usecross = true;   // Default values
 
-    
+
     /* Euclidian distance image */
     float *Y;
-    
+
     /* Current distance values */
     float Tt, Ty;
-    
+
     /* Matrix containing the Frozen Pixels" */
     bool *Frozen;
-    
+
     /* Augmented Fast Marching (For skeletonize) */
     bool Ed;
-    
+
     /* Size of input image */
-    
+
     int dims[2];
-    
+
     /* Size of  SourcePoints array */
-    
+
     size_t dims_sp[2];
 
     dims[0] = size_map[0];
     dims[1] = size_map[1];
     dims_sp[0] = size_target[0];
     dims_sp[1] = size_target[1];
-    
+
     /* Number of pixels in image */
     int npixels;
-    
+
     /* Neighbour list */
     int neg_free;
     int neg_pos;
@@ -245,33 +245,33 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
     float *neg_listx;
     float *neg_listy;
     float *neg_listo;
-    
+
     int *listprop;
     float **listval;
-    
+
     /* Neighbours 4x2 */
     int ne[8]={-1, 1, 0, 0, 0, 0, -1, 1};
 
     /* Loop variables  */
     int z, k, itt, q;
-    
+
     /* Current location */
     int x, y, i, j;
-    
+
     /* Index */
     int IJ_index, XY_index, index;
-    
-    
+
+
     npixels=size_map[0]*size_map[1];
-    
+
     /* Allocate memory for the distance image. IT MAY NOT BE NEEDED, if the memory is allocated before running the function */
-   
+
     //T = (float *)malloc(npixels * sizeof(float)); 
 
     if(Ed) { 
         Y = (float *)malloc(npixels * sizeof(float));
     }
-    
+
     /* Pixels which are processed and have a final distance are frozen */
     Frozen = (bool*)malloc( npixels* sizeof(bool) );
     for(q=0;q<npixels;q++){Frozen[q]=0; T[q]=-1;}
@@ -279,7 +279,7 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
     {
     for(q=0;q<npixels;q++){Y[q]=-1;}
     }
-    
+
     /*Free memory to store neighbours of the (segmented) region */
     neg_free = 100000;
     neg_pos=0;
@@ -293,7 +293,7 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
     listprop=(int*)malloc(3* sizeof(int));
     /* Make jagged list to store a maximum of 2^64 values */
     listval= (float **)malloc( 64* sizeof(float *) );
-    
+
     /* Initialize parameter list */
     initialize_list(listval, listprop);
     neg_listv=listval[listprop[1]-1];
@@ -302,7 +302,7 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
      *  - narrow band (boundary) (in list to check for the next pixel with smallest distance)
      *  - far (not yet used)
      */
-    
+
     /* set all starting points to distance zero and frozen  */
     /* and add all neighbours of the starting points to narrow list  */
     for (z=0; z<dims_sp[1]; z++) {
@@ -310,30 +310,30 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
         x= (int)source_points[0+z*2]-1;
         y= (int)source_points[1+z*2]-1;
         XY_index=x+y*dims[0];
-        
+
         /*Set starting point to frozen and distance to zero  */
         Frozen[XY_index]=1;
         T[XY_index]=0;
         if(Ed) { Y[XY_index]=0; }
     }
-    
+
     for (z=0; z<dims_sp[1]; z++) {
         /*starting point  */
         x= (int)source_points[0+z*2]-1;
         y= (int)source_points[1+z*2]-1;
         XY_index=x+y*dims[0];
-        
+
         /* Add neigbours of starting points  */
         for (k=0; k<4; k++) {
             /*Location of neighbour  */
             i=x+ne[k]; j=y+ne[k+4];
             IJ_index=i+j*dims[0];
-            
+
             /*Check if current neighbour is not yet frozen and inside the
              *picture  */
             if(isntfrozen2d(i, j, dims, Frozen)) {
                 Tt=(1/(max(F[IJ_index],eps)));
-					
+
                 Ty=1;
                 /*Update distance in neigbour list or add to neigbour list */
                 if(T[IJ_index]>0) {
@@ -374,17 +374,17 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
          *distance value and set it to current pixel location  */
         index=list_minimum(listval, listprop);
         neg_listv=listval[listprop[1]-1];
- 		
+
         /* Stop if pixel distance is infinite (all pixels are processed)  */
         if(IsInf(neg_listv[index])) {  break; }
         x=(int)neg_listx[index]; y=(int)neg_listy[index];
-        
+
         XY_index=x+y*dims[0];
         Frozen[XY_index]=1;
         T[XY_index]=neg_listv[index];
         if(Ed) { Y[XY_index]=neg_listo[index]; }
-      
-     
+
+
         /*Remove min value by replacing it with the last value in the array  */
         list_remove_replace(listval, listprop, index) ;
         neg_listv=listval[listprop[1]-1];
@@ -397,11 +397,11 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
             T[(int)(neg_listx[index]+neg_listy[index]*dims[0])]=index;
         }
         neg_pos =neg_pos-1;
-       
-    
+
+
         /*Loop through all 4 neighbours of current pixel  */
         for (k=0;k<4;k++) {
-            
+
             /*Location of neighbour  */
             i=x+ne[k]; j=y+ne[k+4];
             IJ_index=i+j*dims[0];
@@ -409,9 +409,9 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
             /*Check if current neighbour is not yet frozen and inside the  */
             /*picture  */
             if(isntfrozen2d(i, j, dims, Frozen)) {
-				
+
                 Tt=CalculateDistance(T, F[IJ_index], dims, i, j, usesecond, usecross, Frozen);
-				        
+
 				if(Ed) {
                     Ty=CalculateDistance(Y, 1, dims, i, j, usesecond, usecross, Frozen);
                 }
@@ -448,7 +448,7 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
                 }
             }
         }
-        
+
     }
     return (float*)T;
     /* Free memory */
@@ -462,7 +462,6 @@ float* main_msfm(float* F, float* source_points, float* T, int* size_map, int* s
     free(Frozen);
     free(Y);
 }
-
 void compute_gradient_2d_discrete(float* input_matrix, float* gradient_matrix, int* size_map) {
     
     int rows = size_map[1];

@@ -355,13 +355,13 @@ bool isfrozen3d(int i, int j, int k, int *dims, bool *Frozen) {
 
 
 bool isntfrozen2d(int i, int j, int *dims, bool *Frozen) {
-    return (i >= 0) && (j >= 0) && (j < dims[0]) && (i < dims[1]) && 
-           (Frozen[j + i * dims[0]] == 0);
+        return (i >= 0) && (j >= 0) && (i < dims[0]) && (j < dims[1]) && 
+           (Frozen[i + j * dims[0]] == 0);
 }
 
 bool isfrozen2d(int i, int j, int *dims, bool *Frozen) {
-    return (i >= 0) && (j >= 0) && (j < dims[0]) && (i < dims[1]) && 
-           (Frozen[j + i * dims[0]] == 1);
+        return (i >= 0) && (j >= 0) && (i < dims[0]) && (j < dims[1]) && 
+           (Frozen[i + j * dims[0]] == 1);
 }
 
 float euclidean_distance(int x1, int y1, int x2, int y2) {
@@ -443,7 +443,7 @@ float* process_map_file(char* mapfile, int* size_map, int dimensions_prob){
     if (strcmp(extension, ".txt") == 0) {
         if (dimensions_prob == 2){
             int columnas, filas;
-            if (sscanf(mapfile, "./Mapas/MAP_%*d_%d_%d.txt", &columnas, &filas) != 2) {
+            if (sscanf(mapfile, "../Mapas/MAP_%*d_%d_%d.txt", &columnas, &filas) != 2) {
                 printf("Error: Could not extract dimensions from filename. Using defaults.\n");
                 columnas = 50;
                 filas = 50;
@@ -456,7 +456,7 @@ float* process_map_file(char* mapfile, int* size_map, int dimensions_prob){
         }
         else if (dimensions_prob ==3){
             int ancho, largo, alto;
-            if (sscanf(mapfile, "./Mapas/MAP_%*d_%d_%d_%d.txt", &ancho, &largo, &alto) != 3) {
+            if (sscanf(mapfile, "../Mapas/MAP_%*d_%d_%d_%d.txt", &ancho, &largo, &alto) != 3) {
                 printf("Error: Could not extract dimensions from filename. Using defaults.\n");
                 ancho = 50;
                 largo = 50;

@@ -7,6 +7,42 @@
 #include "2D_map.h"
 #include "../common.h"
 
+void apply_restrictions(float* restrictions_map, int* size_map, float restriction_type, int (*areas)[4], int num_areas) {
+    // Loop through each area
+    for (int area_idx = 0; area_idx < num_areas; area_idx++) {
+        // Get current area bounds
+        int x_min = areas[area_idx][0] - 1;
+        int x_max = areas[area_idx][1] - 1;
+        int y_min = areas[area_idx][2] - 1;
+        int y_max = areas[area_idx][3] - 1;
+
+         // Check if area is completely within boundaries
+        if (x_min < 0 || x_max >= size_map[0] || 
+            y_min < 0 || y_max >= size_map[1]) {
+            printf("Warning: Area %d [%d,%d,%d,%d] is outside map boundaries [%d,%d]. Skipping.\n", 
+                   area_idx, x_min+1, x_max+1, y_min+1, y_max+1, 
+                   size_map[0], size_map[1]);
+            continue;  // Skip this area
+        }
+
+        // Check if area boundaries make sense
+        if (x_min > x_max || y_min > y_max) {
+            printf("Warning: Area %d has invalid bounds [%d,%d,%d,%d]. Skipping.\n",
+                   area_idx, x_min+1, x_max+1, y_min+1, y_max+1);
+            continue;  // Skip this area
+        }
+
+        // Apply restriction value to all points in this area
+        for (int x = x_min; x <= x_max; x++) {
+            for (int y = y_min; y <= y_max; y++) {
+                int index = x + y * size_map[0];
+                restrictions_map[index] = restriction_type;
+            }
+        }
+    }
+   
+}
+
 
 float* velocities_map(float* binary_map, int* size_map, int threshold) {
     // Creates the velocities map from the binary occupational map.
@@ -122,7 +158,87 @@ float* restrictions2D(float* viscosity_map, int* size_map, char* dir){
     else{
         // If no restrctions map is provided we can create one
         // Types of restricctions
-        printf("no restrictions so far\n");
+        float hard_restrictions = 0;
+        float soft_restrictions1 = 0.2;
+        float soft_restrictions2 = 0.6;
+        float soft_restrictions3 = 0.75;
+
+
+        // Define number of areas for each restriction type
+        #define NUM_HARD_AREAS 1
+        #define NUM_SOFT1_AREAS 1
+        #define NUM_SOFT2_AREAS 1
+        #define NUM_SOFT3_AREAS 1
+
+        // Define areas [x_min, x_max, y_min, y_max] for each restriction type
+        int hard_areas[NUM_HARD_AREAS][4] = {
+            {20, 30, 20, 30}     
+        };
+
+        int soft1_areas[NUM_SOFT1_AREAS][4] = {
+            {30, 60, 30, 60}     
+        };
+
+        int soft2_areas[NUM_SOFT2_AREAS][4] = {
+            {1, 40, 1, 40}
+        };
+
+        int soft3_areas[NUM_SOFT3_AREAS][4] = {
+            {10, 40, 10, 40}
+        };
+
+        float* restrictions_map = malloc(size_map[0] * size_map[1] * sizeof(float));
+        if (restrictions_map == NULL) {
+            printf("Error: Memory allocation failed for restrictions map.\n");
+            return NULL;
+        }
+
+        // Fill the matrix with 1s (no restrictions)
+        for (int i = 0; i < size_map[0] * size_map[1]; i++) {
+            restrictions_map[i] = 1.0f;
+        }
+
+        if (NUM_SOFT3_AREAS > 0){
+            // Apply soft restrictions
+            apply_restrictions(restrictions_map, size_map, soft_restrictions3, soft3_areas, NUM_SOFT3_AREAS);
+        }
+         if (NUM_SOFT2_AREAS > 0){
+            // Apply soft restrictions
+            apply_restrictions(restrictions_map, size_map, soft_restrictions2, soft2_areas, NUM_SOFT2_AREAS);
+        }
+        if (NUM_SOFT1_AREAS > 0){
+            // Apply soft restrictions
+            apply_restrictions(restrictions_map, size_map, soft_restrictions1, soft1_areas, NUM_SOFT1_AREAS);
+        }
+        if (NUM_HARD_AREAS > 0){
+            // Apply hard restrictions
+            apply_restrictions(restrictions_map, size_map, hard_restrictions, hard_areas, NUM_HARD_AREAS);
+        }
+
+        // Apply to viscosity map (multiplication by 1 won't change values)
+        for (int i = 0; i < size_map[0] * size_map[1]; i++) {
+            viscosity_map[i] *= restrictions_map[i];
+        }
+
+        FILE *output_file2 = fopen("../Archivos/restrictions_map.txt", "w");
+        if (output_file2 == NULL) {
+            perror("Error al abrir el archivo de salida");
+            return NULL;
+        }
+        
+        fprintf(output_file2, "%d %d\n", size_map[0], size_map[1]);
+
+        for (int i = 0; i < size_map[1]; i++) {
+            for (int j = 0; j < size_map[0]; j++) {
+                fprintf(output_file2, "%.2f ", viscosity_map[j + i * size_map[0]]);
+            }
+            fprintf(output_file2, "\n");
+        }
+        fclose(output_file2);
+
+        
+
+        return viscosity_map;
 
     }
 

@@ -9,12 +9,11 @@
 #include "../common.h"
 
 float* map_main2D(float* matriz, int* size_map, int distance_threshold,
-                float* objective_points, int* size_objective, float* start_points, int* size_start,
+                float* objective_points, int* size_objective, float* start_points, int size_start[2],
                 int planner_type, float escalado_vectores){
 
 
-        
-        //Create velocities map
+    //Create velocities map
     printf("Creating velocities map...\n");
     float* obstacle_distance_map = velocities_map(matriz, size_map, distance_threshold);
     //Save velocities map
@@ -33,10 +32,29 @@ float* map_main2D(float* matriz, int* size_map, int distance_threshold,
          fprintf(output_file1, "\n");
      }
      fclose(output_file1);
-
-     
+    
      //Apply restrictions
     float* restrictions_map = restrictions2D(obstacle_distance_map, size_map, NULL);
+
+    // Save restrictions map
+    FILE *output_file2 = fopen("../Archivos/restrictions_map.txt", "w");
+     if (output_file2 == NULL) {
+         perror("Error al abrir el archivo de salida");
+         return NULL;
+     }
+     
+     fprintf(output_file2, "%d %d\n", size_map[0], size_map[1]);
+
+     for (int i = 0; i < size_map[1]; i++) {
+         for (int j = 0; j < size_map[0]; j++) {
+             fprintf(output_file2, "%.2f ", restrictions_map[j + i * size_map[0]]);
+         }
+         fprintf(output_file2, "\n");
+     }
+     fclose(output_file2);
+
+
+
 
     // Apply planner
     planners_2D(restrictions_map, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
@@ -48,7 +66,7 @@ float* map_main2D(float* matriz, int* size_map, int distance_threshold,
 }
 
 float* map_main3D(float* matriz, int* size_map, int distance_threshold,
-                float* objective_points, int* size_objective, float* start_points, int* size_start,
+                float* objective_points, int* size_objective, float* start_points, int size_start[2],
                 int planner_type, float escalado_vectores){
 
     //Create velocities map

@@ -4,14 +4,16 @@
 #include <time.h>
 #include <string.h>
 #include "ascension_restraint.h"
-#include "common.h"
-#include "FMM2.h"
+#include "..\common.h"
+#include "..\FM\FMM2.h"
+#include "2D_map.h"
+#include "map_main.h"
 #include "planner.h"
 
 
 void asc_restraint_planner(float* matriz, int size_map[3], float distance_threshold, float* objective_points, 
     int size_objective[2], float* start_points, int size_start[2], float step, Trajectory3D* traj, 
-    int planner_type, int escalado_vectores, int ascension_rate, int descent_rate, int flight_level, int resolution) {
+    int planner_type, float escalado_vectores, int ascension_rate, int descent_rate, int flight_level, int resolution) {
     
     int* height_map = (int*)calloc(size_map[0] * size_map[1], sizeof(int));
     if (!height_map) {
@@ -68,6 +70,10 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
     traj_2D->points = malloc(initial_capacity * sizeof(Point2D));
     traj_2D->size = 0;
     traj_2D->capacity = initial_capacity;
+
+    float* restrictions_map = map_main2D(occupation_map_2d, size_map_2d, distance_threshold, 
+                                            objective_points, size_objective, start_points, size_start, 
+                                            planner_type, escalado_vectores);
 
     FMM2_2D(occupation_map_2d, size_map_2d, distance_threshold, 
             objective_points, size_objective, start_points, size_start, step, traj_2D, planner_type, escalado_vectores);

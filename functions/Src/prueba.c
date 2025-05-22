@@ -30,7 +30,7 @@ void main() {
         // Coord X = ancho, Y = largo, Z = alto
 
         //const char* mapfile = "./Mapas/MAP_3_100_100_100.txt";         
-        const char* mapfile = "./Mapas/MAP_3_100_100_100.txt"; 
+        const char* mapfile = "../Mapas/MAP_3_100_100_100.txt"; 
         //Procesar el mapa
         int* size_map = (int *)malloc(3 * sizeof(int));
 
@@ -52,7 +52,7 @@ void main() {
         objective_points[2] = 85;     // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
-        int planner_type = 2;
+        int planner_type = 0;
         int escalado_vectores = 5;      //valor para escalar los vectores del planner 1
         int ascension_rate = 1;         
         int descent_rate = 1;           
@@ -211,24 +211,24 @@ void main() {
         clock_t start = clock();
         
         // Define las dimensiones de la occupation_map
-        const char* mapfile = "../Mapas/MAP_2_50_50.txt";
+        const char* mapfile = "../Mapas/MAP_3_100_100.txt";
         int filas, columnas;
         int *size_map = (int *)malloc(2 * sizeof(int));
 
-        // Define las coordenadas objetivo
-        int num_points = 1;
-        int dimensions = 2;
-        int size_objective[2] = {dimensions,num_points};
-        float *objective_points  = (float *)malloc(num_points * 2 * sizeof(float));;
-        objective_points[0] = 10;  // x coordinate
-        objective_points[1] = 9;  // y coordinate
-
         //Define las coordenadas de inicio, por ahora solo funciona con un punto inicial
+        int dimensions = 2;
         int num_start_points = 1;
         int size_start[2] = {dimensions,num_start_points};
         float *start_points = (float *)malloc(num_start_points * 2 * sizeof(float));;
-        start_points[0] = 45;  // x coordinate
-        start_points[1] = 40;  // y coordinate
+        start_points[0] = 18;  // x coordinate
+        start_points[1] = 50;  // y coordinate
+
+        // Define las coordenadas objetivo
+        int num_points = 1;
+        int size_objective[2] = {dimensions,num_points};
+        float *objective_points  = (float *)malloc(num_points * 2 * sizeof(float));;
+        objective_points[0] = 82;  // x coordinate
+        objective_points[1] = 20;  // y coordinate
         
         // PARSAMETROS DE LOS PLANNER
         int planner_type = 0;       // tipo de planner a usar
@@ -257,11 +257,11 @@ void main() {
             printf("Error: Initial or objective point is outside the map\n");
             return;
         }
-
         float* restrictions_map = map_main2D(occupation_map, size_map, distance_threshold, 
                                             objective_points, size_objective, start_points, size_start, 
                                             planner_type, escalado_vectores);
         
+
         // Crear la trayectoria
         int initial_capacity = 100;
         Trajectory* traj = malloc(sizeof(Trajectory));
