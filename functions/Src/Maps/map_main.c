@@ -34,7 +34,8 @@ float* map_main2D(float* matriz, int* size_map, int distance_threshold,
      fclose(output_file1);
     
      //Apply restrictions
-    float* restrictions_map = restrictions2D(obstacle_distance_map, size_map, NULL);
+    float* restrictions_map = restrictions2D(obstacle_distance_map, size_map, NULL, 
+                                            objective_points, size_objective, start_points, size_start);
 
     // Save restrictions map
     FILE *output_file2 = fopen("../Archivos/restrictions_map.txt", "w");

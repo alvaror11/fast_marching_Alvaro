@@ -1,10 +1,10 @@
 % Clear workspace and figures
 clear;
 clc;
-close all;
+%close all;
 
 % Read the height map file
-height_data = readmatrix('../Archivos/height_map.txt');
+height_data = readmatrix('../../Archivos/height_map.txt');
 
 % Create figure
 figure('Name', 'Height Map Visualization', 'Position', [100 100 800 600]);
@@ -30,7 +30,7 @@ text(10, size(height_data,1)+5, sprintf('Min height: %.1f, Max height: %.1f', mi
 
 
 % Read the occupation map file
-occupation_data = readmatrix('../Archivos/occupation_map_2d.txt');
+occupation_data = readmatrix('../../Archivos/occupation_map_2d.txt');
 
 % Create figure
 figure('Name', 'Occupation Map 2D Visualization', 'Position', [100 100 800 600]);
