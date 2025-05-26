@@ -30,7 +30,7 @@ void main() {
         // Coord X = ancho, Y = largo, Z = alto
 
         //const char* mapfile = "./Mapas/MAP_3_100_100_100.txt";         
-        const char* mapfile = "../Mapas/MAP_4_200_200_200.txt"; 
+        const char* mapfile = "../Mapas/MADRIDALTMAP.csv"; 
         //Procesar el mapa
         int* size_map = (int *)malloc(3 * sizeof(int));
 
@@ -38,29 +38,29 @@ void main() {
         int num_start_points = 1;
         int size_start[2] = {3, num_start_points};
         float *start_points = (float *)malloc(num_start_points * 3 * sizeof(float));;
-        start_points[0] = 20;    // x coordinate
-        start_points[1] = 10;   // y coordinate
-        start_points[2] = 10;   // z coordinate
+        start_points[0] = 300;    // x coordinate
+        start_points[1] = 100;   // y coordinate
+        start_points[2] = 15;   // z coordinate
 
         // Define las coordenadas objetivo
         int num_points = 1;
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         float *objective_points  = (float *)malloc(num_points * 3 * sizeof(float));;
-        objective_points[0] = 140;   // x coordinate
-        objective_points[1] = 130;    // y coordinate
-        objective_points[2] = 85;     // z coordinate
+        objective_points[0] = 200;   // x coordinate
+        objective_points[1] = 250;    // y coordinate
+        objective_points[2] = 15;     // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
-        int planner_type = 0;
+        int planner_type = 2;
         int escalado_vectores = 5;      //valor para escalar los vectores del planner 1
         int ascension_rate = 1;         
         int descent_rate = 1;           
-        int flight_level = 175;          // Altura de vuelo en metros
+        int flight_level = 70;          // Altura de vuelo en metros
         int resolution = 5;             // Resolution in meters per cell (1 cell = resolution meters)
         
         // Define el umbral de distancia para la matriz de velocidades
-        float distance_threshold = 4.0;
+        float distance_threshold = 6.0;
 
         // Define el tamaño del paso
         float step = 0.5;
@@ -85,6 +85,30 @@ void main() {
             return;
         }
         
+        FILE* map_file = fopen("../Archivos/occupation_map.txt", "w");
+        if (map_file == NULL) {
+            printf("Error: Could not create occupation map file\n");
+            return;
+        }
+        fprintf(map_file, "%d %d %d\n", size_map[0], size_map[1], size_map[2]);
+        // Write map data layer by layer
+        for (int z = 0; z < size_map[2]; z++) {
+            fprintf(map_file, "Layer %d:\n", z);
+            for (int x = 0; x < size_map[0]; x++) {
+                for (int y = 0; y < size_map[1]; y++) {
+                    fprintf(map_file, "%.0f ", occupation_map[y + x*size_map[1] + z*size_map[0]*size_map[1]]);
+                }
+                fprintf(map_file, "\n");
+            }
+            fprintf(map_file, "\n");
+        }
+
+        fclose(map_file);
+
+
+
+
+
         // Check the planner type to call one function or another
         if (planner_type == 2){
             // If the planner is 2, we need to call the ascension restraint function
@@ -98,7 +122,6 @@ void main() {
                 printf("Error: Memory allocation failed for 3D trajectory.\n");
                 return;
             }
-
             asc_restraint_planner(occupation_map, size_map, distance_threshold, 
                 objective_points, size_objective, start_points, size_start,
                 step, traj, planner_type, escalado_vectores, ascension_rate, 
@@ -114,7 +137,6 @@ void main() {
                 free(traj->points);
                 free(traj);
                 free(occupation_map);
-                free(start_points);
                 free(size_map);
                 return;
             }
@@ -135,7 +157,6 @@ void main() {
             free(traj);
             free(occupation_map);
             free(objective_points);
-            free(start_points);
             free(size_map);
 
         }

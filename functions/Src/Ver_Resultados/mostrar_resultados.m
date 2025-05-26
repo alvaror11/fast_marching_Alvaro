@@ -1,6 +1,6 @@
 clear;
 clc;
-close all;
+%close all;
 
 files_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Archivos";
 main_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Src\Ver_Resultados";
@@ -176,7 +176,7 @@ cd(main_folder);
 
 %% Mapa de tiempos visualization
 
-umbralMax = 150; 
+umbralMax = 300; 
 
 % Crear una copia de la matriz con valores limitados a 200
 matrizClipped = matriz_tiempos;  

@@ -75,7 +75,7 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
                                             objective_points, size_objective, start_points, size_start, 
                                             planner_type, escalado_vectores);
 
-    FMM2_2D(occupation_map_2d, size_map_2d, distance_threshold, 
+    FMM2_2D(restrictions_map, size_map_2d, distance_threshold, 
             objective_points, size_objective, start_points, size_start, step, traj_2D, planner_type, escalado_vectores);
     
     // check if a 2d traj was found
@@ -161,8 +161,8 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
         traj->points[i].z = height_map[height_idx];
         
     }
-    /*
-    FILE *traj_file = fopen("./Archivos/trajectory3D.txt", "w");
+    
+    FILE *traj_file = fopen("../Archivos/trajectory3D.txt", "w");
     if (traj_file == NULL) {
         perror("Error al abrir el archivo de trayectoria");
         return;
@@ -182,5 +182,5 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
             traj->points[i].z);
     }
     fclose(traj_file);
-    */
+    
 }

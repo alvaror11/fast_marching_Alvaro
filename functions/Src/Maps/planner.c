@@ -347,7 +347,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
             }
 
              // Save height map to file
-             /*
+             
              FILE *height_file = fopen("../Archivos/height_map.txt", "w");
              if (!height_file) {
                  printf("Error opening height map file\n");
@@ -363,7 +363,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
              }
  
              fclose(height_file);
-                */
+                
 
             // Check vertical obstacles for each x,y coordinate
             // Seguimos con coordenadas estilo 3d, i = x, j = y, k = z
@@ -390,7 +390,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
                 }
             }
             // Save 2D occupation map to file
-            /*
+            
             FILE* occupation_file = fopen("../Archivos/occupation_map_2d.txt", "w");
             if (!occupation_file) {
                 printf("Error opening 2D occupation map file\n");
@@ -407,7 +407,8 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
             }
 
             fclose(occupation_file);
-            */
+            
+           break;
         }
         case 3: {
             size_map[0] += 2;
