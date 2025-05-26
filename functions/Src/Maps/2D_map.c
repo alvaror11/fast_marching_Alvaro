@@ -125,7 +125,8 @@ float* velocities_map(float* binary_map, int* size_map, int threshold) {
 }
 
 
-float* restrictions2D(float* viscosity_map, int* size_map, char* dir){
+float* restrictions2D(float* viscosity_map, int* size_map, char* dir,
+                     float* objective_points, int* size_objective, float* start_points, int size_start[2]){
 
     // Import/create the soft/hard restrictions map and apply it to the viscosity map
 
@@ -186,6 +187,37 @@ float* restrictions2D(float* viscosity_map, int* size_map, char* dir){
         int soft3_areas[NUM_SOFT3_AREAS][4] = {
             {10, 40, 10, 40}
         };
+
+        //Check if objective or start points are inside a hard restriction area
+        for (int p = 0; p < size_objective[0]; p++) {
+            int x = (int)objective_points[p*3] - 1;
+            int y = (int)objective_points[p*3 + 1] - 1;
+            
+            for (int a = 0; a < NUM_HARD_AREAS; a++) {
+                if (x >= hard_areas[a][0]-1 && x <= hard_areas[a][1]-1 &&
+                    y >= hard_areas[a][2]-1 && y <= hard_areas[a][3]-1) {
+                    printf("Warning: Objective point %d [%d,%d,%d] is inside hard restriction area %d!\n",
+                        p+1, x+1, y+1, a+1);
+                    return NULL;
+                }
+            }
+        }
+        for (int p = 0; p < size_start[0]; p++) {
+            int x = (int)start_points[p*3] - 1;
+            int y = (int)start_points[p*3 + 1] - 1;
+            
+            for (int a = 0; a < NUM_HARD_AREAS; a++) {
+                if (x >= hard_areas[a][0]-1 && x <= hard_areas[a][1]-1 &&
+                    y >= hard_areas[a][2]-1 && y <= hard_areas[a][3]-1) {
+                    printf("Warning: Start point %d [%d,%d,%d] is inside hard restriction area %d!\n",
+                        p+1, x+1, y+1, a+1);
+                    return NULL;
+                }
+            }
+        }
+
+
+
 
         float* restrictions_map = malloc(size_map[0] * size_map[1] * sizeof(float));
         if (restrictions_map == NULL) {

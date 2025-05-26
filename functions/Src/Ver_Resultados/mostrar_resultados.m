@@ -15,7 +15,6 @@ tokens = regexp(filename, 'MAP_(\d+)_(\d+)_(\d+)', 'tokens');
 if ~isempty(tokens)
     % Extract dimensions from filename
     dims = str2double(tokens{1});
-    dimension = dims(1);  % 2 or 3 for 2D/3D
     filas = dims(2);     % number of rows
     columnas = dims(3);  % number of columns
 else

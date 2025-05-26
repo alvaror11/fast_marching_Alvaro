@@ -124,9 +124,6 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
     traj->size = traj_2D->size;
     traj->capacity = traj_2D->size;
 
-    // Transform the 2D trajectory to 3D, remember that we are not encapsulating and the index in C start at 0, so we need to substract only 1
-    // to the x and y coordinates to get the correct index in the height_map
-    // 
     printf("\n=== Complete 2D Trajectory Information ===\n");
     printf("Number of points: %d\n", traj_2D->size);
     printf("Capacity: %d\n", traj_2D->capacity);
@@ -140,13 +137,13 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
             traj_2D->points[i].x,
             traj_2D->points[i].y);
     }
-
     printf("\nStart point: (%.2f, %.2f)\n", traj_2D->points[0].x, traj_2D->points[0].y);
     printf("End point:   (%.2f, %.2f)\n", 
         traj_2D->points[traj_2D->size-1].x, 
         traj_2D->points[traj_2D->size-1].y);
     printf("==============================\n\n");
-
+    // Transform the 2D trajectory to 3D, remember that we are not encapsulating and the index in C start at 0, so we need to substract only 1
+    // to the x and y coordinates to get the correct index in the height_map
     for (int i = 0; i < traj_2D->size; i++) {
         int x_2d = (int)traj_2D->points[i].x - 1;
         int y_2d = (int)traj_2D->points[i].y - 1;
