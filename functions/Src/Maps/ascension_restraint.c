@@ -158,7 +158,7 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
     
         traj->points[i].x = (float)traj_2D->points[i].y;
         traj->points[i].y = (float)traj_2D->points[i].x;
-        traj->points[i].z = height_map[height_idx];
+        traj->points[i].z = height_map[height_idx] + 1;
         
     }
     
@@ -170,15 +170,11 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
     // Print trajectory points
     fprintf(traj_file, "%d %d\n", traj->size, 3);
     for(int i = 0; i < traj->size; i++) {
-
-        int idx__3d = ((int)traj->points[i].y) + (int)traj->points[i].x * size_map[1] + (int)traj->points[i].z * size_map[0] * size_map[1];
-        if (matriz[idx__3d] == 1.0f) {
-            printf("Point %d is inside an obstacle\n", i);
-            break;
-        }
+       // Se guardan los putos con las coordenadas 2d de x e y para la visualizacion en matlab. 
+       // L trajectoria siguiendo el formato 3D sigue con sus coordenadas x e y 
         fprintf(traj_file, "%.2f %.2f %.2f\n", 
-            traj->points[i].x,
             traj->points[i].y,
+            traj->points[i].x,
             traj->points[i].z);
     }
     fclose(traj_file);

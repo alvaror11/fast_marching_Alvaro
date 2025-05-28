@@ -30,7 +30,7 @@ void main() {
         // Coord X = ancho, Y = largo, Z = alto
 
         //const char* mapfile = "./Mapas/MAP_3_100_100_100.txt";         
-        const char* mapfile = "../Mapas/.csv"; 
+        const char* mapfile = "../Mapas/Mapa_50x50.csv"; 
         //Procesar el mapa
         int* size_map = (int *)malloc(3 * sizeof(int));
 
@@ -38,8 +38,8 @@ void main() {
         int num_start_points = 1;
         int size_start[2] = {3, num_start_points};
         float *start_points = (float *)malloc(num_start_points * 3 * sizeof(float));;
-        start_points[0] = 10;    // x coordinate
-        start_points[1] = 15;   // y coordinate
+        start_points[0] = 25;    // x coordinate
+        start_points[1] = 10;   // y coordinate
         start_points[2] = 5;   // z coordinate
 
         // Define las coordenadas objetivo
@@ -47,7 +47,7 @@ void main() {
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         float *objective_points  = (float *)malloc(num_points * 3 * sizeof(float));;
-        objective_points[0] = 30;   // x coordinate
+        objective_points[0] = 17;   // x coordinate
         objective_points[1] = 35;    // y coordinate
         objective_points[2] = 10;     // z coordinate
 
@@ -60,7 +60,7 @@ void main() {
         int resolution = 5;             // Resolution in meters per cell (1 cell = resolution meters)
         
         // Define el umbral de distancia para la matriz de velocidades
-        float distance_threshold = 6.0;
+        float distance_threshold = 8.0;
 
         // Define el tamaño del paso
         float step = 0.5;
@@ -94,9 +94,9 @@ void main() {
         // Write map data layer by layer
         for (int z = 0; z < size_map[2]; z++) {
             fprintf(map_file, "Layer %d:\n", z);
-            for (int x = 0; x < size_map[0]; x++) {
-                for (int y = 0; y < size_map[1]; y++) {
-                    fprintf(map_file, "%.0f ", occupation_map[y + x*size_map[1] + z*size_map[0]*size_map[1]]);
+            for (int x = 0; x < size_map[1]; x++) {
+                for (int y = 0; y < size_map[0]; y++) {
+                    fprintf(map_file, "%.0f ", occupation_map[y + x*size_map[0] + z*size_map[0]*size_map[1]]);
                 }
                 fprintf(map_file, "\n");
             }

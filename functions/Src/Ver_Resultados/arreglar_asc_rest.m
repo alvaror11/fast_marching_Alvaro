@@ -145,5 +145,4 @@ camlight;
 legend('Terrain', 'Trajectory', 'Start', 'End', 'Location', 'best');
 hold off
 
-
 cd(main_folder)
