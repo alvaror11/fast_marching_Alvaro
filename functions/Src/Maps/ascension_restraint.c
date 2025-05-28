@@ -156,8 +156,8 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
             continue;
         }
     
-        traj->points[i].x = (int)traj_2D->points[i].y;
-        traj->points[i].y = (int)traj_2D->points[i].x;
+        traj->points[i].x = (float)traj_2D->points[i].y;
+        traj->points[i].y = (float)traj_2D->points[i].x;
         traj->points[i].z = height_map[height_idx];
         
     }
