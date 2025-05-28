@@ -30,7 +30,7 @@ void main() {
         // Coord X = ancho, Y = largo, Z = alto
 
         //const char* mapfile = "./Mapas/MAP_3_100_100_100.txt";         
-        const char* mapfile = "../Mapas/MADRIDALTMAP.csv"; 
+        const char* mapfile = "../Mapas/Mapa_50x50.csv"; 
         //Procesar el mapa
         int* size_map = (int *)malloc(3 * sizeof(int));
 
@@ -38,25 +38,25 @@ void main() {
         int num_start_points = 1;
         int size_start[2] = {3, num_start_points};
         float *start_points = (float *)malloc(num_start_points * 3 * sizeof(float));;
-        start_points[0] = 300;    // x coordinate
-        start_points[1] = 100;   // y coordinate
-        start_points[2] = 15;   // z coordinate
+        start_points[0] = 10;    // x coordinate
+        start_points[1] = 15;   // y coordinate
+        start_points[2] = 5;   // z coordinate
 
         // Define las coordenadas objetivo
         int num_points = 1;
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         float *objective_points  = (float *)malloc(num_points * 3 * sizeof(float));;
-        objective_points[0] = 200;   // x coordinate
-        objective_points[1] = 250;    // y coordinate
-        objective_points[2] = 15;     // z coordinate
+        objective_points[0] = 30;   // x coordinate
+        objective_points[1] = 35;    // y coordinate
+        objective_points[2] = 10;     // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
         int planner_type = 2;
         int escalado_vectores = 5;      //valor para escalar los vectores del planner 1
         int ascension_rate = 1;         
         int descent_rate = 1;           
-        int flight_level = 70;          // Altura de vuelo en metros
+        int flight_level =75;          // Altura de vuelo en metros
         int resolution = 5;             // Resolution in meters per cell (1 cell = resolution meters)
         
         // Define el umbral de distancia para la matriz de velocidades
@@ -156,7 +156,7 @@ void main() {
             free(traj->points);
             free(traj);
             free(occupation_map);
-            free(objective_points);
+            //free(objective_points);
             free(size_map);
 
         }
