@@ -207,8 +207,8 @@ traj_data = load('trajectory.txt');
 cd(main_folder);
 
 % Extract coordinates
-traj_x = traj_data(:,1) + 1;
-traj_y = traj_data(:,2) + 1;
+traj_x = traj_data(:,1);
+traj_y = traj_data(:,2);
 
 % Convert to double if necessary
 traj_x = double(traj_x);
