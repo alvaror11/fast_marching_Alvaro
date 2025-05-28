@@ -1,6 +1,6 @@
 clear;
 clc;
-close all;
+%close all;
 
 main_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Src\Ver_Resultados";
 files_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Archivos";
@@ -9,17 +9,19 @@ maps_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fas
 
 cd(maps_folder)
 
-mapa = readmatrix("MADRIDALTMAP.CSV");
+mapa = readmatrix("Mapa_50x50.CSV");
 
 figure;
 surf(mapa,"EdgeColor","none")
 fprintf('Reading terrain data from %s...\n', fullfile(maps_folder, "MADRIDALTMAP.CSV"));
-mapa = readmatrix("MADRIDALTMAP.CSV");
+
 fprintf('Terrain data read successfully.\n');
 axis equal;
 xlabel('X');
 ylabel('Y');
 zlabel('Z');
+set(gca, 'YDir', 'reverse');  
+title('Terrain Map');
 
 %% Ocupation maop txt
 
