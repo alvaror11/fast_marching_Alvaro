@@ -176,7 +176,7 @@ cd(main_folder);
 
 %% Mapa de tiempos visualization
 
-umbralMax = 300; 
+umbralMax = 400; 
 
 % Crear una copia de la matriz con valores limitados a 200
 matrizClipped = matriz_tiempos;  

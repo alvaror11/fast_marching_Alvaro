@@ -30,7 +30,7 @@ void main() {
         // Coord X = ancho, Y = largo, Z = alto
 
         //const char* mapfile = "./Mapas/MAP_3_100_100_100.txt";         
-        const char* mapfile = "../Mapas/Mapa_50x50.csv"; 
+        const char* mapfile = "../Mapas/MADRIDALTMAP.csv"; 
         //Procesar el mapa
         int* size_map = (int *)malloc(3 * sizeof(int));
 
@@ -38,17 +38,17 @@ void main() {
         int num_start_points = 1;
         int size_start[2] = {3, num_start_points};
         float *start_points = (float *)malloc(num_start_points * 3 * sizeof(float));;
-        start_points[0] = 25;    // x coordinate
-        start_points[1] = 10;   // y coordinate
-        start_points[2] = 5;   // z coordinate
+        start_points[0] = 50;    // x coordinate
+        start_points[1] = 150;   // y coordinate
+        start_points[2] = 12;   // z coordinate
 
         // Define las coordenadas objetivo
         int num_points = 1;
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         float *objective_points  = (float *)malloc(num_points * 3 * sizeof(float));;
-        objective_points[0] = 17;   // x coordinate
-        objective_points[1] = 35;    // y coordinate
+        objective_points[0] = 250;   // x coordinate
+        objective_points[1] = 350;    // y coordinate
         objective_points[2] = 10;     // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
@@ -56,7 +56,7 @@ void main() {
         int escalado_vectores = 5;      //valor para escalar los vectores del planner 1
         int ascension_rate = 1;         
         int descent_rate = 1;           
-        int flight_level =75;          // Altura de vuelo en metros
+        int flight_level = 70;          // Altura de vuelo en metros
         int resolution = 5;             // Resolution in meters per cell (1 cell = resolution meters)
         
         // Define el umbral de distancia para la matriz de velocidades
@@ -280,7 +280,7 @@ void main() {
         }
         float* restrictions_map = map_main2D(occupation_map, size_map, distance_threshold, 
                                             objective_points, size_objective, start_points, size_start, 
-                                            planner_type, escalado_vectores);
+                                            planner_type, escalado_vectores, false);
         
 
         // Crear la trayectoria
