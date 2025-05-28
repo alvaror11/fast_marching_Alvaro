@@ -10,7 +10,7 @@
 
 float* map_main2D(float* matriz, int* size_map, int distance_threshold,
                 float* objective_points, int* size_objective, float* start_points, int size_start[2],
-                int planner_type, float escalado_vectores){
+                int planner_type, float escalado_vectores, bool dosymedioD){
 
 
     //Create velocities map
@@ -34,8 +34,18 @@ float* map_main2D(float* matriz, int* size_map, int distance_threshold,
      fclose(output_file1);
     
      //Apply restrictions
-    float* restrictions_map = restrictions2D(obstacle_distance_map, size_map, NULL, 
+     float* restrictions_map = NULL;
+     if (dosymedioD == false){
+        //apply normal restrictions
+         restrictions_map = restrictions2D(obstacle_distance_map, size_map, NULL, 
                                             objective_points, size_objective, start_points, size_start);
+     }
+     else{
+        //apply teh 2.5D restrictions
+         restrictions_map = restrictions25D(obstacle_distance_map, size_map, NULL, 
+                                            objective_points, size_objective, start_points, size_start);
+     }
+    
 
     // Save restrictions map
     FILE *output_file2 = fopen("../Archivos/restrictions_map.txt", "w");

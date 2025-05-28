@@ -71,9 +71,10 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
     traj_2D->size = 0;
     traj_2D->capacity = initial_capacity;
 
+
     float* restrictions_map = map_main2D(occupation_map_2d, size_map_2d, distance_threshold, 
                                             objective_points, size_objective, start_points, size_start, 
-                                            planner_type, escalado_vectores);
+                                            planner_type, escalado_vectores, true);
 
     FMM2_2D(restrictions_map, size_map_2d, distance_threshold, 
             objective_points, size_objective, start_points, size_start, step, traj_2D, planner_type, escalado_vectores);
