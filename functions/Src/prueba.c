@@ -30,7 +30,7 @@ void main() {
         // Coord X = ancho, Y = largo, Z = alto
 
         //const char* mapfile = "./Mapas/MAP_3_100_100_100.txt";         
-        const char* mapfile = "../Mapas/Mapa_50x50.csv"; 
+        const char* mapfile = "../Mapas/.csv"; 
         //Procesar el mapa
         int* size_map = (int *)malloc(3 * sizeof(int));
 
