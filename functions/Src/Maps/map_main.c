@@ -8,6 +8,9 @@
 #include "planner.h"
 #include "../common.h"
 
+// Add prototype for restrictions25D
+float* restrictions25D(float* obstacle_distance_map, int* size_map, void* unused, float* objective_points, int* size_objective, float* start_points, int size_start[2]);
+
 float* map_main2D(float* matriz, int* size_map, int distance_threshold,
                 float* objective_points, int* size_objective, float* start_points, int size_start[2],
                 int planner_type, float escalado_vectores, bool dosymedioD){
@@ -16,6 +19,7 @@ float* map_main2D(float* matriz, int* size_map, int distance_threshold,
     //Create velocities map
     printf("Creating velocities map...\n");
     float* obstacle_distance_map = velocities_map(matriz, size_map, distance_threshold);
+    
     //Save velocities map
     FILE *output_file1 = fopen("../Archivos/velocities_map.txt", "w");
      if (output_file1 == NULL) {
@@ -34,19 +38,13 @@ float* map_main2D(float* matriz, int* size_map, int distance_threshold,
      fclose(output_file1);
     
      //Apply restrictions
-     float* restrictions_map = NULL;
+     float* restrictions_map = obstacle_distance_map;
      if (dosymedioD == false){
         //apply normal restrictions
          restrictions_map = restrictions2D(obstacle_distance_map, size_map, NULL, 
                                             objective_points, size_objective, start_points, size_start);
      }
-     else{
-        //apply teh 2.5D restrictions
-         restrictions_map = restrictions25D(obstacle_distance_map, size_map, NULL, 
-                                            objective_points, size_objective, start_points, size_start);
-     }
-    
-
+     
     // Save restrictions map
     FILE *output_file2 = fopen("../Archivos/restrictions_map.txt", "w");
      if (output_file2 == NULL) {
@@ -63,9 +61,7 @@ float* map_main2D(float* matriz, int* size_map, int distance_threshold,
          fprintf(output_file2, "\n");
      }
      fclose(output_file2);
-
-
-
+     
 
     // Apply planner
     planners_2D(restrictions_map, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);

@@ -166,10 +166,10 @@ float* restrictions2D(float* viscosity_map, int* size_map, char* dir,
 
 
         // Define number of areas for each restriction type
-        #define NUM_HARD_AREAS 0
-        #define NUM_SOFT1_AREAS 0
-        #define NUM_SOFT2_AREAS 0
-        #define NUM_SOFT3_AREAS 0
+        #define NUM_HARD_AREAS 1
+        #define NUM_SOFT1_AREAS 1
+        #define NUM_SOFT2_AREAS 1
+        #define NUM_SOFT3_AREAS 1
 
         // Define areas [x_min, x_max, y_min, y_max] for each restriction type
         int hard_areas[NUM_HARD_AREAS][4] = {
@@ -286,7 +286,7 @@ float* restrictions25D(float* viscosity_map, int* size_map, char* dir,
 
                         
 
-                        
+
                     
                     
                     

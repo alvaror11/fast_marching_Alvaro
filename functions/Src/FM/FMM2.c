@@ -83,9 +83,8 @@ void FMM2_2D(float* restrictions_map, int* size_map, float distance_threshold,
      float* output_T = (float *)malloc(size_map[1] * size_map[0] * sizeof(float));
     printf("Calculating times map...\n"); 
     output_T = main_msfm(restrictions_map, objective_points, output_T, size_map, size_objective);
-
-    // Save times map
     
+    // Save times map
     FILE *output_file2 = fopen("../Archivos/times_map.txt", "w");
      if (output_file2 == NULL) {
          perror("Error al abrir el archivo de salida");
@@ -105,8 +104,8 @@ void FMM2_2D(float* restrictions_map, int* size_map, float distance_threshold,
     float* gradient_matrix = (float*)malloc(2 * size_map[1] * size_map[0] * sizeof(float));
     printf("Calculating gradient...\n");
     compute_gradient_2d_discrete(output_T, gradient_matrix, size_map);
-    // Save gradients
     
+    // Save gradients
     FILE *gradient_x_file = fopen("../Archivos/gradient_x.txt", "w");
     FILE *gradient_y_file = fopen("../Archivos/gradient_y.txt", "w");
  

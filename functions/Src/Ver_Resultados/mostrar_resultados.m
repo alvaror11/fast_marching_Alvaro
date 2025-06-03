@@ -1,6 +1,6 @@
 clear;
 clc;
-%close all;
+close all;
 
 files_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Archivos";
 main_folder = "C:\Users\alvar\OneDrive\Desktop\My code\repositorios\TFM_Code\fast_marching-master\functions\Src\Ver_Resultados";
@@ -277,7 +277,7 @@ hold on;
 [X, Y] = meshgrid(1:columnas, 1:filas);
 
 % Downsample for better visualization (adjust skip value as needed)
-skip = 5;  % Show an arrow every 2 points
+skip = 1;  % Show an arrow every 2 points
 X = X(1:skip:end, 1:skip:end);
 Y = Y(1:skip:end, 1:skip:end);
 Fx_down = Fx(1:skip:end, 1:skip:end);
