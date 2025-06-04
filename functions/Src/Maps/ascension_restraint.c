@@ -36,9 +36,6 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
     int objective_x_3d = objective_points[0];
     int objective_y_3d = objective_points[1];
     
-    // Free 3D arrays
-    free(start_points);
-    free(objective_points);
 
     // Reallocate for 2D points
     start_points = (float *)malloc(2 * sizeof(float));
@@ -74,7 +71,7 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
 
     float* restrictions_map = map_main2D(occupation_map_2d, size_map_2d, distance_threshold, 
                                             objective_points, size_objective, start_points, size_start, 
-                                            planner_type, escalado_vectores, false);
+                                            planner_type, escalado_vectores, true);
 
     FMM2_2D(restrictions_map, size_map_2d, distance_threshold, 
             objective_points, size_objective, start_points, size_start, step, traj_2D, planner_type, escalado_vectores);

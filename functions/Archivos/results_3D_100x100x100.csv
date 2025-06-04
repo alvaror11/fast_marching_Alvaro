@@ -1,0 +1,15 @@
+Combination;Start_X;Start_Y;Start_Z;Objective_X;Objective_Y;Objective_Z;Step;Planner_Type;Distance_Threshold;Escalado_Vectores;Flight_Level;Execution_Time;Trajectory_Points;Error_Code;Error_Message
+1;25;15;55;75;35;25;0.5;1;10;10;250;13.053;140;5;Trajectory intersects with obstacles
+2;5;35;75;95;5;45;0.5;2;7;10;250;0.267;0;4;
+3;35;75;85;95;95;95;0.5;0;10;10;250;13.474;153;5;Trajectory intersects with obstacles
+4;75;5;55;25;65;65;0.5;0;7;4;100;9.2;174;0;Success - No collisions detected
+5;55;15;5;95;85;25;0.5;1;4;10;250;7.359;186;5;Trajectory intersects with obstacles
+6;85;35;65;15;25;75;0.5;2;4;4;100;0.286;0;4;
+7;35;75;45;75;75;65;0.5;2;7;10;250;0.265;0;4;
+8;55;85;15;5;35;55;0.5;0;10;4;250;14.089;188;0;Success - No collisions detected
+9;65;5;15;45;15;65;0.5;1;10;7;250;13.857;127;5;Trajectory intersects with obstacles
+10;65;65;55;5;25;35;0.5;1;10;10;250;13.724;195;5;Trajectory intersects with obstacles
+11;95;45;65;45;35;25;0.5;1;4;10;400;7.399;137;5;Trajectory intersects with obstacles
+12;65;95;75;95;25;5;0.5;2;7;7;400;0.312;0;4;
+13;95;35;55;5;55;85;0.5;1;7;4;250;8.678;238;5;Trajectory intersects with obstacles
+14;65;65;25;65;55;45;0.5;1;7;7;250;9.537;49;5;Trajectory intersects with obstacles

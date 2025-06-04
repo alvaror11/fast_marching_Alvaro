@@ -42,11 +42,11 @@ float* map_main2D(float* matriz, int* size_map, int distance_threshold,
      // Allocate memory for a copy (assuming size is known)
     float* restrictions_map = malloc(size_map[0]*size_map[1] * sizeof(float));
     memcpy(restrictions_map, obstacle_distance_map, size_map[0]*size_map[1] * sizeof(float));
-     if (dosymedioD == false){
+    if (dosymedioD == false){
         //apply normal restrictions
          restrictions_map = restrictions2D(obstacle_distance_map, size_map, NULL, 
                                             objective_points, size_objective, start_points, size_start);
-     }
+    }
      
     // Save restrictions map
     FILE *output_file2 = fopen("../Archivos/restrictions_map.txt", "w");
@@ -90,11 +90,11 @@ float* map_main3D(float* matriz, int* size_map, int distance_threshold,
     printf("Time for velocities map: %.3f s\n", time_velocitiesMap);
 
     // Save velocities map
-    /*
+    
     FILE *output_file1 = fopen("../Archivos/velocities_map3D.txt", "w");
     if (output_file1 == NULL) {
         perror("Error al abrir el archivo de salida");
-        return;
+        return NULL;
     }
     
     // Write the map data layer by layer
@@ -111,7 +111,7 @@ float* map_main3D(float* matriz, int* size_map, int distance_threshold,
     }
     
     fclose(output_file1);
-    */
+    
 
     // Apply restrictions
     printf("Applying restrictions...\n");

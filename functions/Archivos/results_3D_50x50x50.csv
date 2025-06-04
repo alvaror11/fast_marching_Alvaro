@@ -1,0 +1,51 @@
+Combination;Start_X;Start_Y;Start_Z;Objective_X;Objective_Y;Objective_Z;Step;Planner_Type;Distance_Threshold;Escalado_Vectores;Flight_Level;Execution_Time;Trajectory_Points;Error_Code;Error_Message
+1;22.78;36.11;36.11;45;13.89;13.89;0.5;2;10;4;165;0.072;0;4;
+2;36.11;31.67;22.78;36.11;18.33;31.67;0.5;0;4;10;230;0.766;35;0;Success - No collisions detected
+3;40.56;45;18.33;18.33;40.56;9.44;0.5;1;10;7;230;1.505;62;0;Success - No collisions detected
+4;40.56;18.33;40.56;13.89;45;45;0.5;1;4;4;230;0.692;112;0;Success - No collisions detected
+5;27.22;31.67;18.33;5;40.56;13.89;0.5;0;10;7;100;1.578;69;0;Success - No collisions detected
+6;31.67;5;27.22;9.44;18.33;5;0.5;0;10;7;100;1.529;75;0;Success - No collisions detected
+7;40.56;13.89;45;22.78;31.67;36.11;0.5;2;10;10;230;0.059;0;4;
+8;27.22;27.22;27.22;5;31.67;36.11;0.5;1;7;7;230;0.963;58;0;Success - No collisions detected
+9;18.33;18.33;13.89;13.89;27.22;27.22;0.5;0;7;10;230;1.026;39;0;Success - No collisions detected
+10;5;31.67;36.11;27.22;31.67;9.44;0.5;2;4;10;165;0.066;52;5;Trajectory intersects with obstacles
+11;40.56;45;9.44;40.56;18.33;5;0.5;1;4;7;165;0.717;63;0;Success - No collisions detected
+12;5;5;36.11;31.67;36.11;36.11;0.5;0;7;10;100;1.052;95;0;Success - No collisions detected
+13;45;9.44;13.89;45;5;13.89;0.5;2;7;4;230;0.069;8;0;Success - No collisions detected
+14;5;13.89;13.89;45;45;36.11;0.5;0;7;7;165;1.01;150;0;Success - No collisions detected
+15;40.56;18.33;13.89;45;18.33;9.44;0.5;0;7;4;165;1.017;25;0;Success - No collisions detected
+16;31.67;27.22;5;5;22.78;18.33;0.5;1;7;10;165;1.041;70;0;Success - No collisions detected
+17;9.44;18.33;40.56;31.67;9.44;18.33;0.5;1;7;10;230;1.004;83;0;Success - No collisions detected
+18;5;40.56;22.78;27.22;18.33;27.22;0.5;0;7;7;165;1.044;101;0;Success - No collisions detected
+19;18.33;22.78;13.89;18.33;9.44;9.44;0.5;1;10;10;100;1.5;46;0;Success - No collisions detected
+20;40.56;31.67;5;40.56;9.44;40.56;0.5;1;7;7;100;0.936;92;0;Success - No collisions detected
+21;22.78;9.44;22.78;40.56;36.11;18.33;0.5;2;4;7;230;0.069;86;5;Trajectory intersects with obstacles
+22;18.33;18.33;40.56;27.22;13.89;45;0.5;2;4;10;230;0.069;23;5;Trajectory intersects with obstacles
+23;18.33;27.22;18.33;13.89;5;27.22;0.5;0;10;10;100;1.572;51;0;Success - No collisions detected
+24;18.33;31.67;31.67;27.22;18.33;13.89;0.5;0;4;10;230;0.831;57;0;Success - No collisions detected
+25;13.89;27.22;45;13.89;5;5;0.5;1;4;10;100;0.719;102;0;Success - No collisions detected
+26;22.78;36.11;36.11;13.89;31.67;9.44;0.5;1;10;4;100;1.549;65;0;Success - No collisions detected
+27;5;45;40.56;5;45;45;0.5;2;7;4;100;0.056;0;4;
+28;40.56;40.56;31.67;18.33;27.22;40.56;0.5;1;4;4;100;0.734;84;0;Success - No collisions detected
+29;40.56;36.11;22.78;5;40.56;45;0.5;1;10;10;100;1.589;96;0;Success - No collisions detected
+30;18.33;22.78;27.22;36.11;13.89;22.78;0.5;0;4;4;230;0.743;48;0;Success - No collisions detected
+31;31.67;18.33;45;22.78;40.56;22.78;0.5;1;10;4;165;1.5;122;0;Success - No collisions detected
+32;22.78;27.22;18.33;18.33;22.78;36.11;0.5;0;4;7;230;0.747;45;0;Success - No collisions detected
+33;22.78;45;18.33;13.89;9.44;27.22;0.5;0;4;10;165;0.743;84;0;Success - No collisions detected
+34;31.67;45;31.67;40.56;5;22.78;0.5;0;10;10;100;1.581;121;0;Success - No collisions detected
+35;45;22.78;45;5;36.11;27.22;0.5;1;4;10;230;0.777;127;0;Success - No collisions detected
+36;13.89;31.67;18.33;36.11;9.44;31.67;0.5;0;7;10;165;1.033;84;0;Success - No collisions detected
+37;45;9.44;27.22;18.33;5;36.11;0.5;2;4;4;165;0.06;0;4;
+38;27.22;18.33;18.33;36.11;27.22;40.56;0.5;0;4;7;230;0.749;60;0;Success - No collisions detected
+39;31.67;27.22;18.33;22.78;22.78;36.11;0.5;1;7;10;165;1.034;67;0;Success - No collisions detected
+40;27.22;45;31.67;18.33;45;45;0.5;0;7;10;230;0.994;33;0;Success - No collisions detected
+41;40.56;5;45;27.22;22.78;18.33;0.5;2;7;10;165;0.08;0;4;
+42;18.33;5;31.67;18.33;5;45;0.5;1;10;4;230;1.518;27;0;Success - No collisions detected
+43;40.56;18.33;5;5;40.56;5;0.5;0;4;4;230;0.734;102;0;Success - No collisions detected
+44;13.89;40.56;36.11;5;22.78;18.33;0.5;0;7;4;230;1.007;77;0;Success - No collisions detected
+45;18.33;36.11;36.11;31.67;45;9.44;0.5;2;4;10;100;0.063;43;0;Success - No collisions detected
+46;40.56;40.56;9.44;5;18.33;13.89;0.5;2;10;7;165;0.078;124;5;Trajectory intersects with obstacles
+47;22.78;40.56;36.11;22.78;9.44;13.89;0.5;1;4;7;165;0.692;86;0;Success - No collisions detected
+48;27.22;22.78;27.22;13.89;31.67;27.22;0.5;2;4;4;165;0.073;36;0;Success - No collisions detected
+49;27.22;36.11;22.78;5;45;36.11;0.5;1;7;10;100;1.03;62;0;Success - No collisions detected
+50;18.33;40.56;5;31.67;22.78;18.33;0.5;0;4;7;100;0.774;59;0;Success - No collisions detected
