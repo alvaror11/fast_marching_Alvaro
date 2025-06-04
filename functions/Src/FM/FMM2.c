@@ -179,10 +179,7 @@ void FMM2_2D(float* restrictions_map, int* size_map, float distance_threshold,
         
         // Free other allocated memory before returning
         free(output_T);
-        free(restrictions_map);
         free(gradient_matrix);
-        free(objective_points);
-        free(start_points);
         free(last_point);
         free(new_point);
         return;
@@ -205,9 +202,6 @@ void FMM2_2D(float* restrictions_map, int* size_map, float distance_threshold,
     
     // Liberar memoria    
     free(output_T);
-    free(objective_points);
-    free(start_points);
-    free(restrictions_map);
     free(last_point);
     free(new_point);
     

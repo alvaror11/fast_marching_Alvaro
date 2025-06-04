@@ -15,6 +15,11 @@
         "3d_map.h": "c",
         "map_main.h": "c",
         "planner.h": "c",
+        "array": "c",
+        "string_view": "c",
+        "format": "c",
+        "initializer_list": "c",
+        "span": "c"
     },
     "editor.insertMode": "insert",
     "editor.cursorStyle": "line",
