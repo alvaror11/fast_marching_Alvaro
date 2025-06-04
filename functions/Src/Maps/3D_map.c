@@ -189,11 +189,11 @@ float* restrictions3D(float* viscosity_map, int* size_map, char* dir,
 
          // Define areas [x_min, x_max, y_min, y_max, z_min, z_max] for each restriction type
         int hard_areas[NUM_HARD_AREAS][6] = {
-            {1, 200, 1, 200, 150, 200}     
+            {1, 10, 1, 10, 1, 10}     
         };
 
         int soft1_areas[NUM_SOFT1_AREAS][6] = {
-            {30, 60, 30, 60, 10, 20}     
+            {30, 40, 30, 40, 10, 20}     
         };
 
         int soft2_areas[NUM_SOFT2_AREAS][6] = {
