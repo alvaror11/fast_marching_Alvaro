@@ -34,11 +34,9 @@ typedef struct {
     int planner_type;
     float distance_threshold;
     float escalado_vectores;
-    int ascension_rate;
-    int descent_rate;
     float flight_level;
     // Results
-    float execution_time;
+    double execution_time;
     int error_code;
     int trajectory_points;
     char error_message[256];
@@ -48,12 +46,10 @@ typedef struct {
     float start_x, start_y;
     float objective_x, objective_y;
     float step;
-    int planner_type;
     float distance_threshold;
     float escalado_vectores;
-    int ascension_rate;
-    int descent_rate;
     float flight_level;
+    float planner_type;
 } Parameters;
 
 // Declare the prototype for fast_marching_2D
@@ -65,8 +61,7 @@ void main(){
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
     char filename[256];
-    sprintf(filename, "../Archivos/results_%d%02d%02d_%02d%02d.csv", 
-            t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min);
+    sprintf(filename, "../Archivos/results_2D_50x50.csv");
 
     FILE* results_file = fopen(filename, "w");
     if (results_file == NULL) {
@@ -76,7 +71,7 @@ void main(){
 
     // Write CSV header
     fprintf(results_file, "Combination,Start_X,Start_Y,Objective_X,Objective_Y,Step,Planner_Type,"
-            "Distance_Threshold,Escalado_Vectores,Ascension_Rate,Descent_Rate,Flight_Level,"
+            "Distance_Threshold,Escalado_Vectores,Flight_Level,"
             "Execution_Time,Trajectory_Points,Error_Code,Error_Message\n");
 
 
@@ -99,29 +94,26 @@ void main(){
         Parameters params;
         
         int items_read = fscanf(param_file, 
-        "%f %f %f %f %f %f %f %f %f %f %f", 
+        "%f %f %f %f %f %f %f %f %f", 
         &params.start_x, &params.start_y,
         &params.objective_x, &params.objective_y,
-        &params.step, &params.planner_type,
+        &params.step,
         &params.distance_threshold, &params.escalado_vectores,
-        &params.ascension_rate, &params.descent_rate,
-        &params.flight_level);
+        &params.flight_level,
+        &params.planner_type);
 
         // Debug print
-        printf("\nReading combination %d: %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f\n",
+        printf("\nReading combination %d: %.2f %.2f %.2f %.2f %.2f %f %.2f %.2f %.2f\n",
             i+1, params.start_x, params.start_y, params.objective_x, params.objective_y,
-            params.step, params.planner_type, params.distance_threshold, 
-            params.escalado_vectores, params.ascension_rate, 
-            params.descent_rate, params.flight_level);
+            params.step, params.distance_threshold, 
+            params.escalado_vectores, params.flight_level, params.planner_type);
 
         // Convert float to int where needed after reading
         params.planner_type = (int)params.planner_type;
-        params.ascension_rate = (int)params.ascension_rate;
-        params.descent_rate = (int)params.descent_rate;
         params.flight_level = (int)params.flight_level;
 
         // Verify we read all parameters correctly
-        if (items_read != 11) {
+        if (items_read != 9) {
             printf("Error: Could not read all parameters for combination %d (read %d of 11)\n", 
                 i+1, items_read);
             printf("Last successful values: start=(%.2f,%.2f), obj=(%.2f,%.2f), step=%.2f\n",
@@ -145,24 +137,22 @@ void main(){
             .planner_type = params.planner_type,
             .distance_threshold = params.distance_threshold,
             .escalado_vectores = params.escalado_vectores,
-            .ascension_rate = params.ascension_rate,
-            .descent_rate = params.descent_rate,
             .flight_level = params.flight_level
         };
 
         fast_marching(params, &result);
 
         // Write results to CSV
-        fprintf(results_file, "%d,%.2f,%.2f,%.2f,%.2f,%.2f,%d,%.2f,%.2f,%d,%d,%.2f,%.3f,%d,%d,\"%s\"\n",
-                i+1,
-                result.start_x, result.start_y,
-                result.objective_x, result.objective_y,
-                result.step, result.planner_type,
-                result.distance_threshold, result.escalado_vectores,
-                result.ascension_rate, result.descent_rate, result.flight_level,
-                result.execution_time, result.trajectory_points,
-                result.error_code, result.error_message);
-        
+        fprintf(results_file, "%d,%.2f,%.2f,%.2f,%.2f,%.2f,%d,%.2f,%.2f,%.2f,%.6f,%d,%d,\"%s\"\n",
+            i+1,
+            result.start_x, result.start_y,
+            result.objective_x, result.objective_y,
+            result.step, result.planner_type,
+            result.distance_threshold, result.escalado_vectores,
+            result.flight_level,
+            result.execution_time, result.trajectory_points,
+            result.error_code, result.error_message);
+    
         // Flush after each write to ensure data is saved
         fflush(results_file);
     }
@@ -458,7 +448,7 @@ TestResult fast_marching(Parameters params, TestResult* result) {
         FMM2_2D(restrictions_map, size_map, distance_threshold, 
                 objective_points, size_objective, start_points, size_start, step, traj, planner_type, escalado_vectores);
         clock_t end = clock();
-        float cpu_time_used = ((float) (end - start)) / CLOCKS_PER_SEC;
+        double cpu_time_used = ((float) (end - start)) / CLOCKS_PER_SEC;
         result->execution_time = cpu_time_used;
         result->trajectory_points = traj->size;
         // Check if a trajectory was generated
@@ -510,6 +500,8 @@ TestResult fast_marching(Parameters params, TestResult* result) {
     cleanup:
         free(size_map);
         free(occupation_map);
+        free(objective_points);
+        free(start_points);
         return *result;
     }
     else{

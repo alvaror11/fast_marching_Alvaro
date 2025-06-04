@@ -1,2 +1,0 @@
-Combination,Start_X,Start_Y,Objective_X,Objective_Y,Step,Planner_Type,Distance_Threshold,Escalado_Vectores,Ascension_Rate,Descent_Rate,Flight_Level,Execution_Time,Trajectory_Points,Error_Code,Error_Message
-1,9.44,18.33,27.22,22.78,0.50,0,4.00,4.00,1065353216,1065353216,230.00,0.000,0,2,"Objectve point is inside an obstacle"

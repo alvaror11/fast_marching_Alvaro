@@ -9,12 +9,10 @@ param_grid = {
     'objective_x': np.linspace(5.0, 45.0, 10),
     'objective_y': np.linspace(5.0, 45.0, 10),
     'step': [0.5],
-    'planner_type': np.linspace(0.0, 3.0, 4),
     'distance_threshold': np.linspace(4.0, 10.0, 3),
     'escalado_vectores': np.linspace(4.0, 6.0, 3),
-    'ascension_rate': np.linspace(0.7, 1.0, 1),  # discrete values
-    'descent_rate': np.linspace(0.7, 1.0, 1),    # discrete values
-    'flight_level': np.linspace(70.0, 230.0, 3)
+    'flight_level': np.linspace(70.0, 230.0, 3),
+    'planner_type': np.linspace(0.0, 2.0, 3)
 }
 
 # Number of combinations you want

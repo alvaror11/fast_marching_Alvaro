@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
 
 #include "2D_map.h"
 #include "3D_map.h"
@@ -38,7 +39,9 @@ float* map_main2D(float* matriz, int* size_map, int distance_threshold,
      fclose(output_file1);
     
      //Apply restrictions
-     float* restrictions_map = obstacle_distance_map;
+     // Allocate memory for a copy (assuming size is known)
+    float* restrictions_map = malloc(size_map[0]*size_map[1] * sizeof(float));
+    memcpy(restrictions_map, obstacle_distance_map, size_map[0]*size_map[1] * sizeof(float));
      if (dosymedioD == false){
         //apply normal restrictions
          restrictions_map = restrictions2D(obstacle_distance_map, size_map, NULL, 
@@ -66,10 +69,10 @@ float* map_main2D(float* matriz, int* size_map, int distance_threshold,
     // Apply planner
     planners_2D(restrictions_map, size_map, objective_points, size_objective, start_points, size_start, planner_type, escalado_vectores);
 
+    free(obstacle_distance_map);
     return restrictions_map;
 
-    free(matriz);
-    free(obstacle_distance_map);
+    
 }
 
 float* map_main3D(float* matriz, int* size_map, int distance_threshold,
