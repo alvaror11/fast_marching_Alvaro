@@ -231,17 +231,23 @@ TestResult fast_marching(Parameters params, TestResult* result) {
         if (objective_points[0] > size_map[0] || objective_points[1] > size_map[1] || objective_points[2] > size_map[2] 
             ||start_points[0] > size_map[0] || start_points[1] > size_map[1] || start_points[2] > size_map[2]){ 
             printf("Error: Initial or objective point is outside the map\n");
-            //return;
+            result->error_code = ERROR_POINTS_OUTSIDE;
+            strcpy(result->error_message, "Initial or objective point is outside the map");
+            goto cleanup;
         }
 
         // Check that initial and final points are not inside an obstacle
         if ((occupation_map[(int)start_points[1] - 1 + ((int)start_points[0] -1)*largo + ((int)start_points[2] - 1)*ancho*largo] == 1)) {
-            printf("Error: Initial point is inside an obstacle\n");
-           // return;
+            printf("Error: Start point is inside an obstacle\n");
+            result->error_code = ERROR_INITIAL_OBSTACLE;
+            strcpy(result->error_message, "Start point is inside an obstacle");
+            goto cleanup;
         }
         if((occupation_map[(int)objective_points[1] - 1 + ((int)objective_points[0] - 1)*largo + ((int)objective_points[2] - 1)*ancho*largo] == 1)){
-            printf("Error: Objective point is inside an obstacle\n");
-            //return;
+            printf("Objectve point is inside an obstacle\n");
+            result->error_code = ERROR_OBJECTIVE_OBSTACLE;
+            strcpy(result->error_message, "Objectve point is inside an obstacle");
+            goto cleanup;
         }
         
         FILE* map_file = fopen("../Archivos/occupation_map.txt", "w");
@@ -420,7 +426,13 @@ TestResult fast_marching(Parameters params, TestResult* result) {
             */
             free(traj->points);
             free(traj);
+
+
+        cleanup:
             free(size_map);
+            free(occupation_map);
+            free(objective_points);
+            free(start_points);
             return *result;
         }
         //free(start_points);
@@ -475,20 +487,20 @@ TestResult fast_marching(Parameters params, TestResult* result) {
             printf("Error: Initial point is inside an obstacle\n");
             result->error_code = ERROR_INITIAL_OBSTACLE;
             strcpy(result->error_message, "Initial point is inside an obstacle");
-            goto cleanup;
+            goto cleanup2D;
         }
         if ((occupation_map[(int)objective_points[0] - 1 + ((int)objective_points[1]-1)*columnas ] == 1)){
             printf("Error: Objective point is inside an obstacle\n");
             result->error_code = ERROR_OBJECTIVE_OBSTACLE;
             strcpy(result->error_message, "Objectve point is inside an obstacle");
-            goto cleanup;
+            goto cleanup2D;
         }
         if (objective_points[0] > size_map[0] || objective_points[1] > size_map[1] 
             ||start_points[0] > size_map[0] || start_points[1] > size_map[1]){ 
             printf("Error: Initial or objective point is outside the map\n");
             result->error_code = ERROR_POINTS_OUTSIDE;
             strcpy(result->error_message, "Initial or objective point is outside the map");
-            goto cleanup;
+            goto cleanup2D;
         }
         float* restrictions_map = map_main2D(occupation_map, size_map, distance_threshold, 
                                             objective_points, size_objective, start_points, size_start, 
@@ -553,7 +565,7 @@ TestResult fast_marching(Parameters params, TestResult* result) {
         free(traj->points);
         free(traj);
 
-    cleanup:
+    cleanup2D:
         free(size_map);
         free(occupation_map);
         free(objective_points);
