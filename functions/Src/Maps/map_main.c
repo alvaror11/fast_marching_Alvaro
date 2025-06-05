@@ -8,6 +8,9 @@
 #include "planner.h"
 #include "../common.h"
 
+// Add prototype for restrictions25D to avoid implicit declaration error
+float* restrictions25D(float* obstacle_distance_map, int* size_map, void* unused, float* objective_points, int* size_objective, float* start_points, int size_start[2]);
+
 float* map_main2D(float* matriz, int* size_map, int distance_threshold,
                 float* objective_points, int* size_objective, float* start_points, int size_start[2],
                 int planner_type, float escalado_vectores, bool dosymedioD){
@@ -91,11 +94,11 @@ float* map_main3D(float* matriz, int* size_map, int distance_threshold,
     printf("Time for velocities map: %.3f s\n", time_velocitiesMap);
 
     // Save velocities map
-    /*
+    
     FILE *output_file1 = fopen("../Archivos/velocities_map3D.txt", "w");
     if (output_file1 == NULL) {
         perror("Error al abrir el archivo de salida");
-        return;
+        return NULL;
     }
     
     // Write the map data layer by layer
@@ -112,7 +115,7 @@ float* map_main3D(float* matriz, int* size_map, int distance_threshold,
     }
     
     fclose(output_file1);
-    */
+    
 
     // Apply restrictions
     printf("Applying restrictions...\n");
@@ -128,6 +131,33 @@ float* map_main3D(float* matriz, int* size_map, int distance_threshold,
      clock_t end_planner = clock();
      float time_planner = ((float) (end_planner - start_planner)) / CLOCKS_PER_SEC;    
      printf("Time for planner: %.3f s\n", time_planner);
+    
+    //save planner map
+    FILE *output_file3 = fopen("../Archivos/planner_map3D.txt", "w");
+    if (output_file3 == NULL) {
+        perror("Error opening planner map output file");
+        return NULL;
+    }
+
+    // Write dimensions
+    fprintf(output_file3, "%d %d %d\n", size_map[0], size_map[1], size_map[2]);
+
+    // Write the planner map data layer by layer
+    for (int k = 0; k < size_map[2]; k++) {
+        fprintf(output_file3, "Layer %d:\n", k);
+        for (int i = 0; i < size_map[0]; i++) {
+            for (int j = 0; j < size_map[1]; j++) {
+                fprintf(output_file3, "%.2f ", 
+                    restrictions_map[j + i*size_map[1] + k*size_map[0]*size_map[1]]);
+            }
+            fprintf(output_file3, "\n");
+        }
+        fprintf(output_file3, "\n");  // Extra newline between layers
+    }
+
+    fclose(output_file3);
+
+
 
      return restrictions_map;
         // Liberar memoria

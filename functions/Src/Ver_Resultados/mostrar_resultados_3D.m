@@ -10,16 +10,24 @@ cd(files_folder)
 %% Occupation map
 %% Read and create 3D map from text file
 cd(maps_folder);
-fileID = fopen('mapa3D.txt', 'r');
+filename = 'MAP_3_100_100_100.txt';
+file = fopen(filename,'r');
+
 if fileID == -1
     error('Could not open Mapa3D.txt file');
 end
 
 % Read dimensions from first line
-ancho = 50;
-largo = 50;
-altura = 50;
-
+tokens = regexp(filename, 'MAP_(\d+)_(\d+)_(\d+)_(\d+)', 'tokens');
+if ~isempty(tokens)
+    % Extract dimensions from filename
+    dims = str2double(tokens{1});
+    ancho = dims(2);     % number of rows
+    largo = dims(3);  % number of columns
+    altura = dims(4);
+else
+    error('Could not extract dimensions from filename');
+end
 % Initialize 3D matrix
 Wgr = zeros(ancho, largo, altura);
 
@@ -171,9 +179,9 @@ hold off;
 cd(main_folder)
 
 %% Times and Gradient Map Visualization
-ancho = ancho + 2;
-largo = largo + 2;
-altura = altura +2;
+% ancho = ancho + 2;
+% largo = largo + 2;
+% altura = altura +2;
 % Read times map
 cd(files_folder);
 fileID = fopen('times_map3D.txt', 'r');

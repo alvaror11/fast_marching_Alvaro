@@ -274,7 +274,7 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
                         if (j < x_min || j > x_max || 
                             i < y_min || i > y_max || 
                             k < z_min || k > z_max) {
-                            matriz[j + i*size_map[1] + k*size_map[0]*size_map[1]] = 1;
+                            matriz[j + i*size_map[1] + k*size_map[0]*size_map[1]] = 0;
                         }
                     }
                 }

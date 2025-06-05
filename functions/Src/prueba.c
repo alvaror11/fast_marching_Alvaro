@@ -29,8 +29,8 @@ void main() {
         clock_t start = clock();
         // Coord X = ancho, Y = largo, Z = alto
 
-        //const char* mapfile = "./Mapas/MAP_3_100_100_100.txt";         
-        const char* mapfile = "../Mapas/MADRIDALTMAP.csv"; 
+        const char* mapfile = "../Mapas/MAP_3_100_100_100.txt";         
+        //const char* mapfile = "../Mapas/MADRIDALTMAP.csv"; 
         //Procesar el mapa
         int* size_map = (int *)malloc(3 * sizeof(int));
 
@@ -38,29 +38,29 @@ void main() {
         int num_start_points = 1;
         int size_start[2] = {3, num_start_points};
         float *start_points = (float *)malloc(num_start_points * 3 * sizeof(float));;
-        start_points[0] = 50;    // x coordinate
-        start_points[1] = 150;   // y coordinate
-        start_points[2] = 12;   // z coordinate
+        start_points[0] = 45;    // x coordinate
+        start_points[1] = 55;   // y coordinate
+        start_points[2] = 45;   // z coordinate
 
         // Define las coordenadas objetivo
         int num_points = 1;
         // Removed redefinition of 'dimensions'
         int size_objective[2] = {3,1};
         float *objective_points  = (float *)malloc(num_points * 3 * sizeof(float));;
-        objective_points[0] = 250;   // x coordinate
-        objective_points[1] = 350;    // y coordinate
-        objective_points[2] = 10;     // z coordinate
+        objective_points[0] = 75;   // x coordinate
+        objective_points[1] = 15;    // y coordinate
+        objective_points[2] = 45;     // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
-        int planner_type = 2;
-        int escalado_vectores = 5;      //valor para escalar los vectores del planner 1
+        int planner_type = 0;
+        int escalado_vectores = 10;      //valor para escalar los vectores del planner 1
         int ascension_rate = 1;         
         int descent_rate = 1;           
         int flight_level = 70;          // Altura de vuelo en metros
         int resolution = 5;             // Resolution in meters per cell (1 cell = resolution meters)
         
         // Define el umbral de distancia para la matriz de velocidades
-        float distance_threshold = 8.0;
+        float distance_threshold = 4.0;
 
         // Define el tamaño del paso
         float step = 0.5;
