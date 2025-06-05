@@ -192,6 +192,13 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
 
         case 1: {
             // Trinchera vert y horizontal combinada
+            printf("\n=== Debug Info for 3D Planner 1 ===\n");
+            printf("Map dimensions: [%d, %d, %d]\n", size_map[0], size_map[1], size_map[2]);
+            printf("Number of start points: %d\n", size_start[1]);
+            printf("Number of objective points: %d\n", size_objective[1]);
+            printf("Vector scaling factor: %d\n", escalado_vectores);
+            
+                   
             int x_max = 0, y_max = 0, z_max = 0;
             int x_min = size_map[0], y_min = size_map[1], z_min = size_map[2];
             int num_start = size_start[1];
@@ -201,12 +208,13 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
                 float start_x = start_points[i*3];
                 float start_y = start_points[i*3 + 1];
                 float start_z = start_points[i*3 + 2];
-
+                printf("Start point %d: (%.2f, %.2f, %.2f)\n", i, start_x, start_y, start_z);
                 for (int j = 0; j < num_end; j++) {
                     float end_x = objective_points[j*3];
                     float end_y = objective_points[j*3 + 1];
                     float end_z = objective_points[j*3 + 2];
-
+                    printf("End point %d: (%.2f, %.2f, %.2f)\n", j, end_x, end_y, end_z);
+                    printf("==============================\n\n");
                     // Calculate directing vector and normalize+scale in one step
                     float vector_x = end_x - start_x;
                     float vector_y = end_y - start_y;
@@ -222,9 +230,14 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
                     float perp1_z = 0;
 
                     // Second perpendicular vector using cross product
-                    float perp2_x = vector_y*perp1_z - vector_z*perp1_y;
-                    float perp2_y = vector_z*perp1_x - vector_x*perp1_z;
-                    float perp2_z = vector_x*perp1_y - vector_y*perp1_x;
+                    float perp2_x = (vector_y*perp1_z - vector_z*perp1_y)/escalado_vectores;
+                    float perp2_y = (vector_z*perp1_x - vector_x*perp1_z)/escalado_vectores;
+                    float perp2_z = (vector_x*perp1_y - vector_y*perp1_x)/escalado_vectores;
+
+                    printf("\nVectors for point pair %d-%d:\n", i, j);
+                    printf("Direction: (%.2f, %.2f, %.2f)\n", vector_x/escalado_vectores, vector_y/escalado_vectores, vector_z/escalado_vectores);
+                    printf("Perp1: (%.2f, %.2f, %.2f)\n", perp1_x/escalado_vectores, perp1_y/escalado_vectores, perp1_z/escalado_vectores);
+                    printf("Perp2: (%.2f, %.2f, %.2f)\n", perp2_x/escalado_vectores, perp2_y/escalado_vectores, perp2_z/escalado_vectores);
 
                     // Generate points array
                     float points[12][3] = {
@@ -266,19 +279,41 @@ void planners_3D(float* matriz, int* size_map, float* objective_points, int size
                     }
                 }
             }
+            printf("\n=== Bounding Box Information ===\n");
+            printf("X bounds: [%d, %d] (width: %d)\n", x_min, x_max, x_max - x_min + 1);
+            printf("Y bounds: [%d, %d] (width: %d)\n", y_min, y_max, y_max - y_min + 1);
+            printf("Z bounds: [%d, %d] (height: %d)\n", z_min, z_max, z_max - z_min + 1);
+            printf("Total volume: %d cells\n", 
+                (x_max - x_min + 1) * (y_max - y_min + 1) * (z_max - z_min + 1));
+            printf("==============================\n\n");
 
+            int zero_count = 0;
+            int total_cells = size_map[0] * size_map[1] * size_map[2];
+            
+
+            //j < x_min || j > x_max || 
+            //i < y_min || i > y_max || 
             // Fill map outside bounds with obstacles
             for (int k = 0; k < size_map[2]; k++) {
                 for (int i = 0; i < size_map[0]; i++) {
                     for (int j = 0; j < size_map[1]; j++) {
-                        if (j < x_min || j > x_max || 
-                            i < y_min || i > y_max || 
-                            k < z_min || k > z_max) {
+                        if (k < z_min || k > z_max) {
                             matriz[j + i*size_map[1] + k*size_map[0]*size_map[1]] = 0;
+                            zero_count++;
                         }
                     }
                 }
             }
+             // Print statistics
+            printf("\nPlanner Statistics:\n");
+            printf("Total cells: %d\n", total_cells);
+            printf("Cells set to 0: %d (%.2f%%)\n", 
+                   zero_count, 
+                   (float)zero_count * 100.0f / total_cells);
+            printf("Remaining valid cells: %d (%.2f%%)\n", 
+                   total_cells - zero_count,
+                   (float)(total_cells - zero_count) * 100.0f / total_cells);
+            
             break;
         }
         case 2: {
