@@ -4,16 +4,16 @@ import os
 
 # Parameter ranges definition
 param_grid = {
-    'start_x': np.linspace(5.0, 95.0, 10),
-    'start_y': np.linspace(5.0, 95.0, 10),
-    'start_z': np.linspace(5.0, 95.0, 10),
-    'objective_x': np.linspace(5.0, 95.0, 10),
-    'objective_y': np.linspace(5.0, 95.0, 10),
-    'objective_z': np.linspace(5.0, 95.0, 10),
+    'start_x': np.linspace(5.0, 460.0, 10),
+    'start_y': np.linspace(5.0, 490.0, 10),
+    'start_z': np.linspace(10.0, 20.0, 5),
+    'objective_x': np.linspace(5.0, 460.0, 10),
+    'objective_y': np.linspace(5.0, 490.0, 10),
+    'objective_z': np.linspace(10.0, 20.0, 5),
     'step': [0.5],
     'distance_threshold': np.linspace(4.0, 10.0, 3),
     'escalado_vectores': np.linspace(4.0, 10.0, 3),
-    'flight_level': np.linspace(70.0, 150.0, 3),
+    'flight_level': np.linspace(100.0, 150.0, 3),
     'planner_type': [0.0, 1.0, 2.0]
 }
 

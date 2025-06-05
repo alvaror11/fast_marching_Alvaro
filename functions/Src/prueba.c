@@ -62,7 +62,7 @@ void main(){
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
     char filename[256];
-    sprintf(filename, "../Archivos/results_3D_100x100x100.csv");
+    sprintf(filename, "../Archivos/results_3D_MADRID.csv");
 
     FILE* results_file = fopen(filename, "w");
     if (results_file == NULL) {
@@ -176,7 +176,7 @@ TestResult fast_marching(Parameters params, TestResult* result) {
         // Coord X = ancho, Y = largo, Z = alto
 
         //const char* mapfile = "./Mapas/MAP_3_100_100_100.txt";         
-        const char* mapfile = "../Mapas/MAP_3_100_100_100.txt"; 
+        const char* mapfile = "../Mapas/MADRIDALTMAP.csv"; 
         //Procesar el mapa
         int* size_map = (int *)malloc(3 * sizeof(int));
 

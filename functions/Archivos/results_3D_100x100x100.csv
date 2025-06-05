@@ -1,4 +1,51 @@
-Combination,Start_X,Start_Y,Start_Z,Objective_X,Objective_Y,Objective_Z,Step,Planner_Type,Distance_Threshold,Escalado_Vectores,Flight_Level,Execution_Time,Trajectory_Points,Error_Code,Error_Message
-1,15.00,5.00,65.00,5.00,75.00,45.00,0.50,2,7.00,4.00,110.00,0.291000,0,4,""
-2,75.00,85.00,15.00,35.00,75.00,45.00,0.50,2,10.00,7.00,70.00,0.283000,0,4,""
-3,55.00,35.00,25.00,95.00,25.00,75.00,0.50,0,4.00,4.00,70.00,0.000000,0,2,"Objectve point is inside an obstacle"
+Combination;Start_X;Start_Y;Start_Z;Objective_X;Objective_Y;Objective_Z;Step;Planner_Type;Distance_Threshold;Escalado_Vectores;Flight_Level;Execution_Time;Trajectory_Points;Error_Code;Error_Message
+1;55;95;55;65;75;5;0.5;0;4;4;150;7.103;127;0;Success - No collisions detected
+2;5;5;95;45;35;5;0.5;0;10;7;150;13.705;242;0;Success - No collisions detected
+3;35;15;95;65;15;5;0.5;0;10;10;70;13.03;266;0;Success - No collisions detected
+4;45;75;55;95;25;75;0.5;0;4;4;150;0;0;2;Objectve point is inside an obstacle
+5;45;35;85;55;55;5;0.5;0;10;7;150;13.085;189;0;Success - No collisions detected
+6;25;5;25;45;15;95;0.5;0;10;10;70;12.815;188;0;Success - No collisions detected
+7;95;25;95;35;55;75;0.5;0;7;7;150;9.026;162;0;Success - No collisions detected
+8;5;75;25;55;65;25;0.5;0;10;10;150;12.946;134;0;Success - No collisions detected
+9;25;95;75;85;15;55;0.5;0;7;10;110;8.96;254;0;Success - No collisions detected
+10;75;25;75;35;35;45;0.5;0;7;7;150;9.259;115;0;Success - No collisions detected
+11;45;85;95;75;85;15;0.5;0;10;4;70;12.822;207;0;Success - No collisions detected
+12;65;5;75;35;35;25;0.5;0;4;4;110;7.113;143;0;Success - No collisions detected
+13;5;85;5;35;35;15;0.5;0;10;4;110;12.878;143;0;Success - No collisions detected
+14;35;85;65;95;95;85;0.5;0;7;7;150;9.225;157;0;Success - No collisions detected
+15;35;35;75;45;25;25;0.5;0;4;10;70;7.064;126;0;Success - No collisions detected
+16;15;75;75;5;45;25;0.5;0;7;4;70;0;0;1;Start point is inside an obstacle
+17;75;45;95;15;95;15;0.5;0;4;10;70;7.129;249;0;Success - No collisions detected
+18;35;35;15;95;95;85;0.5;0;10;4;70;13.126;255;0;Success - No collisions detected
+19;65;55;75;55;5;35;0.5;0;4;10;110;7.033;147;0;Success - No collisions detected
+20;95;5;5;95;55;55;0.5;0;7;4;110;8.978;154;0;Success - No collisions detected
+21;35;55;75;55;45;15;0.5;0;4;4;70;7.15;147;0;Success - No collisions detected
+22;85;85;35;15;65;15;0.5;0;7;10;110;9.234;191;0;Success - No collisions detected
+23;75;5;75;95;5;95;0.5;0;4;10;110;6.903;57;0;Success - No collisions detected
+24;5;65;85;75;95;75;0.5;0;10;10;150;12.755;190;0;Success - No collisions detected
+25;95;45;55;45;65;5;0.5;0;10;7;150;0;0;1;Start point is inside an obstacle
+26;85;95;65;45;25;75;0.5;0;10;10;110;13.035;223;0;Success - No collisions detected
+27;15;75;75;95;5;85;0.5;0;4;10;150;0;0;1;Start point is inside an obstacle
+28;95;5;35;45;55;65;0.5;0;10;4;110;0;0;2;Objectve point is inside an obstacle
+29;85;15;95;85;25;5;0.5;0;4;7;110;0;0;2;Objectve point is inside an obstacle
+30;65;55;45;35;15;25;0.5;0;7;7;70;9.298;124;0;Success - No collisions detected
+31;5;15;15;5;25;65;0.5;0;7;7;110;8.923;116;0;Success - No collisions detected
+32;95;75;45;65;25;5;0.5;0;7;7;70;0;0;2;Objectve point is inside an obstacle
+33;75;75;95;95;25;15;0.5;0;10;7;70;0;0;1;Start point is inside an obstacle
+34;25;35;65;55;45;35;0.5;0;7;7;150;0;0;1;Start point is inside an obstacle
+35;95;35;85;95;35;75;0.5;0;7;7;110;0;0;2;Objectve point is inside an obstacle
+36;35;5;75;25;95;95;0.5;0;4;10;110;0;0;2;Objectve point is inside an obstacle
+37;95;85;65;75;75;85;0.5;0;10;4;70;13.436;70;0;Success - No collisions detected
+38;25;5;35;65;95;5;0.5;0;7;4;70;8.841;243;0;Success - No collisions detected
+39;5;5;25;15;35;65;0.5;0;7;4;110;0;0;2;Objectve point is inside an obstacle
+40;35;55;5;95;55;55;0.5;0;10;4;70;12.692;178;0;Success - No collisions detected
+41;15;15;25;85;35;25;0.5;0;10;4;70;12.888;223;0;Success - No collisions detected
+42;15;55;45;35;65;95;0.5;0;10;7;150;12.798;152;0;Success - No collisions detected
+43;15;25;65;85;55;85;0.5;0;4;7;110;7.523;184;0;Success - No collisions detected
+44;45;55;55;95;95;5;0.5;0;4;4;70;6.89;174;0;Success - No collisions detected
+45;95;15;65;25;65;45;0.5;0;4;10;110;0;0;1;Start point is inside an obstacle
+46;95;45;95;85;55;35;0.5;0;10;10;150;12.913;143;0;Success - No collisions detected
+47;95;15;45;65;15;25;0.5;0;7;4;150;8.88;75;0;Success - No collisions detected
+48;35;65;25;55;5;75;0.5;0;7;4;110;8.787;199;0;Success - No collisions detected
+49;95;35;45;15;35;25;0.5;0;10;7;150;12.92;207;0;Success - No collisions detected
+50;95;95;25;45;25;65;0.5;0;7;7;150;8.926;231;0;Success - No collisions detected

@@ -95,19 +95,6 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
     }
 
 
-    // Print 2D trajectory debug info
-    printf("\n=== 2D Trajectory Debug Info ===\n");
-    printf("Total points: %d\n", traj_2D->size);
-
-    // Print trajectory points
-    for(int i = 0; i < traj_2D->size; i++) {
-       /* printf("Point %d: (%.2f, %.2f)\n", 
-               i, 
-               traj_2D->points[i].x,
-               traj_2D->points[i].y);*/
-    }
-
-
     // Adjust the capacity of the 3D trajectory to match the 2D trajectory
     traj->points = realloc(traj->points, traj_2D->size * sizeof(Point3D));
     if (!traj->points) {
@@ -121,7 +108,7 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
     }
     traj->size = traj_2D->size;
     traj->capacity = traj_2D->size;
-
+    /*
     printf("\n=== Complete 2D Trajectory Information ===\n");
     printf("Number of points: %d\n", traj_2D->size);
     printf("Capacity: %d\n", traj_2D->capacity);
@@ -140,6 +127,7 @@ void asc_restraint_planner(float* matriz, int size_map[3], float distance_thresh
         traj_2D->points[traj_2D->size-1].x, 
         traj_2D->points[traj_2D->size-1].y);
     printf("==============================\n\n");
+    */
     // Transform the 2D trajectory to 3D, remember that we are not encapsulating and the index in C start at 0, so we need to substract only 1
     // to the x and y coordinates to get the correct index in the height_map
     for (int i = 0; i < traj_2D->size; i++) {
