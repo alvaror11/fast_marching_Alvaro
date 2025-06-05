@@ -189,19 +189,19 @@ float* restrictions3D(float* viscosity_map, int* size_map, char* dir,
 
          // Define areas [x_min, x_max, y_min, y_max, z_min, z_max] for each restriction type
         int hard_areas[NUM_HARD_AREAS][6] = {
-            {1, 200, 1, 200, 150, 200}     
+            {1, 1, 1, 1, 1, 1}     
         };
 
         int soft1_areas[NUM_SOFT1_AREAS][6] = {
-            {30, 60, 30, 60, 10, 20}     
+            {1, 1, 1, 1, 1, 1}      
         };
 
         int soft2_areas[NUM_SOFT2_AREAS][6] = {
-            {1, 40, 1, 40, 40, 50}
+            {1, 1, 1, 1, 1, 1} 
         };
 
         int soft3_areas[NUM_SOFT3_AREAS][6] = {
-            {10, 40, 10, 40, 25, 50}
+            {1, 1, 1, 1, 1, 1} 
         };
 
         //Check if objective or start points are inside a hard restriction area

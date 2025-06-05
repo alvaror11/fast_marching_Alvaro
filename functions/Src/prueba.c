@@ -52,7 +52,7 @@ void main() {
         objective_points[2] = 45;     // z coordinate
 
         // PARAMETROS PARA LOS PLANNER
-        int planner_type = 0;
+        int planner_type = 1;
         int escalado_vectores = 10;      //valor para escalar los vectores del planner 1
         int ascension_rate = 1;         
         int descent_rate = 1;           
@@ -104,9 +104,6 @@ void main() {
         }
 
         fclose(map_file);
-
-
-
 
 
         // Check the planner type to call one function or another
