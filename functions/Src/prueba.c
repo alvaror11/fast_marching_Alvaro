@@ -62,7 +62,7 @@ void main(){
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
     char filename[256];
-    sprintf(filename, "../Archivos/results_3D_Madrid.csv");
+    sprintf(filename, "../Archivos/results_3D_100x100x100.csv");
 
     FILE* results_file = fopen(filename, "w");
     if (results_file == NULL) {
@@ -125,7 +125,7 @@ void main(){
         printf("\nRunning combination %d/%d:\n", i+1, num_combinations);
         printf("Start: (%.2f, %.2f, %.2f)\n", params.start_x, params.start_y, params.start_z);
         printf("Objective: (%.2f, %.2f, %.2f)\n", params.objective_x, params.objective_y, params.objective_z);
-        printf("Parameters: step=%.2f, planner=%d, threshold=%.2f\n", 
+        printf("Parameters: step=%.2f, planner=%.2f, threshold=%.2f\n", 
                params.step, params.planner_type, params.distance_threshold);
 
         // Results
@@ -176,7 +176,7 @@ TestResult fast_marching(Parameters params, TestResult* result) {
         // Coord X = ancho, Y = largo, Z = alto
 
         //const char* mapfile = "./Mapas/MAP_3_100_100_100.txt";         
-        const char* mapfile = "../Mapas/MADRIDALTMAP.csv"; 
+        const char* mapfile = "../Mapas/MAP_3_100_100_100.txt"; 
         //Procesar el mapa
         int* size_map = (int *)malloc(3 * sizeof(int));
 
